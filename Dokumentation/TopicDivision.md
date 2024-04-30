@@ -7,12 +7,12 @@
 ## Aufbau
 Gemäß Model-View-Control Modells
 ## Aufteilung
-| Meilenstein 1 | Andreas   | Felix   | Keita   | Tobias   |
-|---------------|-----------|---------|---------|----------|
-| csv. reader   |           |         |         |          |
-| unit-tests    |           |         |         |          |
-| user-Diagram  |           |         |         |          |
-|               |           |         |         |          |
+| Meilenstein 1 | Andreas   | Felix | Keita   | Tobias   |
+|---------------|-----------|-------|---------|----------|
+| csv. reader   |           |       |         |          |
+| unit-tests    |           |       |         |          |
+| user-Diagram  |           |       |         |          |
+|               |           |       |         |          |
 
 
 ## To-Do
