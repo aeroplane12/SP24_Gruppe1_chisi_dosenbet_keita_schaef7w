@@ -3,16 +3,16 @@
 + Andreas
 + Felix
 + Keita
-+ Tobias
++ Tobias 
 ## Aufbau
 Gemäß Model-View-Control Modells
 ## Aufteilung
-| Thema           | Andreas   | Felix   | Keita   | Tobias   |
-|-----------------|-----------|---------|---------|----------|
-| UI & Control    |           |         |         |          |
-| Pers. to Couple |           |         |         |          |
-| Couple to Group |           |         |         |          |
-| General Manager |           |         |         |          |
+| Meilenstein 1 | Andreas   | Felix   | Keita   | Tobias   |
+|---------------|-----------|---------|---------|----------|
+| csv. reader   |           |         |         |          |
+| unit-tests    |           |         |         |          |
+| user-Diagram  |           |         |         |          |
+|               |           |         |         |          |
 
 
 ## To-Do
