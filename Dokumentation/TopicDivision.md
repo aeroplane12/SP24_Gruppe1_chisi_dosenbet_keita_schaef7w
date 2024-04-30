@@ -7,12 +7,12 @@
 ## Aufbau
 Gemäß Model-View-Control Modells
 ## Aufteilung
-| Thema           | Andreas   | Felix   | Keita   | Tobias   |
-|-----------------|-----------|---------|---------|----------|
-| UI & Control    |           |         |         |          |
-| Pers. to Couple |           |         |         |          |
-| Couple to Group |           |         |         |          |
-| General Manager |           |         |         |          |
+| Thema           | Andreas | Felix   | Keita   | Tobias   |
+|-----------------|---------|---------|---------|----------|
+| UI & Control    |         |         |         |          |
+| Pers. to Couple |         |         |         |          |
+| Couple to Group |         |         |         |          |
+| General Manager |         |         |         |          |
 
 
 ## To-Do
