@@ -16,6 +16,7 @@ public class Manager {
         //default file with header
         csvReaderPeople(path, true);
     }
+
     public void csvReaderPeople(String path, boolean header) {
         Scanner scanner;
         //Temp shit
@@ -23,7 +24,7 @@ public class Manager {
         List<Couple> testCouple = new ArrayList<>();
         try {
             scanner = new Scanner(new File(path), StandardCharsets.UTF_8);
-            //skip first line
+            //skip the first line
             String[] input;
             if (scanner.hasNext() && header) {
                 scanner.nextLine();
@@ -44,19 +45,21 @@ public class Manager {
         }
 
     }
-    public void csvReaderPartyLocation(String path){
-        csvReaderPartyLocation(path,true);
+
+    public void csvReaderPartyLocation(String path) {
+        csvReaderPartyLocation(path, true);
     }
-    public void csvReaderPartyLocation(String path,boolean header){
+
+    public void csvReaderPartyLocation(String path, boolean header) {
         Scanner scanner;
-        try{
+        try {
             scanner = new Scanner(new File(path), StandardCharsets.UTF_8);
             String[] input;
             if (scanner.hasNext() && header) {
                 scanner.nextLine();
             }
             input = scanner.nextLine().split("[,\n]");
-            partyLoc = new Location(Double.parseDouble(input[0]),Double.parseDouble(input[1]));
+            partyLoc = new Location(Double.parseDouble(input[0]), Double.parseDouble(input[1]));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
