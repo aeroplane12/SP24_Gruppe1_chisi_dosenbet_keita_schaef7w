@@ -12,6 +12,11 @@ public class Manager {
     CoupleManager coupleManager;
     Location partyLoc;
 
+    Manager(GroupManager groupManager, CoupleManager coupleManager){
+        this.groupManager = groupManager;
+        this.coupleManager = coupleManager;
+    }
+
     public void csvReaderPeople(String path) {
         //default file with header
         csvReaderPeople(path, true);
