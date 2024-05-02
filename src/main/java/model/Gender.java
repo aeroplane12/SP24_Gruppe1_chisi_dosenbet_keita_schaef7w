@@ -12,6 +12,11 @@ public class Gender {
         }
     }
 
+    /**
+     * getGen
+     * @param s the persons gender as a String
+     * @return the Persons gender as a "g" Enum
+     */
     public static g getGen(String s){
         return switch (s) {
             case "male" -> g.male;

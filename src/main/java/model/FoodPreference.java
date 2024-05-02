@@ -13,6 +13,12 @@ public class FoodPreference {
             value = i;
         }
     }
+
+    /**
+     *  getFoodPref
+     * @param s the String which defines the foodPref of the participant
+     * @return the corresponding foodPreference enum
+     */
     public static FoodPref getFoodPref(String s){
         return switch (s) {
             case "vegan" -> FoodPref.VEGAN;
