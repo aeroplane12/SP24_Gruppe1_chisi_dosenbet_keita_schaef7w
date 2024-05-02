@@ -1,7 +1,7 @@
 package model;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.testng.annotations.BeforeClass;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
