@@ -2,6 +2,7 @@ package model;
 
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Person {
     private final String ID;
@@ -11,7 +12,7 @@ public class Person {
     private Gender.g gender;
     private Kitchen kitchen;
     private Person partner; // pointer to a Partner
-    private boolean lockedIn;     // whether the partner is locked (previously assigned)
+    private boolean lockedIn;     // whether the partner is locked (registered as a Couple)
 
     /**
      * constructor for creating a Person through the .csv file
@@ -78,16 +79,33 @@ public class Person {
     }
 
     /**
+     * hasPartner
+     * @return whether person has partner
+     */
+    public boolean hasPartner(){
+        return partner!=null;
+    }
+    /**
      * getCouple
      * retrieves the Partner, and this Person,
      * if this Person is not assigned a Partner, returns NULL
      * @return the Couple or null
      */
     public Person[] getCouple(){
-        if (partner == null){
-            return null;
-        }
-        return new Person[]{this,partner};
+        return hasPartner()? new Person[]{this,partner}:null;
+    }
+
+    /**
+     * getCoupleIDs
+     * creates a CoupleID by concatenating both peopleIDs in a set order
+     * hopefully unique
+     * @return a String consisting of both personalIDs
+     */
+    public String getCoupleIDs(){
+        return hasPartner()?Arrays.stream(new String[]{ID, partner.getID()})
+                .sorted()
+                .collect(Collectors.joining())
+                :null;
     }
 
     @Override
@@ -105,7 +123,7 @@ public class Person {
                 age +
                 ", Gender: " +
                 gender +
-                ", Kitchen" +
+                ", Kitchen: " +
                 (kitchen != null ?
                         kitchen.toString():
                         "none ") +

@@ -2,7 +2,7 @@ package model;
 
 
 public class CoupleManager {
-    // needs overview over all singular People
+    // needs overview over all People, filtered if locked in
     void calcCouples(){
         //TODO Algorithm to sort people into couples
     }

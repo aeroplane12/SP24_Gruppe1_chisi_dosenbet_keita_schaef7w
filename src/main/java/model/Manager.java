@@ -10,11 +10,16 @@ import java.util.Scanner;
 public class Manager {
     GroupManager gm;
     CoupleManager cm;
+    private final Manager instance;
+    public Manager(){
+        instance = this;
+    }
+
     Location partyLoc;
 
     /**
      * Reads .csv File at Path,
-     * then transforms entries into People
+     * then transforms entries into People,
      * will assume a header in file
      * @param path path to csv. File
      */
@@ -42,13 +47,14 @@ public class Manager {
 
             while (scanner.hasNext()) {
                 input = scanner.nextLine().split("[,\n]", -1);
-                testPerson.add(new Person(input));
+                Person n = new Person(input);
+                testPerson.add(n);
+                if (n.hasPartner()) {
+                    testPerson.add(n.getPartner());
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-        for (Person i : testPerson) {
-            System.out.println(i.toString());
         }
 
     }
@@ -81,5 +87,9 @@ public class Manager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Manager getInstance() {
+        return instance;
     }
 }

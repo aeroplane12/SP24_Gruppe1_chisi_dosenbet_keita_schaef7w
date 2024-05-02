@@ -19,13 +19,11 @@ public class Kitchen extends Location{
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("[Kitchen_Status: ").append(maybe?"only for emergencies":"always available").append(", Kitchen_Longitude: ").append(longitude)
-                .append(", Kitchen_Latitude: ").append(latitude);
-        if (story != null) {
-            s.append(", Kitchen_Story: ").append(story);
-        }
-        s.append("]");
-        return s.toString();
+        return "[Kitchen_Status: " +
+                (maybe ? "only for emergencies" : "always available") +
+                ", Kitchen_Longitude: " + longitude +
+                ", Kitchen_Latitude: " + latitude +
+                (story != null ? ", Kitchen_Story: " + story : "") +
+                "]";
     }
 }
