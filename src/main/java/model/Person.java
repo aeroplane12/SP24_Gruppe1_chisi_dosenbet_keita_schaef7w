@@ -104,7 +104,7 @@ public class Person {
     public String getCoupleIDs(){
         return hasPartner()?Arrays.stream(new String[]{ID, partner.getID()})
                 .sorted()
-                .collect(Collectors.joining())
+                .collect(Collectors.joining(","))
                 :null;
     }
 

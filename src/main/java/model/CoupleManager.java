@@ -3,6 +3,10 @@ package model;
 
 public class CoupleManager {
     // needs overview over all People, filtered if locked in
+    Person[] allParticipants;
+    // everyone who is left
+    Person[] succeedingParticipants;
+
     void calcCouples(){
         //TODO Algorithm to sort people into couples
     }
@@ -12,5 +16,13 @@ public class CoupleManager {
 
     public void removePerson(){
         //TODO removes Person and runs calcCouples again
+    }
+    public Person getPerson(String string){
+        //TODO returns a Person by their ID
+        return null;
+    }
+    public Person[] getCouple(String string){
+        //TODO returns a Couple by their ID ( or one of the Peoples ID)<-maybe dont know
+        return null;
     }
 }

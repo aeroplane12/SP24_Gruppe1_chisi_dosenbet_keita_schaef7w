@@ -12,7 +12,7 @@ public class Manager {
     CoupleManager coupleManager;
     Location partyLoc;
 
-    Manager(GroupManager groupManager, CoupleManager coupleManager){
+    public Manager(GroupManager groupManager, CoupleManager coupleManager){
         this.groupManager = groupManager;
         this.coupleManager = coupleManager;
     }
@@ -56,7 +56,7 @@ public class Manager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        testPerson.forEach(System.out::println);
     }
 
     /**
