@@ -18,6 +18,12 @@ public class AgeGroup {
             this.value = value;
         }
     }
+
+    /**
+     * getAgeRange
+     * @param s the String which holds the age of the person
+     * @return a fitting ageRange enum
+     */
     public static AgeRange getAgeRange(String s) {
         int i = Math.round(Float.parseFloat(s));
         if (i < 18){

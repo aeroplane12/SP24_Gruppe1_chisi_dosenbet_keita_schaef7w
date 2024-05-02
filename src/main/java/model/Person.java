@@ -8,7 +8,7 @@ public class Person {
     private String name;
     private FoodPreference.FoodPref foodPreference;
     private AgeGroup.AgeRange age;
-    private Gender.genderValue gender;
+    private Gender.g gender;
     private Kitchen kitchen;
     public Person(String[] strings){
         ID = strings[1];
@@ -16,7 +16,7 @@ public class Person {
         foodPreference = FoodPreference.getFoodPref(strings[3]);
         age = AgeGroup.getAgeRange(strings[4]);
         gender = Gender.getGen(strings[5]);
-        kitchen = strings[6].equals("no") || strings[6].isEmpty() ? null : new Kitchen(Arrays.copyOfRange(strings,6,10));
+        kitchen = strings[6].equals("no") || strings[6].isEmpty() ? null: new Kitchen(Arrays.copyOfRange(strings,6,10));
     }
     public Person(String[] strings, FoodPreference.FoodPref food, Kitchen k){
         ID = strings[0];

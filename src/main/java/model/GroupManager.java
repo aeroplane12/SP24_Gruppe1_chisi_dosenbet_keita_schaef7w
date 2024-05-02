@@ -1,5 +1,9 @@
 package model;
 
 public class GroupManager {
-    void addCouple(Couple c){}
+    public  void calcGroups(){
+        //TODO sorting couples into Groups according to specifications
+    }
+
+
 }

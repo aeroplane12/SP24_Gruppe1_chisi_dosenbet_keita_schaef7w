@@ -1,22 +1,22 @@
 package model;
 
 public class Gender {
-    public enum genderValue {
+    public enum g{
         male(0),
         female(1),
         other(2);
         private final int value;
 
-        genderValue(int value) {
+        g(int value) {
             this.value = value;
         }
     }
 
-    public static genderValue getGen(String s){
+    public static g getGen(String s){
         return switch (s) {
-            case "male" -> genderValue.male;
-            case "female" -> genderValue.female;
-            default -> genderValue.other;
+            case "male" -> g.male;
+            case "female" -> g.female;
+            default -> g.other;
         };
     }
 
