@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Manager {
-    GroupManager gm;
-    CoupleManager cm;
-    private final Manager instance;
-    public Manager(){
-        instance = this;
-    }
-
+    GroupManager groupManager;
+    CoupleManager coupleManager;
     Location partyLoc;
+
+    Manager(GroupManager groupManager, CoupleManager coupleManager){
+        this.groupManager = groupManager;
+        this.coupleManager = coupleManager;
+    }
 
     /**
      * Reads .csv File at Path,
@@ -87,9 +87,5 @@ public class Manager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Manager getInstance() {
-        return instance;
     }
 }
