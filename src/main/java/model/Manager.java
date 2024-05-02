@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Manager {
-    GroupManager gm;
-    CoupleManager cm;
+    GroupManager groupManager;
+    CoupleManager coupleManager;
     Location partyLoc;
 
     public void csvReaderPeople(String path) {
@@ -23,7 +23,7 @@ public class Manager {
         List<Couple> testCouple = new ArrayList<>();
         try {
             scanner = new Scanner(new File(path), StandardCharsets.UTF_8);
-            //skip first line
+            //skip the first line
             String[] input;
             if (scanner.hasNext() && header) {
                 scanner.nextLine();
