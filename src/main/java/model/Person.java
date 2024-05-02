@@ -9,7 +9,7 @@ public class Person {
     private String name;
     private FoodPreference.FoodPref foodPreference;
     private AgeGroup.AgeRange age;
-    private Gender.g gender;
+    private Gender.genderValue gender;
     private Kitchen kitchen;
     private Person partner; // pointer to a Partner
     private boolean lockedIn;     // whether the partner is locked (registered as a Couple)
