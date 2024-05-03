@@ -7,21 +7,25 @@ public class CoupleManager {
     // everyone who is left
     Person[] succeedingParticipants;
 
-    void calcCouples(){
+    void calcCouples() {
         //TODO Algorithm to sort people into couples
     }
-    public void addPerson(){
+    public void addPerson() {
         //TODO Algorithm to add a Person, then a calcCouples again
     }
 
-    public void removePerson(){
+    public void addPerson(Person person){
+        // TODO Algorithm to add a Person, then a calcCouples again
+    }
+
+    public void removePerson() {
         //TODO removes Person and runs calcCouples again
     }
-    public Person getPerson(String string){
+    public Person getPerson(String string) {
         //TODO returns a Person by their ID
         return null;
     }
-    public Person[] getCouple(String string){
+    public Person[] getCouple(String string) {
         //TODO returns a Couple by their ID ( or one of the Peoples ID)<-maybe dont know
         return null;
     }

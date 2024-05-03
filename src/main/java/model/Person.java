@@ -57,6 +57,28 @@ public class Person {
         lockedIn = true;
     }
 
+    /**
+     * Constructor for testing purposes and fine-tuning
+     * @param ID ID of person
+     * @param name name of person
+     * @param age the kitchen of their partnership (might be redundant)
+     * @param gender pointer to partner
+     * @param food the food preference of the person
+     * @param kitchen the kitchen the person is using
+     * @param partner the reference to the partner of the person
+     */
+    public Person (String ID, String name, AgeGroup.AgeRange age,
+                   Gender.genderValue gender , FoodPreference.FoodPref food,
+                   Kitchen kitchen,Person partner) {
+        this.ID = ID;
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+        this.foodPreference = food;
+        this.kitchen = kitchen;
+        this.partner = partner;
+    }
+
     // getter methods
     public FoodPreference.FoodPref getFoodPreference() {
         return foodPreference;
@@ -76,6 +98,10 @@ public class Person {
 
     public Person getPartner() {
         return partner;
+    }
+
+    public void setPartner(Person partner){
+        this.partner = partner;
     }
 
     /**

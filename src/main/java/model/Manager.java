@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Manager {
+
     GroupManager groupManager;
     CoupleManager coupleManager;
     Location partyLoc;
@@ -88,4 +89,13 @@ public class Manager {
             throw new RuntimeException(e);
         }
     }
+
+    public GroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public CoupleManager getCoupleManager() {
+        return coupleManager;
+    }
+
 }
