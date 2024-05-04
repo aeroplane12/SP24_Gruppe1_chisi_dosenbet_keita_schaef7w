@@ -30,10 +30,12 @@ class ManagerTest {
         partner.setPartner(testPerson);
 
         coupleManager.addPerson(testPerson);
-
         //As person has partner both should be added
         assertEquals(coupleManager.allParticipants.length, 2);
 
+        coupleManager.removePerson(partner);
+        //Only removes the partner not test person
+        assertEquals(coupleManager.allParticipants.length, 1);
     }
 
 

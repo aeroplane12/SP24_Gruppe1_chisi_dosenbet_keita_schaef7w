@@ -18,7 +18,7 @@ public class CoupleManager {
         // TODO Algorithm to add a Person, then a calcCouples again
     }
 
-    public void removePerson() {
+    public void removePerson(Person person) {
         //TODO removes Person and runs calcCouples again
     }
     public Person getPerson(String string) {
