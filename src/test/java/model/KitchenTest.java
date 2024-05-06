@@ -37,6 +37,14 @@ public class KitchenTest {
         assertEquals(expectedString2, kitchen2.toString());
     }
 
+    @Test
+    public void testDistance() {
+        Location location = new Location(40.7128, -74.0060);
+        int expectedDistance = 0; // The distance between the same locations should be 0
+        int actualDistance = kitchen1.distance(location);
+        assertEquals(expectedDistance, actualDistance);
+    }
+
 }
 
 
