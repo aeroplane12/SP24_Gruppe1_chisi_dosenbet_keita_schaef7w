@@ -37,7 +37,7 @@ public class GroupManager {
         //TODO returns the Cluster centered around the given couple.
         return null;        //3x3 matrix
     }
-    public static class Group extends Location{
+    public static class Group extends Location {
         Person host;
         Person[] guests;
         float avgGender;
@@ -47,6 +47,7 @@ public class GroupManager {
             super(host.getKitchen().longitude,host.getKitchen().latitude);
         }
     }
+
 
 
 }
