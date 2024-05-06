@@ -10,12 +10,16 @@ public class GroupManager {
     private float minGenderDistribution;
     // maximal allowed distance between Groups
     private int maxAllowedDistance;
+    // min allowed distance between Groups ("community-detection")
+    private int minAllowedDistance;
 
     // Import of satisfying a meaties desire to eat meat or
     // a Veggies desire to consume Animal Products,
     // [0-2] meaning 0-ignore, 1-if-able and 2-paramount
-    private int satisfactionWeightV;
-    private int satisfactionWeightM;
+    private int satisfactionWeight;
+    // "at what point can you use the emergency kitchens"
+    private int kitchenMaybeWeight;
+
     //|-----------------------------|
 
 
@@ -37,17 +41,6 @@ public class GroupManager {
         //TODO returns the Cluster centered around the given couple.
         return null;        //3x3 matrix
     }
-    public static class Group extends Location {
-        Person host;
-        Person[] guests;
-        float avgGender;
-        float avgAgeRange;
-        FoodPreference.FoodPref foodPreference;
-        public Group(Person host){
-            super(host.getKitchen().longitude,host.getKitchen().latitude);
-        }
-    }
-
 
 
 }

@@ -99,9 +99,16 @@ public class Person {
     public Person getPartner() {
         return partner;
     }
-
-    public void setPartner(Person partner){
+    public void setPartner(Person partner) {
         this.partner = partner;
+    }
+
+    public void setLockedIn(boolean lockedIn) {
+        this.lockedIn = lockedIn;
+    }
+
+    public boolean isLockedIn() {
+        return lockedIn;
     }
 
     /**
@@ -134,25 +141,32 @@ public class Person {
                 :null;
     }
 
+    /**
+     * getCoupleKitchens
+     * @return gets you the Kitchen of both participants if able
+     */
+    public Kitchen[] getCoupleKitchens(){
+        return new Kitchen[]{kitchen,
+                hasPartner()?
+                        getPartner().getKitchen():
+                        null};
+    }
+
     @Override
     public String toString() {
         return "[PersonID: " + ID +
                 ", PersonName: " + name +
-                (partner != null ? ", PartnerID: " +
-                        partner.getID() +
-                        ", PartnerName: " +
-                        partner.getName() :
-                        ", Partner: none ") +
-                ", FoodPreference: " +
-                foodPreference +
-                ", Age: " +
-                age +
+                (hasPartner()?
+                        ", PartnerID: " + partner.getID() + ", PartnerName: " + partner.getName() :
+                        ", Partner: none") +
+                ", FoodPreference: " + foodPreference +
+                ", Age: " + age +
                 ", Gender: " +
                 gender +
                 ", Kitchen: " +
                 (kitchen != null ?
                         kitchen.toString():
-                        "none ") +
+                        "none") +
                 "]";
     }
 }
