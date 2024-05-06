@@ -14,13 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class ManagerTest {
 
     Manager manger;
-    List<Person> person;
+    CoupleManager coupleManager;
+    GroupManager groupManager;
+    List<Person> persons;
 
     @BeforeEach
     void setUp() {
-        CoupleManager coupleManager = new CoupleManager();
-        GroupManager groupManager = new GroupManager();
-        person = new ArrayList<>();
+        this.coupleManager = new CoupleManager();
+        this.groupManager = new GroupManager();
+        persons = new ArrayList<>();
         this.manger = new Manager(groupManager, coupleManager);
 
         AgeGroup.AgeRange age1 = AgeGroup.AgeRange.AGE_31_35;
@@ -66,7 +68,7 @@ class ManagerTest {
             Person partner = null; // assuming no partner initially
 
             Person newPerson = new Person(id, name, age, gender, foodPref, kitchen, partner);
-            person.add(newPerson);
+            persons.add(newPerson);
         }
     }
 
