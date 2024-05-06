@@ -36,4 +36,8 @@ public class CoupleManager {
         //TODO returns a Couple by their ID ( or one of the Peoples ID)<-maybe dont know
         return null;
     }
+
+    public static class Couple {
+
+    }
 }

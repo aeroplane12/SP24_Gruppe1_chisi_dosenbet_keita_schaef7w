@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ManagerTest {
 
-    Manager manger;
+    Manager manager;
     CoupleManager coupleManager;
     GroupManager groupManager;
     List<Person> persons;
@@ -21,7 +21,7 @@ class ManagerTest {
         this.coupleManager = new CoupleManager();
         this.groupManager = new GroupManager();
         persons = new ArrayList<>();
-        this.manger = new Manager(groupManager, coupleManager);
+        this.manager = new Manager(groupManager, coupleManager);
 
         AgeGroup.AgeRange age1 = AgeGroup.AgeRange.AGE_31_35;
         AgeGroup.AgeRange age2 = AgeGroup.AgeRange.AGE_18_23;
@@ -77,7 +77,7 @@ class ManagerTest {
 
     @Test
     public void testCoupleManager() {
-        CoupleManager coupleManager = manger.getCoupleManager();
+        CoupleManager coupleManager = manager.getCoupleManager();
         AgeGroup.AgeRange age = AgeGroup.AgeRange.AGE_31_35;
         Gender.genderValue gender = Gender.genderValue.male;
         FoodPreference.FoodPref foodPref = FoodPreference.FoodPref.MEAT;
@@ -109,6 +109,24 @@ class ManagerTest {
         assertEquals(coupleManager.getCouple("ID Couple"), "ID Couple");
 
     }
+     @Test
+        public void testCsvReaderPeople() {
+            // TODO: Implement this test method once you know what to expect from csvReaderPeople
+        }
 
+        @Test
+        public void testCsvReaderPartyLocation() {
+            // TODO: Implement this test method once you know what to expect from csvReaderPartyLocation
+        }
 
+        @Test
+        public void testGetGroupManager() {
+
+            assertEquals(groupManager, manager.getGroupManager());
+        }
+
+        @Test
+        public void testGetCoupleManager() {
+            assertEquals(coupleManager, manager.getCoupleManager());
+        }
 }
