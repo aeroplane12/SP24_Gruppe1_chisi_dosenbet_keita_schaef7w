@@ -1,9 +1,7 @@
 package model;
 
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testng.annotations.BeforeClass;
 
 
 import java.util.ArrayList;
@@ -70,6 +68,8 @@ class ManagerTest {
             Person newPerson = new Person(id, name, age, gender, foodPref, kitchen, partner);
             persons.add(newPerson);
         }
+        // Setting one partner
+        persons.get(1).setPartner(persons.get(3));
     }
 
 
@@ -98,7 +98,15 @@ class ManagerTest {
 
     @Test
     public void testGroupManager() {
+        coupleManager.calcCouples(persons);
+        coupleManager.giveToGroupManager(groupManager);
+        String ID = "1"; //TODO: Default ID think about how to implement ID Couple
+        int size = groupManager.couples.get(ID).length;
 
+        assertEquals(size,coupleManager.allParticipants.length / 2, "The size is the same");
+        // Check if couple from CV file is correct
+
+        assertEquals(coupleManager.getCouple("ID Couple"), "ID Couple");
 
     }
 

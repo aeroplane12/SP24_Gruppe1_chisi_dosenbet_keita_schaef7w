@@ -1,13 +1,20 @@
 package model;
 
 
+import java.util.List;
+
 public class CoupleManager {
     // needs overview over all People, filtered if locked in
     Person[] allParticipants;
     // everyone who is left
     Person[] succeedingParticipants;
 
-    void calcCouples() {
+    public void giveToGroupManager(GroupManager groupManager) {
+
+
+    }
+
+    void calcCouples(List<Person> person) {
         //TODO Algorithm to sort people into couples
     }
     public void addPerson() {
