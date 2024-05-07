@@ -12,6 +12,13 @@ public class Kitchen extends Location {
         story = strings[1].isEmpty()? null : Double.parseDouble(strings[1]);
     }
 
+
+    Kitchen(double longitude,double latitude,boolean emergency,double story){
+        super(longitude,latitude);
+        this.emergency = emergency;
+        this.story = story;
+    }
+
     @Override
     public double distance(Location l){
         //TODO calculation of distance between two Kitchens,

@@ -11,7 +11,7 @@ public class GroupManager {
     // maximal allowed distance between Groups
     private int maxAllowedDistance;
     // min allowed distance between Groups ("community-detection")
-    private int minAllowedDistance;
+    private float minAllowedDistance;
 
     // Import of satisfying a meaties desire to eat meat or
     // a Veggies desire to consume Animal Products,

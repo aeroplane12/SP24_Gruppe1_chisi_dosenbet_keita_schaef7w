@@ -13,7 +13,7 @@ public class KitchenTest {
     @BeforeAll
     public static void setUp() {
         // Creating a kitchen instance using the constructor that takes an array of strings
-        String[] kitchenInfo1 = {"no", "1.5", "40.7128", "-74.0060"};
+        String[] kitchenInfo1 = {"maybe", "1.5", "40.7128", "-74.0060"};
         kitchen1 = new Kitchen(kitchenInfo1);
 
         // Creating a kitchen instance using the constructor that takes individual parameters
@@ -41,7 +41,7 @@ public class KitchenTest {
     public void testDistance() {
         Location location = new Location(40.7128, -74.0060);
         int expectedDistance = 0; // The distance between the same locations should be 0
-        int actualDistance = kitchen1.distance(location);
+        double actualDistance = kitchen1.distance(location);
         assertEquals(expectedDistance, actualDistance);
     }
 

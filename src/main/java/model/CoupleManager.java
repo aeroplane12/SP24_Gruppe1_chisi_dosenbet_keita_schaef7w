@@ -4,10 +4,11 @@ package model;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CoupleManager {
     // needs overview over all People
-    Person[] allParticipants;
+    Person[] allParticipants = new Person[0];
     // everyone who is not locked in left
     Person[] allSingleParticipants;
     // everyone who is left
@@ -16,10 +17,6 @@ public class CoupleManager {
     void calcCouples(){
         //TODO Algorithm to sort people into couples
         // needs to be in accordance with the specifications:
-        if(Arrays.stream(allParticipants).allMatch(Person::isLockedIn))
-            return;
-
-
     }
     public void addPerson(Person person){
         if (person.hasPartner()) {
@@ -34,14 +31,14 @@ public class CoupleManager {
     }
 
     public void removePerson(String personID){
-        allParticipants = (Person[]) Arrays.stream(allParticipants)
+        allParticipants = Arrays.stream(allParticipants)
                 .filter(x->!x.getID().equals(personID))
                 .peek(x->{
                     if(x.getPartner().getID().equals(personID)) {
                     x.setPartner(null);
                     x.setLockedIn(false);
                     }})
-                .toArray();
+                .toArray(Person[]::new);
         calcCouples();
     }
     public void removeCouple(String CoupleID){
@@ -56,7 +53,7 @@ public class CoupleManager {
                 .orElse(null);
     }
 
-    /**
+    /** getCouple()
      * returns a Couple by their CoupleID
      * @param string the CoupleID
      * @return the Couple

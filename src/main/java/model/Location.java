@@ -1,7 +1,7 @@
 package model;
 
 public class Location {
-    private final static int R = 6371000;
+    private final static int R = 6371000 ;
     double longitude;
     double latitude;
     Location(double longitude, double latitude){
@@ -15,11 +15,14 @@ public class Location {
      * @return the approximate distance between the two locations
      */
     public double distance(Location l){
-        return 2 * R * Math.asin(
-                Math.sqrt(
-                        Math.pow(Math.sin((l.latitude-latitude)/2),2)) +
-                        Math.cos(l.latitude) * Math.cos(latitude) *
-                        Math.pow(Math.sin((l.longitude-longitude)/2),2));
+        double lat1Rad = Math.toRadians(latitude);
+        double lat2Rad = Math.toRadians(l.latitude);
+        double lon1Rad = Math.toRadians(longitude);
+        double lon2Rad = Math.toRadians(l.longitude);
+
+        double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
+        double y = (lat2Rad - lat1Rad);
+        return Math.sqrt(x * x + y * y) * R;
     }
 
 }
