@@ -72,9 +72,6 @@ class ManagerTest {
         persons.get(1).setPartner(persons.get(3));
     }
 
-
-
-
     @Test
     public void testCoupleManager() {
         CoupleManager coupleManager = manager.getCoupleManager();
@@ -114,12 +111,18 @@ class ManagerTest {
     }
      @Test
         public void testCsvReaderPeople() {
-            // TODO: Implement this test method once you know what to expect from csvReaderPeople
+        // TODO: Implement this test method once you know what to expect from csvReaderPeople
+         String filePath = "teilnehmerliste.csv";
+         Manager manager = new Manager(new GroupManager(), new CoupleManager());
+         manager.csvReaderPeople(filePath);
         }
 
         @Test
         public void testCsvReaderPartyLocation() {
             // TODO: Implement this test method once you know what to expect from csvReaderPartyLocation
+            String filePath = "partylocation.csv";
+            Manager manager = new Manager(new GroupManager(), new CoupleManager());
+            manager.csvReaderPartyLocation(filePath);
         }
 
         @Test
