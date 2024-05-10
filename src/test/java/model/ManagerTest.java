@@ -111,7 +111,6 @@ class ManagerTest {
     }
      @Test
         public void testCsvReaderPeople() {
-        // TODO: Implement this test method once you know what to expect from csvReaderPeople
          String filePath = "Dokumentation/TestingData/csvtestdate.csv";
          Manager manager = new Manager(new GroupManager(), new CoupleManager());
          manager.csvReaderPeople(filePath);
@@ -123,7 +122,6 @@ class ManagerTest {
 
         @Test
         public void testCsvReaderPartyLocation() {
-            // TODO: Implement this test method once you know what to expect from csvReaderPartyLocation
             String filePath = "Dokumentation/TestingData/partylocation.csv";
             Manager manager = new Manager(new GroupManager(), new CoupleManager());
             manager.csvReaderPartyLocation(filePath);
