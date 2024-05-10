@@ -112,17 +112,24 @@ class ManagerTest {
      @Test
         public void testCsvReaderPeople() {
         // TODO: Implement this test method once you know what to expect from csvReaderPeople
-         String filePath = "teilnehmerliste.csv";
+         String filePath = "Dokumentation/TestingData/csvtestdate.csv";
          Manager manager = new Manager(new GroupManager(), new CoupleManager());
          manager.csvReaderPeople(filePath);
+         // There were four people in the test set 2 singles and one couple
+         assertEquals(4, manager.personTestSet.size());
+         // Check name of person in a set.
+         assertEquals("Person1", manager.personTestSet.get(0).getName());
         }
 
         @Test
         public void testCsvReaderPartyLocation() {
             // TODO: Implement this test method once you know what to expect from csvReaderPartyLocation
-            String filePath = "partylocation.csv";
+            String filePath = "Dokumentation/TestingData/partylocation.csv";
             Manager manager = new Manager(new GroupManager(), new CoupleManager());
             manager.csvReaderPartyLocation(filePath);
+            // Checking if the location is set to the right longitude and latitude
+            assertEquals(8.6746166676233, manager.partyLoc.longitude);
+            assertEquals(50.5909317660173, manager.partyLoc.latitude);
         }
 
         @Test

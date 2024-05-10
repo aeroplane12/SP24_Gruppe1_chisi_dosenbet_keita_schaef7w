@@ -13,6 +13,10 @@ public class Manager {
     CoupleManager coupleManager;
     Location partyLoc;
 
+    //For testing purposes
+
+    List<Person> personTestSet;
+
     public Manager(GroupManager groupManager, CoupleManager coupleManager){
         this.groupManager = groupManager;
         this.coupleManager = coupleManager;
@@ -37,7 +41,7 @@ public class Manager {
     public void csvReaderPeople(String path, boolean header) {
         Scanner scanner;
         //Temporary, simply for Console output
-        List<Person> testPerson = new ArrayList<>();
+        personTestSet = new ArrayList<>();
         String[] input;
         try {
             scanner = new Scanner(new File(path), StandardCharsets.UTF_8);
@@ -49,15 +53,15 @@ public class Manager {
             while (scanner.hasNext()) {
                 input = scanner.nextLine().split("[,\n]", -1);
                 Person n = new Person(input);
-                testPerson.add(n);
+                personTestSet.add(n);
                 if (n.hasPartner()) {
-                    testPerson.add(n.getPartner());
+                    personTestSet.add(n.getPartner());
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        testPerson.forEach(System.out::println);
+        personTestSet.forEach(System.out::println);
     }
 
     /**
