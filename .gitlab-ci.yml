@@ -1,0 +1,25 @@
+image: maven:3.8.7-eclipse-temurin-19
+
+stages:
+  - build
+  - test
+
+build_phase:
+  stage: build
+
+  script:
+    - echo "Compiling..."
+    - "mvn compile"
+
+testing_phase:
+  stage: test
+
+  script:
+    - echo "Testing..."
+    - "mvn verify"
+
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
