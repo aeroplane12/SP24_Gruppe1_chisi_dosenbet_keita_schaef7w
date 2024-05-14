@@ -2,9 +2,8 @@ package model;
 
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
 
 public class CoupleManager {
     // needs overview over all People
@@ -12,7 +11,6 @@ public class CoupleManager {
     // everyone who is not locked in left
     Person[] allSingleParticipants;
     // everyone who is left
-    Person[] succeedingParticipants;
 
     void calcCouples(){
         //TODO Algorithm to sort people into couples
@@ -42,14 +40,14 @@ public class CoupleManager {
         calcCouples();
     }
     public void removeCouple(String CoupleID){
-        allParticipants = (Person[]) Arrays.stream(allParticipants)
+        allParticipants = Arrays.stream(allParticipants)
                 .filter(x->!x.getCoupleIDs().equals(CoupleID))
-                .toArray();
+                .toArray(Person[]::new);
     }
     public Person getPerson(String string){
         return Arrays.stream(allParticipants)
                 .filter(x->x.getID().equals(string))
-                .findFirst()
+                .findAny()
                 .orElse(null);
     }
 

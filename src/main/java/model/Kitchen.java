@@ -1,15 +1,20 @@
 package model;
 
+import java.util.Map;
+
 public class Kitchen extends Location {
-    private Double story;
+    private double story;
     private boolean emergency;
-    private boolean[] inUse = new boolean[3];
+    private Map<Course,Boolean> inUse = Map.of(
+            Course.STARTER,false,
+            Course.DINNER,false,
+            Course.DESSERT,false);
     private Person[] owner;
 
     Kitchen(String[] strings){
         super(Double.parseDouble(strings[2]), Double.parseDouble(strings[3]));
         emergency = strings[0].equals("maybe");
-        story = strings[1].isEmpty()? null : Double.parseDouble(strings[1]);
+        story = strings[1].isEmpty()? 0d : Double.parseDouble(strings[1]);
     }
 
 
@@ -24,7 +29,7 @@ public class Kitchen extends Location {
         //TODO calculation of distance between two Kitchens,
         // necessary for determining identical Kitchens
         double x = super.distance(l);
-        if (x==0 && (l instanceof Kitchen)){
+        if ((x==0 && (l instanceof Kitchen))){
             return Math.abs(((Kitchen) l).story-story);
         }
         return x;
@@ -36,7 +41,7 @@ public class Kitchen extends Location {
                 (emergency ? "only for emergencies" : "always available") +
                 ", Kitchen_Longitude: " + longitude +
                 ", Kitchen_Latitude: " + latitude +
-                (story != null ? ", Kitchen_Story: " + story : "") +
+                ", Kitchen_Story: " + story +
                 "]";
     }
 
@@ -47,16 +52,8 @@ public class Kitchen extends Location {
      * @return whether the setting was successful
      */
     public boolean setUse(Course c){
-        if(owner.length<2 && (inUse[0]||inUse[1]||inUse[2]))
-            return false; // a single person may not be allowed to host twice, this check might be redundant.
-        if (c.equals(Course.STARTER)&&!inUse[0]){
-            inUse[0]=true;
-            return true;
-        } else if (c.equals(Course.DINNER)&&!inUse[1]) {
-            inUse[1]=true;
-            return true;
-        } else if (c.equals(Course.DESSERT)&&!inUse[2]){
-            inUse[2]=true;
+        if (!inUse.get(c)){
+            inUse.remove(c,true);
             return true;
         }
         return false;
@@ -68,12 +65,6 @@ public class Kitchen extends Location {
      * @return availability
      */
     public boolean checkUse(Course c){
-        if(owner.length<2 && (inUse[0]||inUse[1]||inUse[2]))
-            return false; // a single person may not be allowed to host twice, this check might be redundant.
-        return switch (c){
-            case STARTER -> inUse[0];
-            case DINNER -> inUse[1];
-            case DESSERT -> inUse[2];
-        };
+        return inUse.get(c);
     }
 }
