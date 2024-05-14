@@ -20,7 +20,12 @@ public class PersonTest {
 
     @Test
     public void testGetKitchen() {
-        // TODO: Implement this test method once you know what to expect from getKitchen
+
+        Kitchen sameKitchen = new Kitchen(15.0, 20.0, true, 30.0);
+        Kitchen diffKitchen = new Kitchen(15.0, 22.0, true, 30.0);
+        assertEquals(sameKitchen, person.getKitchen());
+        assertEquals(sameKitchen.isEmergency(), person.getKitchen().isEmergency());
+        assertNotEquals(diffKitchen, person.getKitchen());
     }
 
     @Test

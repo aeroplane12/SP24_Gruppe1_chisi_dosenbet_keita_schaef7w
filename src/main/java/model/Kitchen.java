@@ -67,4 +67,24 @@ public class Kitchen extends Location {
     public boolean checkUse(Course c){
         return inUse.get(c);
     }
+    public boolean isEmergency() {
+        return emergency;
+    }
+    @Override
+    public boolean equals(Object other) {
+        if (this.getClass() != other.getClass()) {
+            return false;
+        }
+        Kitchen otherKitchen = (Kitchen) other;
+        if (this == other) {
+            return true;
+        }
+
+        if (this.latitude == otherKitchen.latitude) {
+            if (this.longitude == otherKitchen.longitude) {
+                return this.story == otherKitchen.story;
+            }
+        }
+        return false;
+    }
 }
