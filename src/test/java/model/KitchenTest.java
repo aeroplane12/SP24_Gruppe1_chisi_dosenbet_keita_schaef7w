@@ -3,8 +3,7 @@ package model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KitchenTest {
     private static Kitchen kitchen1;
@@ -17,10 +16,10 @@ public class KitchenTest {
         kitchen1 = new Kitchen(kitchenInfo1);
 
         // Creating a kitchen instance using the constructor that takes individual parameters
-        Double longitude = -77.0369;
-        Double latitude = 38.9072;
+        double longitude = -77.0369;
+        double latitude = 38.9072;
         boolean emergency = true;
-        Double story = 2.0;
+        double story = 2.0;
         kitchen2 = new Kitchen(longitude, latitude, emergency, story);
     }
 
@@ -44,7 +43,12 @@ public class KitchenTest {
         double actualDistance = kitchen1.distance(location);
         assertEquals(expectedDistance, actualDistance);
     }
-
+    @Test
+    public void testEquals() {
+        Kitchen kitchen3 = new Kitchen(-77.0369, 38.9072, false, 2.0);
+        assertNotEquals(kitchen1, kitchen2);
+        assertEquals(kitchen3 , kitchen2);
+    }
 }
 
 
