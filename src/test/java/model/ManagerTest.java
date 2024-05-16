@@ -110,13 +110,13 @@ class ManagerTest {
          */
     }
     /**
-        * This test checks the functionality of the csvReaderPeople method in the Manager class.
-        * It first creates a new Manager object and calls the csvReaderPeople method with a test CSV file path.
-        * It then asserts that the size of the personTestSet list in the Manager object is as expected.
-        * It also checks the name of the first person in the list to ensure the CSV file was read correctly.
-        * It repeats the process with a different CSV file and checks the size of the personTestSet list again.
-        */
-
+     * This test checks the functionality of the inputPeople method in the Manager class
+     * and the csvReaderPeople method in the CSVReader-class.
+     * It first creates a new Manager object and calls the inputPeople method with a .csv file path.
+     * It then asserts that the size of the personTestSet list in the Manager object is as expected.
+     * It also checks whether the people in the list were added correctly,
+     * and also if the partner flag was set accordingly.
+     */
      @Test
         public void testInputPeople() {
          String filePath = "Dokumentation/TestingData/teilnehmerliste.csv";
@@ -138,14 +138,15 @@ class ManagerTest {
         }
 
     /**
-     * This test checks the functionality of the csvReaderPartyLocation method in the Manager class.
-     * It creates a new Manager object and calls the csvReaderPartyLocation method with a test CSV file path.
-     * It then asserts that the longitude and latitude of the party location in the Manger object are as expected,
+     * This test checks the functionality of the inputLocation method in the Manager class
+     * and the csvReaderPartyLocation in the CSVReader class.
+     * It creates a new Manager object and calls the inputLocation method with a test CSV file path.
+     * It then asserts that the longitude and latitude of the party location in the Manager object are as expected,
      * ensuring that the CSV file was read and parsed correctly.
      */
 
         @Test
-        public void testCsvReaderPartyLocation() {
+        public void testInputLocation() {
             String filePath = "Dokumentation/TestingData/partylocation.csv";
             Manager manager = new Manager(new GroupManager(), new CoupleManager());
             manager.inputLocation(filePath);
