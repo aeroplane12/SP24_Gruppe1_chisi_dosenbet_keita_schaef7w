@@ -4,7 +4,7 @@ public class Location {
     private final static int R = 6371000 ;
     double longitude;
     double latitude;
-    Location(double longitude, double latitude){
+    public Location(double longitude, double latitude){
         this.latitude = latitude;
         this.longitude = longitude;
     }

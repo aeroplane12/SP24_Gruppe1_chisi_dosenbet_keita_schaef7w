@@ -5,7 +5,7 @@ public class Main {
         CoupleManager coupleManager = new CoupleManager();
         GroupManager groupManager = new GroupManager();
         Manager Manager = new Manager(groupManager, coupleManager);
-        Manager.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv");
-        Manager.csvReaderPartyLocation("Dokumentation/TestingData/partylocation.csv");
+        Manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
+        Manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
     }
 }

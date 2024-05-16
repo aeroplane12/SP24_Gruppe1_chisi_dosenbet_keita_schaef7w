@@ -110,21 +110,30 @@ class ManagerTest {
          */
     }
      @Test
-        public void testCsvReaderPeople() {
-         String filePath = "Dokumentation/TestingData/csvtestdate.csv";
+        public void testInputPeople() {
+         String filePath = "Dokumentation/TestingData/teilnehmerliste.csv";
          Manager manager = new Manager(new GroupManager(), new CoupleManager());
-         manager.csvReaderPeople(filePath);
+         manager.inputPeople(filePath);
          // There were four people in the test set 2 singles and one couple
-         assertEquals(4, manager.personTestSet.size());
+         assertEquals(310, manager.personTestSet.size());
          // Check name of person in a set.
          assertEquals("Person1", manager.personTestSet.get(0).getName());
+         //testing whether partners are added
+            //no partner
+         assertFalse(manager.personTestSet.get(0).hasPartner());
+            //a partner
+         assertTrue(manager.personTestSet.get(3).hasPartner());
+         //testing whether People are correctly named
+         assertEquals("Person1", manager.personTestSet.get(0).getName());
+         //testing whether partners are correctly added
+         assertEquals("Personx1", manager.personTestSet.get(3).getName());
         }
 
         @Test
         public void testCsvReaderPartyLocation() {
             String filePath = "Dokumentation/TestingData/partylocation.csv";
             Manager manager = new Manager(new GroupManager(), new CoupleManager());
-            manager.csvReaderPartyLocation(filePath);
+            manager.inputLocation(filePath);
             // Checking if the location is set to the right longitude and latitude
             assertEquals(8.6746166676233, manager.partyLoc.longitude);
             assertEquals(50.5909317660173, manager.partyLoc.latitude);
