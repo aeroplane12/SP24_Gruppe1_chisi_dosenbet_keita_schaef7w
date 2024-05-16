@@ -109,16 +109,37 @@ class ManagerTest {
         assertEquals(coupleManager.getCouple("ID Couple"), "ID Couple");
          */
     }
+    /**
+        * This test checks the functionality of the csvReaderPeople method in the Manager class.
+        * It first creates a new Manager object and calls the csvReaderPeople method with a test CSV file path.
+        * It then asserts that the size of the personTestSet list in the Manager object is as expected.
+        * It also checks the name of the first person in the list to ensure the CSV file was read correctly.
+        * It repeats the process with a different CSV file and checks the size of the personTestSet list again.
+        */
+
      @Test
         public void testCsvReaderPeople() {
          String filePath = "Dokumentation/TestingData/csvtestdate.csv";
+         String filePathList = "Dokumentation/TestingData/teilnehmerliste.csv";
+
          Manager manager = new Manager(new GroupManager(), new CoupleManager());
          manager.csvReaderPeople(filePath);
          // There were four people in the test set 2 singles and one couple
          assertEquals(4, manager.personTestSet.size());
          // Check name of person in a set.
          assertEquals("Person1", manager.personTestSet.get(0).getName());
+
+         Manager manager2 = new Manager(new GroupManager(), new CoupleManager());
+         manager2.csvReaderPeople(filePathList);
+         assertEquals(310, manager2.personTestSet.size());
         }
+
+    /**
+     * This test checks the functionality of the csvReaderPartyLocation method in the Manager class.
+     * It creates a new Manager object and calls the csvReaderPartyLocation method with a test CSV file path.
+     * It then asserts that the longitude and latitude of the party location in the Manger object are as expected,
+     * ensuring that the CSV file was read and parsed correctly.
+     */
 
         @Test
         public void testCsvReaderPartyLocation() {
