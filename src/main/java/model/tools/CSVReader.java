@@ -8,6 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class CSVReader {
+    //CSV_CONSTANTS
+    private final static String SEPARATOR = ",";
+    private final static String NEWLINE = "\n";
+
     // Maps with Header names and index of Entry
     private final static Map<String,Integer> PEOPLE_PARSE_INDEX = new HashMap<>(
             Map.ofEntries(
@@ -47,16 +51,14 @@ public class CSVReader {
                 return null; // returns null if file empty
             }
             //checking first line for header
-            input = scanner.nextLine().split("[,\n]", -1);
+            input = scanner.nextLine().split("["+SEPARATOR+NEWLINE+"]", -1);
             if (PEOPLE_PARSE_INDEX.containsKey(input[1])) {
                 for (int i = 0; i<input.length;i++) {
                     // replace default assignment with current
                     PEOPLE_PARSE_INDEX.put(input[i].isEmpty()?"Index":input[i],i);
                 }
-            }
-
-            while (scanner.hasNext()) {
-                input = scanner.nextLine().split("[,\n]", -1);
+            } else {
+                //not pretty but functional
                 Person n = new Person(new String[]{
                         input[PEOPLE_PARSE_INDEX.get("Index")],
                         input[PEOPLE_PARSE_INDEX.get("ID")],
@@ -76,6 +78,30 @@ public class CSVReader {
                 if (n.hasPartner()) {
                     output.add(n.getPartner());
                 }
+            }
+
+            while (scanner.hasNext()) {
+                input = scanner.nextLine().split("["+SEPARATOR+NEWLINE+"]", -1);
+                Person n = new Person(new String[]{
+                        input[PEOPLE_PARSE_INDEX.get("Index")],
+                        input[PEOPLE_PARSE_INDEX.get("ID")],
+                        input[PEOPLE_PARSE_INDEX.get("Name")],
+                        input[PEOPLE_PARSE_INDEX.get("FoodPreference")],
+                        input[PEOPLE_PARSE_INDEX.get("Age")],
+                        input[PEOPLE_PARSE_INDEX.get("Sex")],
+                        input[PEOPLE_PARSE_INDEX.get("Kitchen")],
+                        input[PEOPLE_PARSE_INDEX.get("Kitchen_Story")],
+                        input[PEOPLE_PARSE_INDEX.get("Kitchen_Longitude")],
+                        input[PEOPLE_PARSE_INDEX.get("Kitchen_Latitude")],
+                        input[PEOPLE_PARSE_INDEX.get("ID_2")],
+                        input[PEOPLE_PARSE_INDEX.get("Name_2")],
+                        input[PEOPLE_PARSE_INDEX.get("Age_2")],
+                        input[PEOPLE_PARSE_INDEX.get("Sex_2")]});
+                output.add(n);
+                if (n.hasPartner()) {
+                    output.add(n.getPartner());
+                }
+
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -99,16 +125,14 @@ public class CSVReader {
                 return null; // returns null if file empty
             }
             //checking first line for header
-            input = scanner.nextLine().split("[,\n]", -1);
+            input = scanner.nextLine().split("["+SEPARATOR+NEWLINE+"]", -1);
             if (LOCATION_PARSE_INDEX.containsKey(input[1])) {
-                for (int i = 0; i<input.length;i++) {
+                for (int i = 0; i < input.length; i++) {
                     // replace default assignment with current
-                    LOCATION_PARSE_INDEX.put(input[i],i);
+                    LOCATION_PARSE_INDEX.put(input[i], i);
                 }
+                input = scanner.nextLine().split("["+SEPARATOR+NEWLINE+"]", -1);
             }
-
-            input = scanner.nextLine().split("[,\n]");
-
             output = new Location(
                     Double.parseDouble(input[LOCATION_PARSE_INDEX.get("Longitude")]),
                     Double.parseDouble(input[LOCATION_PARSE_INDEX.get("Latitude")]));
