@@ -24,7 +24,15 @@ public class Person {
         foodPreference = FoodPreference.getFoodPref(strings[3]);
         age = AgeGroup.getAgeRange(strings[4]);
         gender = Gender.getGen(strings[5]);
-        kitchen = strings[6].equals("no") || strings[6].isEmpty() ? null: new Kitchen(Arrays.copyOfRange(strings,6,10));
+        kitchen = strings[6].equals("no") || strings[6].isEmpty() ?
+                null:
+                new Kitchen(Arrays.copyOfRange(strings,6,10));
+        if (kitchen!=null) {
+            //TODO needs a way of adding / merging a co-owned kitchen
+            // rn. it merely adds an owner to a new kitchen
+            // probably a job for the general manager
+            kitchen.addOwner(this);
+        }
         if (!strings[10].isEmpty()) {
             lockedIn = true;
             partner = new Person(
@@ -151,6 +159,27 @@ public class Person {
                         getPartner().getKitchen():
                         null};
     }
+
+    /**
+     * getCouplePreference
+     * @return the FoodPreference of the couple
+     */
+    public FoodPreference.FoodPref getCouplePreference(){
+        if (partner.foodPreference.equals(FoodPreference.FoodPref.NONE)) {
+            return foodPreference;
+        } else if (foodPreference.equals(FoodPreference.FoodPref.NONE)) {
+            return partner.foodPreference;
+        } else if (foodPreference.equals(FoodPreference.FoodPref.VEGAN) ||
+                partner.foodPreference.equals(FoodPreference.FoodPref.VEGAN)) {
+            return FoodPreference.FoodPref.VEGAN;
+        } else if (foodPreference.equals(FoodPreference.FoodPref.VEGGIE)||
+                partner.foodPreference.equals(FoodPreference.FoodPref.VEGGIE)){
+            return FoodPreference.FoodPref.VEGGIE;
+        } else {
+            return FoodPreference.FoodPref.MEAT;
+        }
+    }
+
 
     @Override
     public String toString() {

@@ -1,6 +1,9 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Kitchen extends Location {
     private double story;
@@ -9,7 +12,7 @@ public class Kitchen extends Location {
             Course.STARTER,false,
             Course.DINNER,false,
             Course.DESSERT,false);
-    private Person[] owner;
+    private List<Person> owner = new ArrayList<>();
 
     Kitchen(String[] strings){
         super(Double.parseDouble(strings[2]), Double.parseDouble(strings[3]));
@@ -26,8 +29,6 @@ public class Kitchen extends Location {
 
     @Override
     public double distance(Location l){
-        //TODO calculation of distance between two Kitchens,
-        // necessary for determining identical Kitchens
         double x = super.distance(l);
         if ((x==0 && (l instanceof Kitchen))){
             return Math.abs(((Kitchen) l).story-story);
@@ -70,21 +71,29 @@ public class Kitchen extends Location {
     public boolean isEmergency() {
         return emergency;
     }
+    /**
+     * add
+     * adding an owner to a Kitchen
+     * @param person an owner of this kitchen
+     */
+    public void addOwner(Person person){
+        owner.add(person);
+    }
     @Override
     public boolean equals(Object other) {
-        if (this.getClass() != other.getClass()) {
+        if (!(other instanceof Kitchen otherKitchen)) {
             return false;
         }
-        Kitchen otherKitchen = (Kitchen) other;
         if (this == other) {
             return true;
         }
-
-        if (this.latitude == otherKitchen.latitude) {
-            if (this.longitude == otherKitchen.longitude) {
-                return this.story == otherKitchen.story;
-            }
-        }
-        return false;
+        return this.latitude == otherKitchen.latitude &&
+                this.longitude == otherKitchen.longitude &&
+                this.story == otherKitchen.story;
+        // not really valid for our purposes need them to evaluate based on actual distance
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(latitude,longitude,story);
     }
 }
