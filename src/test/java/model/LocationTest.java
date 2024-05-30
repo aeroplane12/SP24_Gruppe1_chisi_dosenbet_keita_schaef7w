@@ -8,10 +8,10 @@ public class LocationTest {
 
     @Test
     public void testDistance() {
-        Location location1 = new Location(0, 0);
-        Location location2 = new Location(1, 1);
+        Location location1 = new Location(0d, 0d);
+        Location location2 = new Location(1d, 1d);
         double expectedDistance = 157249; //
         double actualDistance = location1.distance(location2);
-        assertEquals(expectedDistance, actualDistance,5);//
+        assertEquals(expectedDistance, actualDistance,2);// delta of 2 meters
     }
 }

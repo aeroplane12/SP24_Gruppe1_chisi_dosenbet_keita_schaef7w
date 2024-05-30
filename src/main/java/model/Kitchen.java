@@ -1,9 +1,7 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Kitchen extends Location {
     private double story;
@@ -12,7 +10,7 @@ public class Kitchen extends Location {
             Course.STARTER,false,
             Course.DINNER,false,
             Course.DESSERT,false);
-    private List<Person> owner = new ArrayList<>();
+    private Set<Person> owner = new HashSet<>(); // hashset contains complexity O(1)
 
     Kitchen(String[] strings){
         super(Double.parseDouble(strings[2]), Double.parseDouble(strings[3]));
@@ -21,17 +19,17 @@ public class Kitchen extends Location {
     }
 
 
-    Kitchen(double longitude,double latitude,boolean emergency,double story){
+    Kitchen(Double longitude,Double latitude,boolean emergency,Double story){
         super(longitude,latitude);
         this.emergency = emergency;
         this.story = story;
     }
 
     @Override
-    public double distance(Location l){
-        double x = super.distance(l);
-        if ((x==0 && (l instanceof Kitchen))){
-            return Math.abs(((Kitchen) l).story-story);
+    public Double distance(Location l){
+        Double x = super.distance(l);
+        if ((x==0 && (l instanceof Kitchen k))){
+            return Math.abs(k.story-story)*3;// assumes a story to be ~3m in height
         }
         return x;
     }
@@ -71,6 +69,26 @@ public class Kitchen extends Location {
     public boolean isEmergency() {
         return emergency;
     }
+
+    /**
+     * Merges this Kitchen with the given parameter Kitchen
+     * @param k kitchen to be merged with
+     */
+    public void mergeKitchen(Kitchen k){
+        k.owner = k.owner.stream().peek(x->x.setKitchen(this)).collect(Collectors.toSet());
+        owner.addAll(k.owner);
+    }
+
+    /**
+     * isOwner
+     * determines if the given person is an owner of the kitchen
+     * @param person given Person
+     * @return true if person is an Owner
+     */
+    public boolean isOwner(Person person){
+        return owner.contains(person);
+    }
+
     /**
      * add
      * adding an owner to a Kitchen
@@ -87,8 +105,8 @@ public class Kitchen extends Location {
         if (this == other) {
             return true;
         }
-        return this.latitude == otherKitchen.latitude &&
-                this.longitude == otherKitchen.longitude &&
+        return Objects.equals(this.latitude, otherKitchen.latitude) &&
+                Objects.equals(this.longitude, otherKitchen.longitude) &&
                 this.story == otherKitchen.story;
         // not really valid for our purposes need them to evaluate based on actual distance
     }
