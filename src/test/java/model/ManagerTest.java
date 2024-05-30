@@ -86,12 +86,12 @@ class ManagerTest {
 
         coupleManager.addPerson(testPerson);
         //As person has partner both should be added
-        assertEquals(coupleManager.allParticipants.length, 2);
+        assertEquals(coupleManager.allParticipants.size(), 2);
         assertEquals(coupleManager.getCouple(testPerson.getCoupleIDs())[0].getCoupleIDs(),
                 "1,2");
         coupleManager.removePerson(partner.getID());
         //Only removes the partner not test person
-        assertEquals(coupleManager.allParticipants.length, 1);
+        assertEquals(coupleManager.allParticipants.size(), 1);
         assertEquals(testPerson, coupleManager.getPerson("1"));
     }
 
@@ -123,18 +123,18 @@ class ManagerTest {
          Manager manager = new Manager(new GroupManager(), new CoupleManager());
          manager.inputPeople(filePath);
          // There were four people in the test set 2 singles and one couple
-         assertEquals(310, manager.personTestSet.size());
+         assertEquals(310, manager.allPersonList.size());
          // Check name of person in a set.
-         assertEquals("Person1", manager.personTestSet.get(0).getName());
+         assertEquals("Person1", manager.allPersonList.get(0).getName());
          //testing whether partners are added
             //no partner
-         assertFalse(manager.personTestSet.get(0).hasPartner());
+         assertFalse(manager.allPersonList.get(0).hasPartner());
             //a partner
-         assertTrue(manager.personTestSet.get(3).hasPartner());
+         assertTrue(manager.allPersonList.get(3).hasPartner());
          //testing whether People are correctly named
-         assertEquals("Person1", manager.personTestSet.get(0).getName());
+         assertEquals("Person1", manager.allPersonList.get(0).getName());
          //testing whether partners are correctly added
-         assertEquals("Personx1", manager.personTestSet.get(3).getName());
+         assertEquals("Personx1", manager.allPersonList.get(3).getName());
         }
 
     /**

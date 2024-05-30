@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static model.Manager.MAX_EQUAL_KITCHEN_DISTANCE;
+
 public class CSVReader {
     //CSV_CONSTANTS
     private final static String SEPARATOR = ",";
@@ -97,6 +99,21 @@ public class CSVReader {
                         input[PEOPLE_PARSE_INDEX.get("Name_2")],
                         input[PEOPLE_PARSE_INDEX.get("Age_2")],
                         input[PEOPLE_PARSE_INDEX.get("Sex_2")]});
+                for (Person j : output) {
+                    if (n.getKitchen() != null &&
+                            j.getKitchen() != null &&
+                            n.getKitchen() != j.getKitchen() &&
+                            j.getKitchen().distance(n.getKitchen()) < MAX_EQUAL_KITCHEN_DISTANCE) {
+                        j.getKitchen().mergeKitchen(n.getKitchen());
+                    }
+                    if (n.hasPartner() &&
+                            n.getPartner().getKitchen() != null &&
+                            j.getKitchen() != null &&
+                            n.getPartner().getKitchen() != j.getKitchen() &&
+                            j.getKitchen().distance(n.getPartner().getKitchen()) < MAX_EQUAL_KITCHEN_DISTANCE) {
+                        j.getKitchen().mergeKitchen(n.getPartner().getKitchen());
+                    }
+                }
                 output.add(n);
                 if (n.hasPartner()) {
                     output.add(n.getPartner());

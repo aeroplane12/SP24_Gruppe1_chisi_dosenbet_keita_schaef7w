@@ -9,8 +9,9 @@ public class Manager {
     CoupleManager coupleManager;
     Location partyLoc;
 
-    //For testing purposes
-    List<Person> personTestSet;
+    // maximum distance between kitchens for it to be measured as equal in meters
+    public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
+    List<Person> allPersonList;
 
     public Manager(GroupManager groupManager, CoupleManager coupleManager){
         this.groupManager = groupManager;
@@ -24,8 +25,12 @@ public class Manager {
      * @param path path to csv. File
      */
     public void inputPeople(String path) {
-        //file with custom header
-        personTestSet = CSVReader.csvReaderPeople(path);
+        allPersonList = CSVReader.csvReaderPeople(path);
+        if (allPersonList == null) {
+            return;
+        }
+        coupleManager.calcCouples();
+        groupManager.calcGroups();
     }
 
     /**

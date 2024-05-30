@@ -5,7 +5,7 @@ public class Gender {
         male(0),
         female(1),
         other(2);
-        private final int value;
+        public final int value;
 
         genderValue(int value) {
             this.value = value;
