@@ -5,17 +5,17 @@ import java.util.List;
 
 public class Manager {
 
-    GroupManager groupManager;
-    CoupleManager coupleManager;
+    final GroupManager groupManager;
+    final CoupleManager coupleManager;
     Location partyLoc;
 
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
     List<Person> allPersonList;
 
-    public Manager(GroupManager groupManager, CoupleManager coupleManager){
-        this.groupManager = groupManager;
-        this.coupleManager = coupleManager;
+    public Manager(){
+        this.groupManager = GroupManager.getInstance();
+        this.coupleManager = CoupleManager.getInstance();
     }
 
 
@@ -29,6 +29,7 @@ public class Manager {
         if (allPersonList == null) {
             return;
         }
+        System.out.println(allPersonList);
         coupleManager.calcCouples();
         groupManager.calcGroups();
     }

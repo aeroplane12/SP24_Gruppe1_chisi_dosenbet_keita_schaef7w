@@ -18,10 +18,8 @@ class ManagerTest {
 
     @BeforeEach
     void setUp() {
-        this.coupleManager = new CoupleManager();
-        this.groupManager = new GroupManager();
         persons = new ArrayList<>();
-        this.manager = new Manager(groupManager, coupleManager);
+        this.manager = new Manager();
 
         AgeGroup.AgeRange age1 = AgeGroup.AgeRange.AGE_31_35;
         AgeGroup.AgeRange age2 = AgeGroup.AgeRange.AGE_18_23;
@@ -120,7 +118,7 @@ class ManagerTest {
      @Test
         public void testInputPeople() {
          String filePath = "Dokumentation/TestingData/teilnehmerliste.csv";
-         Manager manager = new Manager(new GroupManager(), new CoupleManager());
+         Manager manager = new Manager();
          manager.inputPeople(filePath);
          // There were four people in the test set 2 singles and one couple
          assertEquals(310, manager.allPersonList.size());
@@ -148,7 +146,7 @@ class ManagerTest {
         @Test
         public void testInputLocation() {
             String filePath = "Dokumentation/TestingData/partylocation.csv";
-            Manager manager = new Manager(new GroupManager(), new CoupleManager());
+            Manager manager = new Manager();
             manager.inputLocation(filePath);
             // Checking if the location is set to the right longitude and latitude
             assertEquals(8.6746166676233, manager.partyLoc.longitude);

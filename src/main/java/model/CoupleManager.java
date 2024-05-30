@@ -6,7 +6,16 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class CoupleManager {
+class CoupleManager {
+
+
+    private static CoupleManager instance;
+    public static CoupleManager getInstance(){
+        if(instance == null)
+            instance = new CoupleManager();
+
+            return instance;
+    }
     // might need overview over all People
     List<Person> allParticipants = new ArrayList<>();
     // everyone who is not locked in left

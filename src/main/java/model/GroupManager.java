@@ -20,6 +20,7 @@ public class GroupManager {
     // "at what point can you use the emergency kitchens"
     private int kitchenMaybeWeight;
 
+    private static GroupManager instance;
     //|-----------------------------|
 
 
@@ -28,6 +29,14 @@ public class GroupManager {
     Map<String,Person[]> couples;
     //Matrix of every Couple and whom they meet at each point in time
     Map<String,Person[][]> allGroupClusters; //KEY = coupleID, VALUE = 4 People in 3 rows each
+
+    public static GroupManager getInstance() {
+        if(instance == null)
+            instance = new GroupManager();
+
+        return instance;
+    }
+
     public void calcGroups(){
         //TODO sorting couples into Groups according to specifications
         // -first by location, small distances but closing in on partyLoc
