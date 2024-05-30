@@ -107,6 +107,10 @@ public class Person {
     public Person getPartner() {
         return partner;
     }
+
+    public void setKitchen(Kitchen kitchen) {
+        this.kitchen = kitchen;
+    }
     public void setPartner(Person partner) {
         this.partner = partner;
     }
