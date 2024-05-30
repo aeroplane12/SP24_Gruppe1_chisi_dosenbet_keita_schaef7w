@@ -14,13 +14,18 @@ class CoupleManager {
         if(instance == null)
             instance = new CoupleManager();
 
-            return instance;
+        return instance;
     }
     // might need overview over all People
     List<Person> allParticipants = new ArrayList<>();
     // everyone who is not locked in left
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
+
+    void givePeople(List<Person> persons){
+        System.out.println(persons.get(2).getCouple());
+
+    }
 
     void calcCouples(){
         //TODO Algorithm to sort people into couples

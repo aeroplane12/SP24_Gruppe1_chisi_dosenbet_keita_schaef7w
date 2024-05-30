@@ -29,8 +29,7 @@ public class Manager {
         if (allPersonList == null) {
             return;
         }
-        System.out.println(allPersonList);
-        coupleManager.calcCouples();
+        coupleManager.givePeople(allPersonList);
         groupManager.calcGroups();
     }
 
