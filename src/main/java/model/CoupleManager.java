@@ -18,11 +18,11 @@ class CoupleManager {
     }
     // might need overview over all People
     List<Person> allParticipants = new ArrayList<>();
-    // everyone who is not locked in left
+    // everyone who is not locked in a left
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
 
-    void givePeopleWithoutPartner(List<Person> persons){
+    List<Couple> givePeopleWithoutPartner(List<Person> persons){
         persons.forEach(x -> {
             if (x.hasPartner()) {
                 allParticipants.add(x);

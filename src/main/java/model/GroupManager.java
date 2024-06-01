@@ -1,5 +1,6 @@
 package model;
 
+import java.util.List;
 import java.util.Map;
 
 public class GroupManager {
@@ -37,7 +38,7 @@ public class GroupManager {
         return instance;
     }
 
-    public void calcGroups(){
+    public void calcGroups(List<Couple> couples, Location partyLoc){
         //TODO sorting couples into Groups according to specifications
         // -first by location, small distances but closing in on partyLoc
         // -second by food preference, meaties with meaties and nones ,veggies with vegans and other veggies
