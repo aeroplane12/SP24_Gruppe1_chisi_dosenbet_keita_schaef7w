@@ -1,6 +1,8 @@
 package model;
 
 import model.tools.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Manager {
@@ -29,10 +31,15 @@ public class Manager {
         if (allPersonList == null) {
             return;
         }
-        coupleManager.givePeople(allPersonList);
+        giveSingleParticipants();
         groupManager.calcGroups();
     }
 
+    private void giveSingleParticipants() {
+        List<Person> singles = allPersonList.stream().filter(x -> !x.hasPartner()).toList();
+        coupleManager.givePeopleWithoutPartner(singles);
+
+    }
     /**
      * scans csv. file at path,
      * then instantiates a Location according to entries in file

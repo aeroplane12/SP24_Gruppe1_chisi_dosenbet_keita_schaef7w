@@ -22,8 +22,16 @@ class CoupleManager {
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
 
-    void givePeople(List<Person> persons){
-        System.out.println(persons.get(2).getCouple());
+    void givePeopleWithoutPartner(List<Person> persons){
+        persons.forEach(x -> {
+            if (x.hasPartner()) {
+                allParticipants.add(x);
+                allParticipants.add(x.getPartner());
+            } else {
+                allParticipants.add(x);
+                allSingleParticipants.add(x);
+            }
+        });
 
     }
 
