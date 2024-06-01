@@ -66,9 +66,13 @@ class CoupleManager {
                 couples.add(couple);
             }
         }
-
-
     }
+
+    private double calculateCost(Person person1, Person person2) {
+        // Implement this method based on your criteria
+        return 0;
+    }
+
     public void addPerson(Person person){
         if (person.hasPartner()) {
             allParticipants.add(person);
