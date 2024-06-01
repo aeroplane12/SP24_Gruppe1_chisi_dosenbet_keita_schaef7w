@@ -3,6 +3,8 @@ package model;
 public class Couple {
     private final Person person1;
     private final Person person2;
+    private Kitchen kitchenBeingUsed;
+    private FoodPreference.FoodPref foodPreference;
 
     public Couple(Person person1, Person person2) {
         this.person1 = person1;

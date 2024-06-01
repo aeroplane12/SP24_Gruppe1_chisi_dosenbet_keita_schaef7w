@@ -1,5 +1,8 @@
 package model;
 
+import org.jgrapht.alg.matching.KuhnMunkresMinimalWeightBipartitePerfectMatching;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,32 +19,53 @@ class CoupleManager {
 
         return instance;
     }
+    List<Couple> couples = new ArrayList<>();
     // might need overview over all People
     List<Person> allParticipants = new ArrayList<>();
     // everyone who is not locked in a left
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
 
-    List<Couple> givePeopleWithoutPartner(List<Person> persons){
-        persons.forEach(x -> {
-            if (x.hasPartner()) {
-                allParticipants.add(x);
-                allParticipants.add(x.getPartner());
-            } else {
-                allParticipants.add(x);
-                allSingleParticipants.add(x);
-            }
-        });
-
+    List<Couple> givePeopleWithoutPartner(List<Person> singles) {
+        allSingleParticipants.addAll(singles);
+        calcCouples();
+        return couples;
     }
 
     void calcCouples(){
-        //TODO Algorithm to sort people into couples
-        // needs to be in accordance with the specifications:
-        // - Strictly according to their FoodPreference,
-        // meaning there should be no couples who dont eat the same food
-        // - Sorted according to their Age Group
-        // - no couple without a kitchen, no couple with the same kitchen
+
+        public void calcCouples() {
+            // Create a graph
+            SimpleWeightedGraph<Person, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+
+            // Add vertices
+            for (Person person : allSingleParticipants) {
+                graph.addVertex(person);
+            }
+
+            // Add edges with weights (costs)
+            for (Person person1 : allSingleParticipants) {
+                for (Person person2 : allSingleParticipants) {
+                    if (!person1.equals(person2)) {
+                        DefaultWeightedEdge edge = graph.addEdge(person1, person2);
+                        double cost = calculateCost(person1, person2); // Implement this method based on your criteria
+                        graph.setEdgeWeight(edge, cost);
+                    }
+                }
+            }
+
+            // Apply the Hungarian algorithm
+            KuhnMunkresMinimalWeightBipartitePerfectMatching<Person, DefaultWeightedEdge> matching =
+                    new KuhnMunkresMinimalWeightBipartitePerfectMatching<>(graph, allSingleParticipants, allSingleParticipants);
+
+            // Get the matching and create couples
+            for (DefaultWeightedEdge edge : matching.getMatching()) {
+                Person person1 = graph.getEdgeSource(edge);
+                Person person2 = graph.getEdgeTarget(edge);
+                Couple couple = new Couple(person1, person2);
+                couples.add(couple);
+            }
+        }
 
 
     }
