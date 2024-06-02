@@ -1,9 +1,5 @@
 package model;
 
-import org.jgrapht.alg.matching.KuhnMunkresMinimalWeightBipartitePerfectMatching;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,12 +9,14 @@ class CoupleManager {
 
 
     private static CoupleManager instance;
-    public static CoupleManager getInstance(){
-        if(instance == null)
+
+    public static CoupleManager getInstance() {
+        if (instance == null)
             instance = new CoupleManager();
 
         return instance;
     }
+
     List<Couple> couples = new ArrayList<>();
     // might need overview over all People
     List<Person> allParticipants = new ArrayList<>();
@@ -32,48 +30,40 @@ class CoupleManager {
         return couples;
     }
 
-    void calcCouples(){
+    void calcCouples() {
 
-        public void calcCouples() {
-            // Create a graph
-            SimpleWeightedGraph<Person, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+        int[][] matrix = new int[allSingleParticipants.size()][allSingleParticipants.size()];
 
-            // Add vertices
-            for (Person person : allSingleParticipants) {
-                graph.addVertex(person);
-            }
-
-            // Add edges with weights (costs)
-            for (Person person1 : allSingleParticipants) {
-                for (Person person2 : allSingleParticipants) {
-                    if (!person1.equals(person2)) {
-                        DefaultWeightedEdge edge = graph.addEdge(person1, person2);
-                        double cost = calculateCost(person1, person2); // Implement this method based on your criteria
-                        graph.setEdgeWeight(edge, cost);
-                    }
-                }
-            }
-
-            // Apply the Hungarian algorithm
-            KuhnMunkresMinimalWeightBipartitePerfectMatching<Person, DefaultWeightedEdge> matching =
-                    new KuhnMunkresMinimalWeightBipartitePerfectMatching<>(graph, allSingleParticipants, allSingleParticipants);
-
-            // Get the matching and create couples
-            for (DefaultWeightedEdge edge : matching.getMatching()) {
-                Person person1 = graph.getEdgeSource(edge);
-                Person person2 = graph.getEdgeTarget(edge);
-                Couple couple = new Couple(person1, person2);
-                couples.add(couple);
+        for (int i = 0; i < allSingleParticipants.size(); i++) {
+            for (int j = i; j < allSingleParticipants.size(); j++) {
+                matrix[i][j] = calculateCost(allSingleParticipants.get(i), allSingleParticipants.get(j));
             }
         }
     }
 
-    private double calculateCost(Person person1, Person person2) {
-        // Implement this method based on your criteria
-        return 0;
+    private int calculateCost(Person person1, Person person2) {
+        int cost = 0;
+
+        //If food preference is not equal
+        if (!person1.getFoodPreference().equals(person2.getFoodPreference())) {
+            if (person1.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && person2.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) ||
+                    person1.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && person2.getFoodPreference().equals(FoodPreference.FoodPref.MEAT))
+                cost += 100;
+            else if (person1.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && person2.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) ||
+                    person1.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) && person2.getFoodPreference().equals(FoodPreference.FoodPref.MEAT))
+                cost += 80;
+            else if (person1.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && person2.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) ||
+                    person1.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) && person2.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN))
+                cost += 60;
+        }
+
+        //If age difference is too big
+
+
+        return cost;
     }
 
-    public void addPerson(Person person){
+    public void addPerson(Person person) {
         if (person.hasPartner()) {
             allParticipants.add(person);
             allParticipants.add(person.getPartner());
@@ -84,34 +74,38 @@ class CoupleManager {
         }
     }
 
-    public void removePerson(String personID){
+    public void removePerson(String personID) {
         Person person = getPerson(personID);
         allParticipants.remove(person);
         allSingleParticipants.remove(person);
         calcCouples();
     }
-    public void removeCouple(String CoupleID){
+
+    public void removeCouple(String CoupleID) {
         allParticipants = allParticipants.stream()
-                .filter(x->!x.getCoupleIDs().equals(CoupleID))
+                .filter(x -> !x.getCoupleIDs().equals(CoupleID))
                 .toList();
     }
-    public Person getPerson(String string){
+
+    public Person getPerson(String string) {
         return allParticipants.stream()
-                .filter(x->x.getID().equals(string))
+                .filter(x -> x.getID().equals(string))
                 .findAny()
                 .orElse(null);
     }
 
-    /** getCouple()
+    /**
+     * getCouple()
      * returns a Couple by their CoupleID
+     *
      * @param string the CoupleID
      * @return the Couple
      */
-    public Person[] getCouple(String string){
+    public Person[] getCouple(String string) {
         return allParticipants.stream()
                 .map(Person::getCouple)
                 .filter(Objects::nonNull)
-                .filter(x->x[0].getCoupleIDs().equals(string))
+                .filter(x -> x[0].getCoupleIDs().equals(string))
                 .findFirst()
                 .orElse(null);
     }
