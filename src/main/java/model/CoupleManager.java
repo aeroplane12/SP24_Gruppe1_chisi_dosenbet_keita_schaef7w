@@ -24,6 +24,8 @@ class CoupleManager {
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
 
+    private int[][] matrix;
+
     List<Couple> givePeopleWithoutPartner(List<Person> singles) {
         allSingleParticipants.addAll(singles);
         calcCouples();
@@ -32,7 +34,7 @@ class CoupleManager {
 
     void calcCouples() {
 
-        int[][] matrix = new int[allSingleParticipants.size()][allSingleParticipants.size()];
+        matrix = new int[allSingleParticipants.size()][allSingleParticipants.size()];
 
         for (int i = 0; i < allSingleParticipants.size(); i++) {
             for (int j = 0; j < allSingleParticipants.size(); j++) {
@@ -46,27 +48,30 @@ class CoupleManager {
 
         // Subtract the smallest row value from all values in that row
         for (int i = 0; i < matrix.length; i++) {
-            int smallestValueInRow = matrix[i][0];
-            for (int j = 1; j < matrix[i].length; j++) {
-                // Find the smallest value in the row and making sure it is not -1 (error value)
-                if (matrix[i][j] < smallestValueInRow && matrix[i][j] != -1) {
+            int smallestValueInRow = Integer.MAX_VALUE;
+            for (int j = 0; j < matrix[i].length; j++) {
+                // Find the smallest value in the row that is not -1
+                if (matrix[i][j] != -1 && matrix[i][j] < smallestValueInRow) {
                     smallestValueInRow = matrix[i][j];
                 }
             }
 
             for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] < smallestValueInRow)
-                    throw new IllegalStateException("This should not happen as we chose the smallest value this was the value!"
-                            + matrix[i][j] + " and the smallest value was " + smallestValueInRow);
-                else
-                    matrix[i][j] -= smallestValueInRow;
+                if (matrix[i][j] != -1) {
+                    if (matrix[i][j] < smallestValueInRow)
+                        throw new IllegalStateException("This should not happen as we chose the smallest value this was the value!"
+                                + matrix[i][j] + " and the smallest value was " + smallestValueInRow);
+                    else
+                        matrix[i][j] -= smallestValueInRow;
+                }
             }
+
 
         }
 
-            // Count the number of rows and columns that contain a zero
-            int rowCount = 0;
-            int colCount = 0;
+        // Count the number of rows and columns that contain a zero
+        int rowCount = 0;
+        int colCount = 0;
 
         for (int[] ints : matrix) {
             for (int anInt : ints) {
@@ -77,23 +82,22 @@ class CoupleManager {
             }
         }
 
-            for (int j = 0; j < matrix[0].length; j++) {
-                for (int[] ints : matrix) {
-                    if (ints[j] == 0) {
-                        colCount++;
-                        break; // Once we found a zero in the column, move to the next column
-                    }
+        for (int j = 0; j < matrix[0].length; j++) {
+            for (int[] ints : matrix) {
+                if (ints[j] == 0) {
+                    colCount++;
+                    break; // Once we found a zero in the column, move to the next column
                 }
-            }
-
-            // Check if the sum of the row and column counts is greater than or equal to the number of rows
-            if (rowCount + colCount >= matrix.length) {
-                System.out.println("The sum of the row and column counts is greater than or equal to the number of rows");
-            } else {
-                System.out.println("The sum of the row and column counts is less than the number of rows");
             }
         }
 
+        // Check if the sum of the row and column counts is greater than or equal to the number of rows
+        if (rowCount + colCount >= matrix.length) {
+            System.out.println("The sum of the row and column counts is greater than or equal to the number of rows");
+        } else {
+            System.out.println("The sum of the row and column counts is less than the number of rows");
+        }
+    }
 
 
     private int calculateCost(Person person1, Person person2) {
@@ -101,7 +105,7 @@ class CoupleManager {
 
         //Can#t have singles build a pair if they are in the same building
         // or have the same kitchen and are not registered as a couple
-        if (person1.getKitchen().distance(person2.getKitchen()) == 0)
+        if (!(person1.getKitchen() == null) && !(person2.getKitchen() == null) && person1.getKitchen().distance(person2.getKitchen()) == 0)
             return -1;
 
         //If food preference is not equal
