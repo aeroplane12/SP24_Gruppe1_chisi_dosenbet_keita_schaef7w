@@ -1,8 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 class CoupleManager {
@@ -26,6 +24,11 @@ class CoupleManager {
 
     private int[][] matrix;
 
+    // Index numbers of Zeros in each row
+    private Map<Integer, Integer> indexOfNumberOfZerosInRow = new HashMap<>();
+    // Index numbers of Zeros in each column
+    private Map<Integer, Integer> indexOfNumberOfZerosInColumns = new HashMap<>();
+
     List<Couple> givePeopleWithoutPartner(List<Person> singles) {
         allSingleParticipants.addAll(singles);
         calcCouples();
@@ -47,58 +50,72 @@ class CoupleManager {
         }
 
         // Subtract the smallest row value from all values in that row
+        initialCalc();
+
+        crossingOutZeros();
+
+        // Check if the sum of the row and column counts is greater than or equal to the number of rows
+        //printMatrix();
+
+
+    }
+
+    private void initialCalc() {
+
+        // Subtract the smallest value in the row from all values in that row
         for (int i = 0; i < matrix.length; i++) {
             int smallestValueInRow = Integer.MAX_VALUE;
             for (int j = 0; j < matrix[i].length; j++) {
                 // Find the smallest value in the row that is not -1
-                if (matrix[i][j] != -1 && matrix[i][j] < smallestValueInRow) {
+                if (matrix[i][j] != -1 && matrix[i][j] < smallestValueInRow)
                     smallestValueInRow = matrix[i][j];
-                }
+
             }
 
             for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] != -1) {
+                if (matrix[i][j] != -1)
                     if (matrix[i][j] < smallestValueInRow)
                         throw new IllegalStateException("This should not happen as we chose the smallest value this was the value!"
                                 + matrix[i][j] + " and the smallest value was " + smallestValueInRow);
                     else
                         matrix[i][j] -= smallestValueInRow;
-                }
-            }
-
-
-        }
-
-        // Count the number of rows and columns that contain a zero
-        int rowCount = 0;
-        int colCount = 0;
-
-        for (int[] ints : matrix) {
-            for (int anInt : ints) {
-                if (anInt == 0) {
-                    rowCount++;
-                    break; // Once we found a zero in the row, move to the next row
-                }
             }
         }
 
-        for (int j = 0; j < matrix[0].length; j++) {
-            for (int[] ints : matrix) {
-                if (ints[j] == 0) {
-                    colCount++;
-                    break; // Once we found a zero in the column, move to the next column
-                }
-            }
-        }
+        // Subtract the smallest value in the column from all values in that column
+        for (int i = 0; i < matrix.length; i++) {
+            int smallestValueInColumn = Integer.MAX_VALUE;
+            for (int j = 0; j < matrix[i].length; j++) {
+                // Find the smallest value in the column that is not -1
+                if (matrix[j][i] != -1 && matrix[j][i] < smallestValueInColumn)
+                    smallestValueInColumn = matrix[j][i];
 
-        // Check if the sum of the row and column counts is greater than or equal to the number of rows
-        if (rowCount + colCount >= matrix.length) {
-            System.out.println("The sum of the row and column counts is greater than or equal to the number of rows");
-        } else {
-            System.out.println("The sum of the row and column counts is less than the number of rows");
+            }
+
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[j][i] != -1)
+                    if (matrix[j][i] < smallestValueInColumn)
+                        throw new IllegalStateException("This should not happen as we chose the smallest value this was the value!"
+                                + matrix[j][i] + " and the smallest value was " + smallestValueInColumn);
+                    else
+                        matrix[j][i] -= smallestValueInColumn;
+            }
         }
     }
 
+    void crossingOutZeros() {
+
+    }
+
+
+    void printMatrix() {
+        for (int[] ints : matrix) {
+            for (int anInt : ints) {
+                System.out.print(anInt + " ");
+            }
+            System.out.println();
+        }
+    }
 
     private int calculateCost(Person person1, Person person2) {
         int cost = 0;
@@ -135,6 +152,7 @@ class CoupleManager {
 
         return cost;
     }
+
 
     public void addPerson(Person person) {
         if (person.hasPartner()) {
