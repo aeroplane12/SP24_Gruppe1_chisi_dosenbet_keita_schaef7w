@@ -11,7 +11,7 @@ public class CoupleManager {
     // everyone who is not locked in left
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
-
+    private final List<RatingPriority> ratingPrioritieOrder = new ArrayList<>(3);
     void calcCouples(){
         //TODO Algorithm to sort people into couples
         // needs to be in accordance with the specifications:
@@ -41,51 +41,60 @@ public class CoupleManager {
             - Kann sein, dass Personen keinen Partnern zugeordnet werden können, weshalb diese mit Nachrückern zusammengebracht werden sollen
         */
         allSingleParticipants = allParticipants.stream().filter(person -> !person.hasPartner()).toList();
-        List<Person> fleshPrefGroup = allSingleParticipants.stream()
-                .filter(person -> person.getFoodPreference() == FoodPreference.FoodPref.MEAT ||
-                        person.getFoodPreference() == FoodPreference.FoodPref.NONE)
-                .toList();
-        List<Person> vegiGroup = allSingleParticipants.stream()
-                .filter(person -> !(person.getFoodPreference() == FoodPreference.FoodPref.MEAT))
-                .toList();
+        int foodPrefWeight;
+        int ageDiffWeight;
+        int genderDiffWeight;
+        // default ranking order for the rating system
+        if (ratingPrioritieOrder.isEmpty()) {
+            ratingPrioritieOrder.add(RatingPriority.FOODPREFERENCE);
+            ratingPrioritieOrder.add(RatingPriority.AGEDIFFERENCE);
+            ratingPrioritieOrder.add(RatingPriority.GENDERDIFFERENCE);
+            foodPrefWeight = 1;
+            ageDiffWeight = 10;
+            genderDiffWeight = 100;
+        } else {
+            foodPrefWeight = (int) Math.pow(10, ratingPrioritieOrder.indexOf(RatingPriority.FOODPREFERENCE));
+            ageDiffWeight = (int) Math.pow(10, ratingPrioritieOrder.indexOf(RatingPriority.AGEDIFFERENCE));
+            genderDiffWeight = (int) Math.pow(10, ratingPrioritieOrder.indexOf(RatingPriority.GENDERDIFFERENCE));
+        }
 
-        double[][] coupleRating = new double[allSingleParticipants.size()][allSingleParticipants.size()];
+
+        int[][] coupleRating = new int[allSingleParticipants.size()][allSingleParticipants.size()];
         for (int i = 0; i < coupleRating.length; i++) {
             for (int j = i + 1; j < coupleRating.length; j++) {
-
+                coupleRating[i][j] = calculateCoupleRating(allParticipants.get(i), allParticipants.get(j), foodPrefWeight, ageDiffWeight, genderDiffWeight);
             }
         }
+
     }
-    private double calculateCoupleRating(Person person1, Person person2){
+    private int calculateCoupleRating(Person person1, Person person2, int foodPrefWeight, int ageDiffWeight, int genderDiffWeight){
         // are the FoodPreferences compatible
         if ((person1.getFoodPreference().value == 1 && person2.getFoodPreference().value > 1) ||
             person2.getFoodPreference().value == 1 && person1.getFoodPreference().value > 1) {
-            return 0;
+            return 1000;
         }
         // does at least one person have a kitchen
         if (person1.getKitchen() == null && person2.getKitchen() == null) {
-            return 0;
+            return 1000;
         }
         // are they living in the same building
         if (person1.getKitchen().distance(person2.getKitchen()) == 0) {
-            return 0;
+            return 1000;
         }
-        double rating = 1;
+        int rating = 0;
         // if egali and vegi/vegan are tested, half the rating, prefer egali and meat
-        // 0.5 is a placeholder for now
+
         if ((person1.getFoodPreference().value == 0 && person2.getFoodPreference().value > 1) ||
             person2.getFoodPreference().value == 0 && person1.getFoodPreference().value > 1) {
-            rating = 0.5;
+            rating = foodPrefWeight;
         }
         // computes a rating for the age difference,
-        // 0.1 is a placeholder for now
-        rating *= 1 - 0.1 * Math.abs(person1.getAge().value - person2.getAge().value) ;
-        // adjusting rating based on the gender of both ppl
-        // 0.7 another magic number
-        if (person1.getGender() == person2.getGender()) {
-            rating *= 0.7;
-        }
 
+        rating += ageDiffWeight * Math.abs(person1.getAge().value - person2.getAge().value) ;
+        // adjusting rating based on the gender of both ppl
+        if (person1.getGender() == person2.getGender()) {
+            rating += genderDiffWeight;
+        }
         return rating;
 
     }
