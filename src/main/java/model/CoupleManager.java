@@ -1,5 +1,7 @@
 package model;
 
+import model.tools.NumberBox;
+
 import java.util.*;
 
 
@@ -25,9 +27,9 @@ class CoupleManager {
     private int[][] matrix;
 
     // Index numbers of Zeros in each row
-    private Map<Integer, Integer> indexOfNumberOfZerosInRow = new HashMap<>();
+    private List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
     // Index numbers of Zeros in each column
-    private Map<Integer, Integer> indexOfNumberOfZerosInColumns = new HashMap<>();
+    private List<int[]> indexOfNumberOfZerosInColumns = new ArrayList<>();
 
     List<Couple> givePeopleWithoutPartner(List<Person> singles) {
         allSingleParticipants.addAll(singles);
@@ -51,7 +53,6 @@ class CoupleManager {
 
         // Subtract the smallest row value from all values in that row
         initialCalc();
-
         crossingOutZeros();
 
         // Check if the sum of the row and column counts is greater than or equal to the number of rows
@@ -104,13 +105,64 @@ class CoupleManager {
     }
 
     void crossingOutZeros() {
+        // Find the number of zeros in each row
+        for (int i = 0; i < matrix.length; i++) {
+            int numberOfZerosInRow = 0;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0)
+                    numberOfZerosInRow++;
+            }
+            int[] storage = new int[2];
+            storage[0] = i;
+            storage[1] = numberOfZerosInRow;
+            indexOfNumberOfZerosInRow.add(storage);
+        }
+
+
+        // Find the number of zeros in each column
+        for (int i = 0; i < matrix.length; i++) {
+            int numberOfZerosInColumn = 0;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[j][i] == 0)
+                    numberOfZerosInColumn++;
+            }
+            int[] storage = new int[2];
+            storage[0] = i;
+            storage[1] = numberOfZerosInColumn;
+            indexOfNumberOfZerosInColumns.add(storage);
+        }
+
+        // Sort the rows and columns by the number of zeros
+        indexOfNumberOfZerosInRow.sort(Comparator.comparingInt(o -> o[1]));
+        indexOfNumberOfZerosInColumns.sort(Comparator.comparingInt(o -> o[1]));
+        //Print the sorted rows and columns
+       // for (int[] ints : indexOfNumberOfZerosInRow)
+         //   System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
+
+       // for (int[] ints : indexOfNumberOfZerosInColumns)
+         //   System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
+
+        System.out.println(indexOfNumberOfZerosInColumns.size());
+        System.out.println(indexOfNumberOfZerosInRow.size());
+
+        // now we need to cross out the zeros by the row or column with the most zeros
+
+        NumberBox[][] tempMatrix = new NumberBox[matrix.length][matrix.length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                tempMatrix[i][j] = new NumberBox(matrix[i][j]);
+            }
+        }
+
+        printMatrix(tempMatrix);
 
     }
 
 
-    void printMatrix() {
-        for (int[] ints : matrix) {
-            for (int anInt : ints) {
+     <T> void printMatrix(T[][] matrix) {
+        for (T[] ints : matrix) {
+            for (T anInt : ints) {
                 System.out.print(anInt + " ");
             }
             System.out.println();
