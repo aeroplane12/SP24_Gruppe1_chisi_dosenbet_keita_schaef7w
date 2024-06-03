@@ -154,8 +154,9 @@ class CoupleManager {
                 tempMatrix[i][j] = new NumberBox(matrix[i][j]);
             }
         }
+        while(allZerosHaveALine(tempMatrix)) {
 
-        printMatrix(tempMatrix);
+        }
 
     }
 
@@ -167,6 +168,23 @@ class CoupleManager {
             }
             System.out.println();
         }
+    }
+
+    //TODO Still need to check this method for correctness
+    private boolean allZerosHaveALine(NumberBox[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            boolean rowHasZero = false;
+            boolean columnHasZero = false;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j].getNumber() == 0 && !matrix[i][j].isCrossedOut())
+                    rowHasZero = true;
+                if (matrix[j][i].getNumber() == 0 && !matrix[j][i].isCrossedOut())
+                    columnHasZero = true;
+            }
+            if (!rowHasZero || !columnHasZero)
+                return false;
+        }
+        return true;
     }
 
     private int calculateCost(Person person1, Person person2) {
