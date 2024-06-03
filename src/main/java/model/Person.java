@@ -92,6 +92,15 @@ public class Person {
         return foodPreference;
     }
 
+    public AgeGroup.AgeRange getAgeGroup() {
+        return age;
+    }
+
+    public boolean hasKitchen() {
+        return kitchen != null;
+    }
+
+
     public Kitchen getKitchen() {
         return kitchen;
     }

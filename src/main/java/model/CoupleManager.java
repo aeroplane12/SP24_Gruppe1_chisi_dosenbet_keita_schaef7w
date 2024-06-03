@@ -3,7 +3,9 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 public class CoupleManager {
@@ -21,8 +23,47 @@ public class CoupleManager {
         // - Sorted according to their Age Group
         // - no couple without a kitchen, no couple with the same kitchen
 
+        // Group single participants by their food preference
+        Map<FoodPreference.FoodPref, List<Person>> groupedByFood = allSingleParticipants.stream()
+                .collect(Collectors.groupingBy(Person::getFoodPreference));
+
+        List<Person> newCouples = new ArrayList<>();
+
+        // Iterate over each food preference group
+        for (List<Person> foodGroup : groupedByFood.values()) {
+            // Sort by age group within each food preference group
+            Map<AgeGroup.AgeRange, List<Person>> groupedByAge = foodGroup.stream()
+                    .collect(Collectors.groupingBy(Person::getAgeGroup));
+
+            // For each age group, form couples
+            for (List<Person> ageGroup : groupedByAge.values()) {
+                int i = 0;
+                while (i < ageGroup.size() - 1) {
+                    Person person1 = ageGroup.get(i);
+                    Person person2 = ageGroup.get(i + 1);
+
+                    // Ensure no couple without a kitchen and no couple with the same kitchen
+                    if (person1.hasKitchen() && person2.hasKitchen() && !person1.getKitchen().equals(person2.getKitchen())) {
+                        person1.setPartner(person2);
+                        person2.setPartner(person1);
+                        newCouples.add(person1);
+                        newCouples.add(person2);
+                        i += 2; // Move to the next pair
+                    } else {
+                        i++; // Try the next person
+                    }
+                }
+            }
+        }
+
+        // Update the lists of participants
+        allSingleParticipants.removeAll(newCouples);
+        allParticipants.clear();
+        allParticipants.addAll(allSingleParticipants);
+        allParticipants.addAll(newCouples);
 
     }
+
     public void addPerson(Person person){
         if (person.hasPartner()) {
             allParticipants.add(person);
