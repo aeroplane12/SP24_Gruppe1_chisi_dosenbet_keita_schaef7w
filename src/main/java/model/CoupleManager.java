@@ -2,6 +2,7 @@ package model;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,5 +65,9 @@ public class CoupleManager {
                 .filter(x->x[0].getCoupleIDs().equals(string))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<Couple> givePeopleWithoutPartner(List<Person> singles) {
+        return null;
     }
 }

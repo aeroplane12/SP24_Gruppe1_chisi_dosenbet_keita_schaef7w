@@ -1,10 +1,13 @@
 package model;
 
 import model.tools.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Manager {
-
+    static int couple_Counter = 0;
+    static int group_Counter = 0;
     GroupManager groupManager;
     CoupleManager coupleManager;
     Location partyLoc;
@@ -29,10 +32,25 @@ public class Manager {
      */
     public void inputPeople(String path) {
         allPersonList = CSVReader.csvReaderPeople(path);
+
         if (allPersonList == null) {
             return;
         }
-        coupleManager.calcCouples();
+        // split people into couples and singles
+        allPersonList.forEach(x -> {
+            if (x.hasPartner())
+                couples.add(new Couple(couple_Counter++ ,
+                        x,
+                        x.getPartner(),
+                        x.getKitchen(),
+                        x.getPartner().getKitchen(),
+                        x.getCouplePreference()));
+            else
+                singles.add(x);
+        });
+        // TODO: Remove singles && people who dont have a person go back to singles
+        couples.addAll(coupleManager.givePeopleWithoutPartner(singles));
+
         groupManager.calcGroups();
     }
 
