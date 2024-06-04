@@ -12,6 +12,9 @@ public class Manager {
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
     List<Person> allPersonList;
+    List<Person> singles;
+    List<Couple> couples;
+    List<Group> groups;
 
     public Manager(GroupManager groupManager, CoupleManager coupleManager){
         this.groupManager = groupManager;
