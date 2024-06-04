@@ -1,15 +1,27 @@
 package model;
 
+import java.util.Map;
+
 public class Couple {
+
+    private int ID;
+
+    // Integer is the Group ID
+
+    private final Map<Course,Integer> withWhomAmIEating = Map.of(
+            Course.STARTER,-1,
+            Course.DINNER,-1,
+            Course.DESSERT,-1);
 
     private Person person1;
 
     private Person person2;
 
     private Kitchen kitchen1;
+
     private Kitchen kitchen2;
     FoodPreference.FoodPref foodPref;
-    public Couple(Person person1, Person person2,
+    public Couple(int ID, Person person1, Person person2,
                   Kitchen kitchen1, Kitchen kitchen2,
                   FoodPreference.FoodPref foodPref) {
         this.person1 = person1;
@@ -17,8 +29,8 @@ public class Couple {
         this.kitchen1 = kitchen1;
         this.kitchen2 = kitchen2;
         this.foodPref = foodPref;
+        this.ID = ID;
     }
-
 
 
     public Person getPerson1() {
