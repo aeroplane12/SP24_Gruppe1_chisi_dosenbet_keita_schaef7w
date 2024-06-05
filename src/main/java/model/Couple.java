@@ -40,7 +40,9 @@ public class Couple {
         this.foodPref = foodPref;
         this.ID = ID;
         //needs to have one kitchen, only one can be null
-        if (kitchen1 == null || kitchen2 == null) {
+        if (partyLoc == null) {
+            whoseKitchen = false; //simply a default value, will delete if partyLoc always notNull
+        } else if (kitchen1 == null || kitchen2 == null) {
             whoseKitchen = kitchen1 == null;
         } else {
             whoseKitchen = kitchen1.distance(partyLoc) > kitchen2.distance(partyLoc);

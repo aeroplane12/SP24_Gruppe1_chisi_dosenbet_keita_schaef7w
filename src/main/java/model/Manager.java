@@ -10,18 +10,23 @@ public class Manager {
     static int group_Counter = 0;
     GroupManager groupManager;
     CoupleManager coupleManager;
-    Location partyLoc;
+    Location partyLoc;//temporary filler
 
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
     List<Person> allPersonList;
-    List<Person> singles;
-    List<Couple> couples;
+    List<Person> singles = new ArrayList<>();
+    List<Couple> couples = new ArrayList<>();
     List<Group> groups;
 
     public Manager(GroupManager groupManager, CoupleManager coupleManager){
         this.groupManager = groupManager;
         this.coupleManager = coupleManager;
+    }
+    public Manager(GroupManager groupManager, CoupleManager coupleManager,String path){
+        this.groupManager = groupManager;
+        this.coupleManager = coupleManager;
+        inputLocation(path);
     }
 
 
@@ -50,7 +55,7 @@ public class Manager {
                 singles.add(x);
         });
         // TODO: Remove singles && people who dont have a person go back to singles
-        couples.addAll(coupleManager.givePeopleWithoutPartner(singles));
+        //couples.addAll(coupleManager.givePeopleWithoutPartner(singles)); // cant add temp null value in addAll
 
         groupManager.calcGroups();
     }

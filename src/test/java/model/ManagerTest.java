@@ -21,7 +21,7 @@ class ManagerTest {
         this.coupleManager = new CoupleManager();
         this.groupManager = new GroupManager();
         persons = new ArrayList<>();
-        this.manager = new Manager(groupManager, coupleManager);
+        this.manager = new Manager(groupManager, coupleManager,"Dokumentation/TestingData/partylocation.csv");
 
         AgeGroup.AgeRange age1 = AgeGroup.AgeRange.AGE_31_35;
         AgeGroup.AgeRange age2 = AgeGroup.AgeRange.AGE_18_23;
@@ -83,7 +83,6 @@ class ManagerTest {
         Person partner = new Person("2", "alice", age, gender, foodPref, kitchen, null);
         Person testPerson = new Person("1", "Bob", age, gender, foodPref, kitchen, partner);
         partner.setPartner(testPerson);
-
         coupleManager.addPerson(testPerson);
         //As person has partner both should be added
         assertEquals(coupleManager.allParticipants.size(), 2);
@@ -120,7 +119,6 @@ class ManagerTest {
      @Test
         public void testInputPeople() {
          String filePath = "Dokumentation/TestingData/teilnehmerliste.csv";
-         Manager manager = new Manager(new GroupManager(), new CoupleManager());
          manager.inputPeople(filePath);
          // There were four people in the test set 2 singles and one couple
          assertEquals(310, manager.allPersonList.size());
@@ -157,7 +155,6 @@ class ManagerTest {
 
         @Test
         public void testGetGroupManager() {
-
             assertEquals(groupManager, manager.getGroupManager());
         }
 
