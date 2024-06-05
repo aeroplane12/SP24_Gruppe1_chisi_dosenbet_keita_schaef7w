@@ -44,7 +44,8 @@ public class Manager {
                         x.getPartner(),
                         x.getKitchen(),
                         x.getPartner().getKitchen(),
-                        x.getCouplePreference()));
+                        x.getCouplePreference(),
+                        partyLoc));
             else
                 singles.add(x);
         });

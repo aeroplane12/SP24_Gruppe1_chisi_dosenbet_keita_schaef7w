@@ -1,6 +1,8 @@
 package model;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Couple {
 
@@ -20,16 +22,30 @@ public class Couple {
     private Kitchen kitchen1;
 
     private Kitchen kitchen2;
-    FoodPreference.FoodPref foodPref;
-    public Couple(int ID, Person person1, Person person2,
+    private FoodPreference.FoodPref foodPref;
+    private boolean whoseKitchen; //whose kitchen is used, can change
+    //-Field-Parameters for Group-Manager-
+    private boolean wasHost = false;
+    private Set<Couple> metCouple = new HashSet<>();
+    //-Field-Parameters for Group-Manager- End
+
+    public Couple(int ID,
+                  Person person1, Person person2,
                   Kitchen kitchen1, Kitchen kitchen2,
-                  FoodPreference.FoodPref foodPref) {
+                  FoodPreference.FoodPref foodPref,Location partyLoc) {
         this.person1 = person1;
         this.person2 = person2;
         this.kitchen1 = kitchen1;
         this.kitchen2 = kitchen2;
         this.foodPref = foodPref;
         this.ID = ID;
+        //needs to have one kitchen, only one can be null
+        if (kitchen1 == null || kitchen2 == null) {
+            whoseKitchen = kitchen1 == null;
+        } else {
+            whoseKitchen = kitchen1.distance(partyLoc) > kitchen2.distance(partyLoc);
+        }
+
     }
 
 
@@ -74,4 +90,11 @@ public class Couple {
     }
 
 
+    public boolean isWhoseKitchen() {
+        return whoseKitchen;
+    }
+
+    public void setWhoseKitchen(boolean whoseKitchen) {
+        this.whoseKitchen = whoseKitchen;
+    }
 }
