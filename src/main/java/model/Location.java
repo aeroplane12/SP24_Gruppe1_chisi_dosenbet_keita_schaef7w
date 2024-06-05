@@ -9,6 +9,14 @@ public class Location {
         this.longitude = longitude;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
     /**
      * distance
      * @param l other location

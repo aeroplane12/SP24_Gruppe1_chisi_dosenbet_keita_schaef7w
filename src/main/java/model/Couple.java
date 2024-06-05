@@ -99,4 +99,8 @@ public class Couple {
     public void setWhoseKitchen(boolean whoseKitchen) {
         this.whoseKitchen = whoseKitchen;
     }
+
+    public Map<Course, Integer> getWithWhomAmIEating() {
+        return withWhomAmIEating;
+    }
 }
