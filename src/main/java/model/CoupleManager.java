@@ -197,8 +197,9 @@ class  CoupleManager {
 
         indexOfNumberOfZerosInColumns.clear();
         indexOfNumberOfZerosInRow.clear();
-
+        return null;
     }
+
 
 
     <T> void printMatrix(T[][] matrix) {
