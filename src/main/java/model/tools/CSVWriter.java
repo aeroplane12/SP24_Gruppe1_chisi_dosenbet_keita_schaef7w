@@ -11,6 +11,12 @@ import java.io.FileWriter;
 import java.util.List;
 
 public class CSVWriter {
+    /**
+     * write
+     * Writes a CSV with our assembled groups in the required format to a file
+     * @param groups the groups that have been assembled with our algorithm
+     * @param fileName the file and path in which our CSV is saved in
+     */
     public static void write(List<Group> groups, String fileName) {
         File file = new File(fileName); // Create new file instance with the filepath
         try {
