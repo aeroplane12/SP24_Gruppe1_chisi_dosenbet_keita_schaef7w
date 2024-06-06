@@ -11,8 +11,8 @@ import model.Person;
 public class NumberBox {
 
     private boolean crossedOut;
-    private int number;
-    public NumberBox(int number){
+    private double number;
+    public NumberBox(double number){
         this.number = number;
         this.crossedOut = false;
     }
@@ -25,11 +25,11 @@ public class NumberBox {
         this.crossedOut = crossedOut;
     }
 
-    public int getNumber() {
+    public double getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(double number) {
         this.number = number;
     }
 
@@ -38,7 +38,7 @@ public class NumberBox {
         if(crossedOut)
             return "-" + number + "-";
         else
-            return  Integer.toString(number);
+            return  Double.toString(number);
 
     }
 }

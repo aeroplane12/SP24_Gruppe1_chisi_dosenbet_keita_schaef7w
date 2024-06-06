@@ -68,29 +68,29 @@ class CoupleManager {
             bringSingleTogether(createNumberBoxMatrix(veggie));
         }
     }
-
+    //This is correct
     private NumberBox[][] createNumberBoxMatrix(List<Person> people) {
         NumberBox[][] matrix = new NumberBox[people.size()][people.size()];
         for (int i = 0; i < people.size(); i++)
             for (int j = 0; j < people.size(); j++)
                 matrix[i][j] = new NumberBox(calculateCost(people.get(i), people.get(j)));
 
+
         return matrix;
     }
 
     private void bringSingleTogether(NumberBox[][] matrix) {
-
-        System.out.println(crossingOutZeros(subtractSmallest(matrix)));
-        givePeoplePartner(matrix);
+        //TODO: Till here everything is correct
+        printMatrix(subtractSmallest(matrix));
 
     }
-
+        //This is correct
     private NumberBox[][] subtractSmallest(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             // Find the smallest number in the row
-            int smallestNumberRow = Integer.MAX_VALUE;
+            double smallestNumberRow = Integer.MAX_VALUE;
             for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j].getNumber() < smallestNumberRow && matrix[i][j].getNumber() > -1)
+                if (matrix[i][j].getNumber() < smallestNumberRow && matrix[i][j].getNumber() > -1.0)
                     smallestNumberRow = matrix[i][j].getNumber();
             }
             if (smallestNumberRow < 0)
@@ -104,7 +104,7 @@ class CoupleManager {
             }
 
             // Find the smallest number in the column
-            int smallestNumberColumn = Integer.MAX_VALUE;
+            double smallestNumberColumn = Integer.MAX_VALUE;
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[j][i].getNumber() < smallestNumberColumn && matrix[j][i].getNumber() > -1)
                     smallestNumberColumn = matrix[j][i].getNumber();
@@ -124,6 +124,7 @@ class CoupleManager {
     }
 
 
+    //TODO: This is wrong somehow I donÄT get the right number returned
     private int crossingOutZeros(NumberBox[][] matrix) {
         List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
         // Index numbers of Zeros in each column
@@ -241,8 +242,8 @@ class CoupleManager {
             System.out.println();
         }
     }
-
-    private int calculateCost(Person person1, Person person2) {
+    //This is correct
+    private double calculateCost(Person person1, Person person2) {
         int cost = 10;
 
         if (person1.equals(person2))
@@ -254,7 +255,7 @@ class CoupleManager {
             return -1;
 
         //If food preference is not equal
-        if (!person1.getFoodPreference().equals(person2.getFoodPreference())) {
+        if (!(person1.getFoodPreference().equals(person2.getFoodPreference()))) {
             if (person1.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && person2.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) ||
                     person1.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && person2.getFoodPreference().equals(FoodPreference.FoodPref.MEAT))
                 cost += 100;
@@ -266,16 +267,18 @@ class CoupleManager {
                 cost += 40;
         }
 
+
         // If both have a kitchen distance is the added cost if one doesn't and the other does the cost is reduced
         if (person1.getKitchen() != null && person2.getKitchen() != null) {
-            cost += (int) Math.round(person1.getKitchen().distance(person2.getKitchen())) * 50;
+            cost +=  person1.getKitchen().distance(person2.getKitchen());
         } else if ((person1.getKitchen() != null && person2.getKitchen() == null) || (person1.getKitchen() == null && person2.getKitchen() != null)) {
             if (cost < 30)
                 cost = 0;
             else
                 cost -= 30;
         }
-
+        else
+            return -1;
 
 
         //If age difference is too big
@@ -283,7 +286,6 @@ class CoupleManager {
 
         if (person1.getGender().equals(person2.getGender()))
             cost += 200;
-
         return cost;
     }
 
