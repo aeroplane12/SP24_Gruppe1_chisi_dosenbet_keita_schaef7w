@@ -105,6 +105,14 @@ public class Person {
         return ID;
     }
 
+    public AgeGroup.AgeRange getAge() {
+        return age;
+    }
+
+    public Gender.genderValue getGender() {
+        return gender;
+    }
+
     public Person getPartner() {
         return partner;
     }

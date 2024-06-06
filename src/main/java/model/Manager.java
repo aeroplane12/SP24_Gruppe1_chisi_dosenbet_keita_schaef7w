@@ -4,6 +4,7 @@ import model.tools.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class Manager {
     static int couple_Counter = 0;
@@ -19,9 +20,10 @@ public class Manager {
     List<Couple> couples = new ArrayList<>();
     List<Group> groups;
 
-    public Manager(GroupManager groupManager, CoupleManager coupleManager){
-        this.groupManager = groupManager;
-        this.coupleManager = coupleManager;
+    public Manager() {
+        this.groupManager = GroupManager.getInstance();
+        this.coupleManager = CoupleManager.getInstance();
+        this.couples = new ArrayList<>();
     }
     public Manager(GroupManager groupManager, CoupleManager coupleManager,String path){
         this.groupManager = groupManager;
@@ -33,6 +35,7 @@ public class Manager {
     /**
      * Reads .csv File at Path,
      * then transforms entries into People
+     *
      * @param path path to csv. File
      */
     public void inputPeople(String path) {
@@ -64,9 +67,10 @@ public class Manager {
      * scans csv. file at path,
      * then instantiates a Location according to entries in file
      * assumes a header.
+     *
      * @param path file path
      */
-    public void inputLocation(String path){
+    public void inputLocation(String path) {
         partyLoc = CSVReader.csvReaderPartyLocation(path);
     }
 
