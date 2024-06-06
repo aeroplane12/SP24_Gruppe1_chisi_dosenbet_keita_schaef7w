@@ -15,9 +15,16 @@ public class Group {
         HOST = host;
         GUESTS = guests;
         ID = id;
+        this.course = course;
     }
 
     public int getID() {
         return ID;
+    }
+    public Couple getHosts() {
+        return HOST;
+    }
+    public Course getCourse() {
+        return course;
     }
 }

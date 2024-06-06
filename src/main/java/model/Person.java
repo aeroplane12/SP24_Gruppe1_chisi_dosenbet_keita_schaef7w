@@ -125,6 +125,7 @@ public class Person {
         this.partner = partner;
     }
 
+
     public void setLockedIn(boolean lockedIn) {
         this.lockedIn = lockedIn;
     }

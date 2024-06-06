@@ -19,7 +19,7 @@ public class Kitchen extends Location {
     }
 
 
-    Kitchen(Double longitude,Double latitude,boolean emergency,Double story){
+    public Kitchen(Double longitude, Double latitude, boolean emergency, Double story){
         super(longitude,latitude);
         this.emergency = emergency;
         this.story = story;
