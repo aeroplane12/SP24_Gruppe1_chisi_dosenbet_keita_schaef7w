@@ -52,11 +52,25 @@ public class Kitchen extends Location {
      */
     public boolean setUse(Course c){
         if (!inUse.get(c)){
-            inUse.remove(c,true);
+            inUse.replace(c,true);
             return true;
         }
         return false;
     }
+
+    /**
+     * isOverbooked
+     * @return whether there is still space in the kitchen
+     */
+    public boolean isOverbooked(){
+        for (boolean i : inUse.values()) {
+            if (!i) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     /**
      * determines if the kitchen is available at that time

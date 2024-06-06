@@ -2,6 +2,7 @@ package model;
 
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Person {
@@ -106,6 +107,14 @@ public class Person {
 
     public Person getPartner() {
         return partner;
+    }
+    public boolean hasKitchen() {return kitchen != null; }
+    public AgeGroup.AgeRange getAge() {
+        return age;
+    }
+
+    public Gender.genderValue getGender() {
+        return gender;
     }
 
     public void setKitchen(Kitchen kitchen) {

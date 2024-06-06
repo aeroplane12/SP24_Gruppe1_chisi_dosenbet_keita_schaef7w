@@ -1,46 +1,77 @@
 package model;
 
-import java.util.Map;
+import model.tools.Rankable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GroupManager {
-    //|---CALCULATION - VARIABLES---|
-    // the highest allowed average AgeRange distribution
-    private float maxAvgAgeRange;
-    // the lowest allowed average Gender distribution
-    private float minGenderDistribution;
-    // maximal allowed distance between Groups
-    private int maxAllowedDistance;
-    // min allowed distance between Groups ("community-detection")
-    private float minAllowedDistance;
-
-    // Import of satisfying a meaties desire to eat meat or
-    // a Veggies desire to consume Animal Products,
-    // [0-2] meaning 0-ignore, 1-if-able and 2-paramount
-    private int satisfactionWeight;
-    // "at what point can you use the emergency kitchens"
-    private int kitchenMaybeWeight;
-
-    //|-----------------------------|
-
-
-
-    //All the Couples and their respective instances
-    Map<String,Person[]> couples;
-    //Matrix of every Couple and whom they meet at each point in time
-    Map<String,Person[][]> allGroupClusters; //KEY = coupleID, VALUE = 4 People in 3 rows each
-    public void calcGroups(){
-        //TODO sorting couples into Groups according to specifications
-        // -first by location, small distances but closing in on partyLoc
-        // -second by food preference, meaties with meaties and nones ,veggies with vegans and other veggies
-        // -third by age, keeping the ageRange minimal
+    private Double FOODPREFWEIGHT;
+    private Double AVGAGERANGEWEIGHT;
+    private Double AVGGENDERDIVWEIGHT;
+    private List<Couple> allCouples;
+    private List<Couple> succeedingCouples;
+    private Map<Course,List<Group>> ledger = new HashMap<>(Map.of(
+            Course.DESSERT,new ArrayList<>(),
+            Course.DINNER,new ArrayList<>(),
+            Course.STARTER,new ArrayList<>()));
+    private Location partyLoc;
+    private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
+        Math.abs(x.getFoodPref().value - y.getFoodPref().value) * FOODPREFWEIGHT
+                + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG())*AVGAGERANGEWEIGHT
+                - Math.abs(x.getGenderAVG() - y.getGenderAVG()) * AVGGENDERDIVWEIGHT);
+    public GroupManager(){
+        FOODPREFWEIGHT = 0d;
+        AVGAGERANGEWEIGHT = 0d;
+        AVGGENDERDIVWEIGHT = 0d;
     }
-    private Group[] generateGroup(){
+    public GroupManager(Double foodprefweight,
+                        Double maxavgagerange,
+                        Double mingenderdistribution) {
+        FOODPREFWEIGHT = foodprefweight;
+        AVGAGERANGEWEIGHT = maxavgagerange;
+        AVGGENDERDIVWEIGHT = mingenderdistribution;
+    }
+
+
+
+    public void calcGroups(List<Couple> allCouples){
+        /*TODO sorting couples into Groups according to specifications
+         - each group consists of three couples, one host and two guests
+         - create groups according to the following specifications
+         - first by food preference, meaties with meaties and nones ,veggies with vegans and other veggies
+         - second by location, small distances but closing in on partyLoc
+         - third by age, keeping the ageRange minimal
+         - finally by gender, keeping genders in each group as diverse as possible
+         - AVOID USING A KITCHEN MORE THAN THREE TIMES
+         */
+        this.allCouples = allCouples;
+        List<Couple> possibleHosts = this.allCouples;
+        possibleHosts.sort( (x,y) ->
+                x.getCurrentKitchen()
+                        .distance(partyLoc)
+                        .compareTo(y.getCurrentKitchen()
+                                .distance(partyLoc)));
+        for (Couple c : possibleHosts) {
+
+        }
+
+    }
+
+    /**
+     * fillCourse
+     * fills the maü
+     */
+    private void fillCourse(){
+
+    }
+
+    private Group findGuests(Couple host){
+        List<Couple> potentialGuests = allCouples.stream()
+                .filter(x->!(x.getMetCouple().contains(host) && x.equals(host)))
+                .toList();
+        // HUNGARIAN ALGORITHM HERE
         return null;
     }
-    public Person[][] printCluster(String coupleID){
-        //TODO returns the Cluster centered around the given couple.
-        return null;        //3x3 matrix
-    }
-
 
 }

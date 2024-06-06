@@ -99,4 +99,22 @@ public class Couple {
     public void setWhoseKitchen(boolean whoseKitchen) {
         this.whoseKitchen = whoseKitchen;
     }
+
+    public Kitchen getCurrentKitchen(){
+        return whoseKitchen? kitchen2:kitchen1;
+    }
+
+    public Set<Couple> getMetCouple() {
+        return metCouple;
+    }
+    public void meetsCouple(Couple couple){
+        metCouple.add(couple);
+    }
+
+    public Double getGenderAVG() {
+        return (person1.getGender().value+person2.getGender().value)/2d;
+    }
+    public Double getAgeRAngeAVG(){
+        return (person1.getAge().value+person2.getAge().value)/2d;
+    }
 }
