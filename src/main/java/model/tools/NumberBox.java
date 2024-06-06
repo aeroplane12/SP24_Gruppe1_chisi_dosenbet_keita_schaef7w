@@ -1,4 +1,7 @@
 package model.tools;
+
+import model.Person;
+
 /**
  * This class is a placeholder for a number box. It is used for the Hungarian algorithm.
  * To check, if a number in a row or column has already been crossed out.
@@ -9,7 +12,6 @@ public class NumberBox {
 
     private boolean crossedOut;
     private int number;
-
     public NumberBox(int number){
         this.number = number;
         this.crossedOut = false;

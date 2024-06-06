@@ -58,7 +58,7 @@ public class Manager {
             else
                 singles.add(x);
         });
-        couples.addAll(coupleManager.givePeopleWithoutPartner(singles));
+        couples.addAll(coupleManager.givePeopleWithoutPartner(singles, 0));
 
         singles = coupleManager.getSinglesList();
 

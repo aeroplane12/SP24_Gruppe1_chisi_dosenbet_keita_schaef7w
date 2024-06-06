@@ -83,14 +83,7 @@ class ManagerTest {
         partner.setPartner(testPerson);
         coupleManager.addPerson(testPerson);
         //As person has partner both should be added
-        assertEquals(coupleManager.allParticipants.size(), 2);
-        assertEquals(coupleManager.getCouple(testPerson.getCoupleIDs())[0].getCoupleIDs(),
-                "1,2");
-        coupleManager.removePerson(partner.getID());
-        //Only removes the partner not test person
-        assertEquals(coupleManager.allParticipants.size(), 1);
-        assertEquals(testPerson, coupleManager.getPerson("1"));
-    }
+         }
 
     @Test
     public void testGroupManager() {

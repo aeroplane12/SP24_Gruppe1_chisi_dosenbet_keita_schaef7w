@@ -8,172 +8,211 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-class CoupleManager {
+class  CoupleManager {
 
-
+    private static final List<List<NumberBox[][]>> matrixList = new ArrayList<>();
     private static CoupleManager instance;
+    private int strictnessLevel = 0;
 
+    /**
+     * CoupleManager() is a singleton class
+     * Has different levels of strictness, the higher the number, the more strict the algorithm in terms of pairing of food preferences
+     * lowStrictness = 0 and means that the algorithm will pair any two people together
+     * mediumStrictness = 1 and means that the algorithm will pair people vegan and vegetarian together and meat with any
+     * highStrictness = 2 and means that the algorithm will pair people with the same food preference together
+     * @return the instance of the CoupleManager
+     */
     public static CoupleManager getInstance() {
         if (instance == null)
             instance = new CoupleManager();
+
 
         return instance;
     }
 
     List<Couple> couples = new ArrayList<>();
+
     // might need overview over all People
-    List<Person> allParticipants = new ArrayList<>();
-    // everyone who is not locked in a left
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
-
-    private int[][] matrix;
+    private List<Person> any;
 
     // Index numbers of Zeros in each row
-    private List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
-    // Index numbers of Zeros in each column
-    private List<int[]> indexOfNumberOfZerosInColumns = new ArrayList<>();
 
-    List<Couple> givePeopleWithoutPartner(List<Person> singles) {
+    List<Couple> givePeopleWithoutPartner(List<Person> singles, int strictnessLevel) {
+        if (strictnessLevel < 0 || strictnessLevel > 2)
+            throw new IllegalArgumentException("Strictness level must be between 0 and 2");
+
+        this.strictnessLevel = strictnessLevel;
         allSingleParticipants.addAll(singles);
         calcCouples();
         return couples;
     }
 
     void calcCouples() {
+        if(strictnessLevel == 0)
+            bringSingleTogether(createNumberBoxMatrix(allSingleParticipants));
+        else if(strictnessLevel == 1) {
+            List<Person> veganAndVeggie = allSingleParticipants.stream().filter( x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+            List<Person> meatAndAny = allSingleParticipants.stream().filter( x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie));
+            bringSingleTogether(createNumberBoxMatrix(meatAndAny));
+        } else if(strictnessLevel == 2) {
+            List<Person> vegan = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
+            List<Person> meat = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT)).toList();
+            List<Person> veggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+            this.any = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+            bringSingleTogether(createNumberBoxMatrix(vegan));
+            bringSingleTogether(createNumberBoxMatrix(meat));
+            bringSingleTogether(createNumberBoxMatrix(veggie));
+        }
+    }
 
-        matrix = new int[allSingleParticipants.size()][allSingleParticipants.size()];
-
-        for (int i = 0; i < allSingleParticipants.size(); i++) {
-            for (int j = 0; j < allSingleParticipants.size(); j++) {
-                // Making sure not to compare person with themselves
+    private NumberBox[][] createNumberBoxMatrix(List<Person> people){
+        NumberBox[][] matrix = new NumberBox[people.size()][people.size()];
+        for (int i = 0; i < people.size(); i++) {
+            for (int j = 0; j < people.size(); j++) {
+                matrix[i][j] = new NumberBox(calculateCost(people.get(i), people.get(j)));
+            }
+        }
+        //Here we cut the matrix diagonally
+        for (int i = 0; i < people.size(); i++) {
+            for (int j = 0; j < people.size(); j++) {
                 if (i == j)
-                    matrix[i][j] = -1;
-                else
-                    matrix[i][j] = calculateCost(allSingleParticipants.get(i), allSingleParticipants.get(j));
+                    matrix[i][j] = new NumberBox(-1);
             }
         }
 
-        // Subtract the smallest row value from all values in that row
-        initialCalc();
-        crossingOutZeros();
-
-        // Check if the sum of the row and column counts is greater than or equal to the number of rows
-        //printMatrix();
-
-
+        return matrix;
     }
 
-    private void initialCalc() {
-
-        // Subtract the smallest value in the row from all values in that row
-        for (int i = 0; i < matrix.length; i++) {
-            int smallestValueInRow = Integer.MAX_VALUE;
-            for (int j = 0; j < matrix[i].length; j++) {
-                // Find the smallest value in the row that is not -1
-                if (matrix[i][j] != -1 && matrix[i][j] < smallestValueInRow)
-                    smallestValueInRow = matrix[i][j];
-
-            }
-
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] != -1)
-                    if (matrix[i][j] < smallestValueInRow)
-                        throw new IllegalStateException("This should not happen as we chose the smallest value this was the value!"
-                                + matrix[i][j] + " and the smallest value was " + smallestValueInRow);
-                    else
-                        matrix[i][j] -= smallestValueInRow;
-            }
-        }
-
-        // Subtract the smallest value in the column from all values in that column
-        for (int i = 0; i < matrix.length; i++) {
-            int smallestValueInColumn = Integer.MAX_VALUE;
-            for (int j = 0; j < matrix[i].length; j++) {
-                // Find the smallest value in the column that is not -1
-                if (matrix[j][i] != -1 && matrix[j][i] < smallestValueInColumn)
-                    smallestValueInColumn = matrix[j][i];
-
-            }
-
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[j][i] != -1)
-                    if (matrix[j][i] < smallestValueInColumn)
-                        throw new IllegalStateException("This should not happen as we chose the smallest value this was the value!"
-                                + matrix[j][i] + " and the smallest value was " + smallestValueInColumn);
-                    else
-                        matrix[j][i] -= smallestValueInColumn;
-            }
-        }
+    private void bringSingleTogether(NumberBox[][] matrix) {
+        couples.addAll(crossingOutZeros(subtractSmallest(matrix)));
     }
 
-    void crossingOutZeros() {
+    private NumberBox[][] subtractSmallest(NumberBox[][] matrix) {
+
+        for (int i = 0; i < matrix.length; i++) {
+            // Find the smallest number in the row
+            int smallestNumberRow = Integer.MAX_VALUE;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j].getNumber() < smallestNumberRow && matrix[i][j].getNumber() > -1)
+                    smallestNumberRow = matrix[i][j].getNumber();
+            }
+            if(smallestNumberRow < 0)
+                throw new IllegalArgumentException("Smallest number in row is negative");
+
+            // Subtract the smallest number from all numbers in the row
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j].getNumber() != -1)
+                    matrix[i][j].setNumber(matrix[i][j].getNumber() - smallestNumberRow);
+            }
+
+            // Find the smallest number in the column
+            int smallestNumberColumn = Integer.MAX_VALUE;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[j][i].getNumber() < smallestNumberColumn && matrix[j][i].getNumber() > -1)
+                    smallestNumberColumn = matrix[j][i].getNumber();
+            }
+            if(smallestNumberColumn < 0)
+                throw new IllegalArgumentException("Smallest number in column is negative");
+
+            // Subtract the smallest number from all numbers in the column
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[j][i].getNumber() > -1)
+                    matrix[j][i].setNumber(matrix[j][i].getNumber() - smallestNumberColumn);
+            }
+        }
+        return matrix;
+    }
+
+    private List<Couple> crossingOutZeros(NumberBox[][] matrix) {
+        List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
+        // Index numbers of Zeros in each column
+        List<int[]> indexOfNumberOfZerosInColumns = new ArrayList<>();
+
         // Find the number of zeros in each row
         for (int i = 0; i < matrix.length; i++) {
             int numberOfZerosInRow = 0;
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] == 0)
-                    numberOfZerosInRow++;
-            }
-            int[] storage = new int[2];
-            storage[0] = i;
-            storage[1] = numberOfZerosInRow;
-            indexOfNumberOfZerosInRow.add(storage);
-        }
-
-
-        // Find the number of zeros in each column
-        for (int i = 0; i < matrix.length; i++) {
             int numberOfZerosInColumn = 0;
             for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[j][i] == 0)
+                if (matrix[i][j].getNumber() == 0)
+                    numberOfZerosInRow++;
+                if (matrix[j][i].getNumber() == 0)
                     numberOfZerosInColumn++;
+
             }
-            int[] storage = new int[2];
-            storage[0] = i;
-            storage[1] = numberOfZerosInColumn;
-            indexOfNumberOfZerosInColumns.add(storage);
+            int[] storageRow = new int[2];
+            storageRow[0] = i;
+            storageRow[1] = numberOfZerosInRow;
+            indexOfNumberOfZerosInRow.add(storageRow);
+
+            int[] storageColumn = new int[2];
+            storageColumn[0] = i;
+            storageColumn[1] = numberOfZerosInColumn;
+            indexOfNumberOfZerosInColumns.add(storageColumn);
         }
 
         // Sort the rows and columns by the number of zeros
         indexOfNumberOfZerosInRow.sort(Comparator.comparingInt(o -> o[1]));
         indexOfNumberOfZerosInColumns.sort(Comparator.comparingInt(o -> o[1]));
         //Print the sorted rows and columns
-       // for (int[] ints : indexOfNumberOfZerosInRow)
-         //   System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
+        // for (int[] ints : indexOfNumberOfZerosInRow)
+        //   System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
 
-       // for (int[] ints : indexOfNumberOfZerosInColumns)
-         //   System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
+        // for (int[] ints : indexOfNumberOfZerosInColumns)
+        //   System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
 
         System.out.println(indexOfNumberOfZerosInColumns.size());
         System.out.println(indexOfNumberOfZerosInRow.size());
 
         // now we need to cross out the zeros by the row or column with the most zeros
-
-        NumberBox[][] tempMatrix = new NumberBox[matrix.length][matrix.length];
-
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                tempMatrix[i][j] = new NumberBox(matrix[i][j]);
+        while (!allZerosHaveALine(matrix)){
+            // Find the row or column with the most zeros
+            int row = indexOfNumberOfZerosInRow.get(0)[0];
+            int column = indexOfNumberOfZerosInColumns.get(0)[0];
+            // Find the smallest number in the row or column
+            int smallestNumber = Integer.MAX_VALUE;
+            for (int i = 0; i < matrix.length; i++) {
+                if (matrix[row][i].getNumber() < smallestNumber && matrix[row][i].getNumber() != -1)
+                    smallestNumber = matrix[row][i].getNumber();
+                if (matrix[i][column].getNumber() < smallestNumber && matrix[i][column].getNumber() != -1)
+                    smallestNumber = matrix[i][column].getNumber();
             }
+            // Subtract the smallest number from all numbers in the row and add it to all numbers in the column
+            for (int i = 0; i < matrix.length; i++) {
+                if (matrix[row][i].getNumber() != -1)
+                    matrix[row][i].setNumber(matrix[row][i].getNumber() - smallestNumber);
+                if (matrix[i][column].getNumber() != -1)
+                    matrix[i][column].setNumber(matrix[i][column].getNumber() + smallestNumber);
+            }
+            // Cross out the zero
+            matrix[row][column].setCrossedOut(true);
+            // Remove the row and column from the list
+            indexOfNumberOfZerosInRow.remove(0);
+            indexOfNumberOfZerosInColumns.remove(0);
         }
-        while(allZerosHaveALine(tempMatrix)) {
 
-        }
+
+
+        indexOfNumberOfZerosInColumns.clear();
+        indexOfNumberOfZerosInRow.clear();
 
     }
 
 
-     <T> void printMatrix(T[][] matrix) {
+    <T> void printMatrix(T[][] matrix) {
         for (T[] ints : matrix) {
             for (T anInt : ints) {
                 System.out.print(anInt + " ");
             }
+
             System.out.println();
         }
     }
 
     //TODO Still need to check this method for correctness
+
     private boolean allZerosHaveALine(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             boolean rowHasZero = false;
@@ -189,11 +228,13 @@ class CoupleManager {
         }
         return true;
     }
-
     private int calculateCost(Person person1, Person person2) {
         int cost = 0;
 
-        //Can#t have singles build a pair if they are in the same building
+        if(person1.equals(person2))
+            return -1;
+
+        //Can't have singles build a pair if they are in the same building
         // or have the same kitchen and are not registered as a couple
         if (!(person1.getKitchen() == null) && !(person2.getKitchen() == null) && person1.getKitchen().distance(person2.getKitchen()) == 0)
             return -1;
@@ -228,52 +269,37 @@ class CoupleManager {
 
 
     public void addPerson(Person person) {
-        if (person.hasPartner()) {
-            allParticipants.add(person);
-            allParticipants.add(person.getPartner());
-        } else {
-            allParticipants.add(person);
-            allSingleParticipants.add(person);
-            calcCouples();
-        }
-    }
-
-    public void removePerson(String personID) {
-        Person person = getPerson(personID);
-        allParticipants.remove(person);
-        allSingleParticipants.remove(person);
+        allSingleParticipants.add(person);
         calcCouples();
     }
 
-    public void removeCouple(String CoupleID) {
-        allParticipants = allParticipants.stream()
-                .filter(x -> !x.getCoupleIDs().equals(CoupleID))
-                .toList();
+    public void removeSinglePerson(String personID) {
+        if (allSingleParticipants.stream().noneMatch(x -> Objects.equals(x.getID(), personID)))
+            throw new IllegalArgumentException("Person not found");
+        else
+            allSingleParticipants.remove(personID);
+        calcCouples();
     }
 
-    public Person getPerson(String string) {
-        return allParticipants.stream()
-                .filter(x -> x.getID().equals(string))
+
+    public Person getSinglePerson(String ID) {
+        return allSingleParticipants.stream()
+                .filter(x -> x.getID().equals(ID))
                 .findAny()
                 .orElse(null);
+    }
+
+
+    public int getStrictnessLevel() {
+        return strictnessLevel;
+    }
+
+    public void setStrictnessLevel(int strictnessLevel) {
+        this.strictnessLevel = strictnessLevel;
     }
 
     public List<Person> getSinglesList() {
         return allSingleParticipants;
     }
 
-    /** getCouple()
-     * returns a Couple by their CoupleID
-     *
-     * @param string the CoupleID
-     * @return the Couple
-     */
-    public Person[] getCouple(String string) {
-        return allParticipants.stream()
-                .map(Person::getCouple)
-                .filter(Objects::nonNull)
-                .filter(x -> x[0].getCoupleIDs().equals(string))
-                .findFirst()
-                .orElse(null);
-    }
 }
