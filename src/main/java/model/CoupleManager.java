@@ -80,10 +80,7 @@ class CoupleManager {
 
     private void bringSingleTogether(NumberBox[][] matrix) {
 
-
-            System.out.println(crossingOutZeros(matrix));
-
-
+        System.out.println(crossingOutZeros(subtractSmallest(matrix)));
         givePeoplePartner(matrix);
 
     }
@@ -154,43 +151,52 @@ class CoupleManager {
             indexOfNumberOfZerosInColumns.add(storageColumn);
         }
 
-        // Sort the rows and columns by the number of zeros
-        indexOfNumberOfZerosInRow.sort(Comparator.comparingInt(o -> o[1]));
-        indexOfNumberOfZerosInColumns.sort(Comparator.comparingInt(o -> o[1]));
+        // Sort the rows and columns by the number of zeros from most zeros to least
+        indexOfNumberOfZerosInRow.sort((x, y) -> Integer.compare(y[1], x[1]));
+        indexOfNumberOfZerosInColumns.sort((x, y) -> Integer.compare(y[1], x[1]));
+
         //Print the sorted rows and columns
-         for (int[] ints : indexOfNumberOfZerosInRow)
-           System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
+        for (int[] ints : indexOfNumberOfZerosInRow)
+            System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
 
-         for (int[] ints : indexOfNumberOfZerosInColumns)
-           System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
+        for (int[] ints : indexOfNumberOfZerosInColumns)
+            System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
 
-        System.out.println(indexOfNumberOfZerosInColumns.size());
-        System.out.println(indexOfNumberOfZerosInRow.size());
+
         int numberOfLines = 0;
         // now we need to cross out the zeros by the row or column with the most zeros
-        //while (!allZerosHaveALine(matrix)) {
-            // Find the row or column with the most zeros
-          //  int[] row = indexOfNumberOfZerosInRow.get(0);
-           // int[] column = indexOfNumberOfZerosInColumns.get(0);
-            //if(row[1] > column[1]) {
+        while (allZerosHaveALine(matrix)) {
+
+            int[] row = indexOfNumberOfZerosInRow.get(0);
+            int[] column = indexOfNumberOfZerosInColumns.get(0);
+            if (row[1] > column[1]) {
                 // Cross out the zeros in the row
-              //  for (int i = 0; i < matrix[row].length; i++) {
-                //    if (matrix[row][i].getNumber() == 0)
-                   //     matrix[row][i].setCrossedOut(true);
-                //}
-           // }
-            numberOfLines++;
-       // }
+                for (int i = 0; i < matrix[row[0]].length; i++)
+                    if (matrix[row[0]][i].getNumber() != -1)
+                        matrix[row[0]][i].setCrossedOut(true);
 
+                indexOfNumberOfZerosInRow.remove(0);
+            } else {
+                // Cross out the zeros in the column
+                for (int i = 0; i < matrix[column[0]].length; i++)
+                    if (matrix[i][column[0]].getNumber() != -1)
+                        matrix[i][column[0]].setCrossedOut(true);
 
+                indexOfNumberOfZerosInColumns.remove(0);
+            }
+
+            ++numberOfLines;
+
+        }
+        System.out.println(numberOfLines);
+        //printMatrix(matrix);
         indexOfNumberOfZerosInColumns.clear();
         indexOfNumberOfZerosInRow.clear();
 
-        return -1;
+        return numberOfLines;
     }
 
 
-    //TODO Still need to check this method for correctness
     private boolean allZerosHaveALine(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             boolean rowHasZero = false;
@@ -261,19 +267,22 @@ class CoupleManager {
         }
 
         // If both have a kitchen distance is the added cost if one doesn't and the other does the cost is reduced
-        if (person1.getKitchen() != null && person2.getKitchen() != null)
-            cost += (int) Math.round(person1.getKitchen().distance(person2.getKitchen()));
-        else if ((person1.getKitchen() != null && person2.getKitchen() == null) || (person1.getKitchen() == null && person2.getKitchen() != null))
+        if (person1.getKitchen() != null && person2.getKitchen() != null) {
+            cost += (int) Math.round(person1.getKitchen().distance(person2.getKitchen())) * 50;
+        } else if ((person1.getKitchen() != null && person2.getKitchen() == null) || (person1.getKitchen() == null && person2.getKitchen() != null)) {
             if (cost < 30)
                 cost = 0;
             else
                 cost -= 30;
+        }
+
+
 
         //If age difference is too big
         cost += Math.abs(person1.getAge().ordinal() - person2.getAge().ordinal()) * 20;
 
         if (person1.getGender().equals(person2.getGender()))
-            cost += 50;
+            cost += 200;
 
         return cost;
     }

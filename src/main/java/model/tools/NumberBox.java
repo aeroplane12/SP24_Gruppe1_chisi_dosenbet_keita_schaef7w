@@ -35,6 +35,10 @@ public class NumberBox {
 
     @Override
     public String toString() {
-        return Integer.toString(number);
+        if(crossedOut)
+            return "-" + number + "-";
+        else
+            return  Integer.toString(number);
+
     }
 }
