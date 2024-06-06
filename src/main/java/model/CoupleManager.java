@@ -12,7 +12,8 @@ public class CoupleManager {
     // everyone who is not locked in left
     List<Person> allSingleParticipants = new ArrayList<>();
     // everyone who is left
-    private final List<RatingPriority> ratingPrioritieOrder = new ArrayList<>(3);
+    private final List<RatingPriority> ratingPriorityOrder = new ArrayList<>(3);
+
     void calcCouples(){
         //TODO Algorithm to sort people into couples
         // needs to be in accordance with the specifications:
@@ -46,17 +47,17 @@ public class CoupleManager {
         int ageDiffWeight;
         int genderDiffWeight;
         // default ranking order for the rating system
-        if (ratingPrioritieOrder.isEmpty()) {
-            ratingPrioritieOrder.add(RatingPriority.FOODPREFERENCE);
-            ratingPrioritieOrder.add(RatingPriority.AGEDIFFERENCE);
-            ratingPrioritieOrder.add(RatingPriority.GENDERDIFFERENCE);
-            foodPrefWeight = 1;
+        if (ratingPriorityOrder.isEmpty()) {
+            ratingPriorityOrder.add(RatingPriority.GENDERDIFFERENCE);
+            ratingPriorityOrder.add(RatingPriority.AGEDIFFERENCE);
+            ratingPriorityOrder.add(RatingPriority.FOODPREFERENCE);
+            foodPrefWeight = 100;
             ageDiffWeight = 10;
-            genderDiffWeight = 100;
+            genderDiffWeight = 1;
         } else {
-            foodPrefWeight = (int) Math.pow(10, ratingPrioritieOrder.indexOf(RatingPriority.FOODPREFERENCE));
-            ageDiffWeight = (int) Math.pow(10, ratingPrioritieOrder.indexOf(RatingPriority.AGEDIFFERENCE));
-            genderDiffWeight = (int) Math.pow(10, ratingPrioritieOrder.indexOf(RatingPriority.GENDERDIFFERENCE));
+            foodPrefWeight = (int) Math.pow(10, ratingPriorityOrder.indexOf(RatingPriority.FOODPREFERENCE));
+            ageDiffWeight = (int) Math.pow(10, ratingPriorityOrder.indexOf(RatingPriority.AGEDIFFERENCE));
+            genderDiffWeight = (int) Math.pow(10, ratingPriorityOrder.indexOf(RatingPriority.GENDERDIFFERENCE));
         }
 
 
@@ -84,13 +85,11 @@ public class CoupleManager {
         }
         int rating = 0;
         // if egali and vegi/vegan are tested, half the rating, prefer egali and meat
-
         if ((person1.getFoodPreference().value == 0 && person2.getFoodPreference().value > 1) ||
             person2.getFoodPreference().value == 0 && person1.getFoodPreference().value > 1) {
             rating = foodPrefWeight;
         }
         // computes a rating for the age difference,
-
         rating += ageDiffWeight * Math.abs(person1.getAge().value - person2.getAge().value) ;
         // adjusting rating based on the gender of both ppl
         if (person1.getGender() == person2.getGender()) {

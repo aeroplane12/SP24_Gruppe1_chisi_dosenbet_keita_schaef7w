@@ -49,7 +49,9 @@ public class Couple {
         }
 
     }
-
+    public int getID() {
+        return ID;
+    }
 
     public Person getPerson1() {
         return person1;
