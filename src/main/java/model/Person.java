@@ -124,12 +124,8 @@ public class Person {
     public void setPartner(Person partner) {
         this.partner = partner;
     }
-    public AgeGroup.AgeRange getAge() {
-        return age;
-    }
-    public Gender.genderValue getGender() {
-        return gender;
-    }
+
+
     public void setLockedIn(boolean lockedIn) {
         this.lockedIn = lockedIn;
     }
