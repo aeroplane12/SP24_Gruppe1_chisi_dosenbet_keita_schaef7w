@@ -54,8 +54,8 @@ public class Manager {
             else
                 singles.add(x);
         });
-        // TODO: Remove singles && people who dont have a person go back to singles
-        //couples.addAll(coupleManager.givePeopleWithoutPartner(singles)); // cant add temp null value in addAll
+        couples.addAll(coupleManager.givePeopleWithoutPartner(singles));
+        singles = coupleManager.getSinglesList();
 
         //groupManager.calcGroups(couples);
     }

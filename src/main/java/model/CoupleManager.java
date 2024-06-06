@@ -53,6 +53,10 @@ public class CoupleManager {
                 .orElse(null);
     }
 
+    public List<Person> getSinglesList() {
+        return allSingleParticipants;
+    }
+
     /** getCouple()
      * returns a Couple by their CoupleID
      * @param string the CoupleID
