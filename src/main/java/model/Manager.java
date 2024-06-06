@@ -25,9 +25,10 @@ public class Manager {
         this.coupleManager = CoupleManager.getInstance();
         this.couples = new ArrayList<>();
     }
-    public Manager(GroupManager groupManager, CoupleManager coupleManager,String path){
-        this.groupManager = groupManager;
-        this.coupleManager = coupleManager;
+    public Manager(String path){
+        this.groupManager = GroupManager.getInstance();
+        this.coupleManager = CoupleManager.getInstance();
+        this.couples = new ArrayList<>();
         inputLocation(path);
     }
 
@@ -58,6 +59,7 @@ public class Manager {
                 singles.add(x);
         });
         couples.addAll(coupleManager.givePeopleWithoutPartner(singles));
+
         singles = coupleManager.getSinglesList();
 
         //groupManager.calcGroups(couples);

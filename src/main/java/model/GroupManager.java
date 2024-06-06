@@ -7,10 +7,12 @@ import java.util.stream.Collectors;
 
 public class GroupManager {
     private Double FOODPREFWEIGHT;
+
     private Double AVGAGERANGEWEIGHT;
     private Double AVGGENDERDIVWEIGHT;
     private List<Couple> allCouples;
     private List<Couple> succeedingCouples;
+    private static GroupManager instance;
     private Map<Course,List<Group>> ledger = new HashMap<>(Map.of(
             Course.DESSERT,new ArrayList<>(),
             Course.DINNER,new ArrayList<>(),
@@ -25,14 +27,13 @@ public class GroupManager {
         AVGAGERANGEWEIGHT = 0d;
         AVGGENDERDIVWEIGHT = 0d;
     }
-    public GroupManager(Double foodprefweight,
-                        Double maxavgagerange,
-                        Double mingenderdistribution) {
-        FOODPREFWEIGHT = foodprefweight;
-        AVGAGERANGEWEIGHT = maxavgagerange;
-        AVGGENDERDIVWEIGHT = mingenderdistribution;
-    }
 
+    public static GroupManager getInstance() {
+        if(instance == null)
+            instance = new GroupManager();
+
+        return instance;
+    }
 
 
     public void calcGroups(List<Couple> allCouples){
@@ -54,7 +55,7 @@ public class GroupManager {
                                 .distance(partyLoc)));
         for (Couple c : possibleHosts) {
 
-        }
+       }
 
     }
 
@@ -72,6 +73,30 @@ public class GroupManager {
                 .toList();
         // HUNGARIAN ALGORITHM HERE
         return null;
+    }
+
+    public Double getFOODPREFWEIGHT() {
+        return FOODPREFWEIGHT;
+    }
+
+    public void setFOODPREFWEIGHT(Double FOODPREFWEIGHT) {
+        this.FOODPREFWEIGHT = FOODPREFWEIGHT;
+    }
+
+    public Double getAVGAGERANGEWEIGHT() {
+        return AVGAGERANGEWEIGHT;
+    }
+
+    public void setAVGAGERANGEWEIGHT(Double AVGAGERANGEWEIGHT) {
+        this.AVGAGERANGEWEIGHT = AVGAGERANGEWEIGHT;
+    }
+
+    public Double getAVGGENDERDIVWEIGHT() {
+        return AVGGENDERDIVWEIGHT;
+    }
+
+    public void setAVGGENDERDIVWEIGHT(Double AVGGENDERDIVWEIGHT) {
+        this.AVGGENDERDIVWEIGHT = AVGGENDERDIVWEIGHT;
     }
 
 }

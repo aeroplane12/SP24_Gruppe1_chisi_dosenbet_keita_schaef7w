@@ -276,8 +276,4 @@ class CoupleManager {
                 .findFirst()
                 .orElse(null);
     }
-
-    public List<Couple> givePeopleWithoutPartner(List<Person> singles) {
-        return null;
-    }
 }

@@ -9,6 +9,7 @@ public class Person {
     private final String ID;
     private String name;
     private FoodPreference.FoodPref foodPreference;
+
     private AgeGroup.AgeRange age;
     private Gender.genderValue gender;
     private Kitchen kitchen;
@@ -103,14 +104,6 @@ public class Person {
 
     public String getID() {
         return ID;
-    }
-
-    public AgeGroup.AgeRange getAge() {
-        return age;
-    }
-
-    public Gender.genderValue getGender() {
-        return gender;
     }
 
     public Person getPartner() {
