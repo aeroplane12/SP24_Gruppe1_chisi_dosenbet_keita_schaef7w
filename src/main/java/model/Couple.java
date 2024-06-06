@@ -49,7 +49,9 @@ public class Couple {
         }
 
     }
-
+    public int getID() {
+        return ID;
+    }
 
     public Person getPerson1() {
         return person1;
@@ -98,6 +100,10 @@ public class Couple {
 
     public void setWhoseKitchen(boolean whoseKitchen) {
         this.whoseKitchen = whoseKitchen;
+    }
+
+    public Map<Course, Integer> getWithWhomAmIEating() {
+        return withWhomAmIEating;
     }
 
     public Kitchen getCurrentKitchen(){

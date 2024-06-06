@@ -12,6 +12,20 @@ public class FoodPreference {
         FoodPref(int i){
             value = i;
         }
+
+        @Override
+        public String toString() {
+            switch (this.value) {
+                case 3:
+                    return "VEGAN";
+                case 2:
+                    return "VEGGIE";
+                case 1:
+                    return "MEAT";
+                default:
+                    return "ANY";
+            }
+        }
     }
 
     /**
@@ -27,5 +41,6 @@ public class FoodPreference {
             default -> FoodPref.NONE;
         };
     }
+
 
 }
