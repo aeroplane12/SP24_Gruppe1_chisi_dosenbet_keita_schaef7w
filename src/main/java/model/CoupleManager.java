@@ -13,6 +13,10 @@ class CoupleManager {
     private static final List<List<NumberBox[][]>> matrixList = new ArrayList<>();
     private static CoupleManager instance;
     private int strictnessLevel = 0;
+
+    private Location partyLoc;
+
+    private int currentCoupleCount;
     CoupleManager(){
         instance=this;
     }
@@ -43,11 +47,13 @@ class CoupleManager {
 
     // Index numbers of Zeros in each row
 
-    List<Couple> givePeopleWithoutPartner(List<Person> singles, int strictnessLevel) {
+    List<Couple> givePeopleWithoutPartner(List<Person> singles, int strictnessLevel, int currentCoupleCount, Location partyLoc) {
         if (strictnessLevel < 0 || strictnessLevel > 2)
             throw new IllegalArgumentException("Strictness level must be between 0 and 2");
 
         this.strictnessLevel = strictnessLevel;
+        this.currentCoupleCount = currentCoupleCount;
+        this.partyLoc = partyLoc;
         allSingleParticipants.addAll(singles);
         calcCouples();
         return couples;
@@ -55,20 +61,20 @@ class CoupleManager {
 
     void calcCouples() {
         if (strictnessLevel == 0)
-            bringSingleTogether(createNumberBoxMatrix(allSingleParticipants));
+            bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
         else if (strictnessLevel == 1) {
             List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
             List<Person> meatAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
-            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie));
-            bringSingleTogether(createNumberBoxMatrix(meatAndAny));
+            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie), veganAndVeggie);
+            bringSingleTogether(createNumberBoxMatrix(meatAndAny), meatAndAny);
         } else if (strictnessLevel == 2) {
             List<Person> vegan = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
             List<Person> meat = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT)).toList();
             List<Person> veggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
             this.any = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
-            bringSingleTogether(createNumberBoxMatrix(vegan));
-            bringSingleTogether(createNumberBoxMatrix(meat));
-            bringSingleTogether(createNumberBoxMatrix(veggie));
+            bringSingleTogether(createNumberBoxMatrix(vegan), vegan);
+            bringSingleTogether(createNumberBoxMatrix(meat), meat);
+            bringSingleTogether(createNumberBoxMatrix(veggie), veggie);
         }
     }
     //This is correct
@@ -119,10 +125,11 @@ class CoupleManager {
         return matrix;
     }
 
-    private void bringSingleTogether(NumberBox[][] matrix) {
+    private void bringSingleTogether(NumberBox[][] matrix, List<Person> people) {
         //TODO: Till here everything is correct
         crossingOutZeros(subtractSmallest(matrix));
-        matchingSingleTogether(splitDiagonal(matrix));
+        printMatrix(splitDiagonal(matrix));
+        matchingSingleTogether(splitDiagonal(matrix), people);
 
     }
 
@@ -209,34 +216,30 @@ class CoupleManager {
         return true;
     }
 
-    private void matchingSingleTogether(NumberBox[][] numberBox) {
+    private void matchingSingleTogether(NumberBox[][] numberBox, List<Person> people){
 
-    }
 
-    private NumberBox[][] splitDiagonal(NumberBox[][] matrix) {
-        NumberBox[][] resultMatrix = new NumberBox[matrix.length][matrix.length];
-        //Here we cut the matrix diagonally
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (i <= j)
-                    resultMatrix[i][j] = matrix[i][j];
-                else
-                    resultMatrix[i][j] = new NumberBox(-1);
+        for (int i = 0; i < numberBox.length; i++) {
+            for (int j = 0; j < numberBox[i].length; j++) {
+                if (numberBox[i][j].getNumber() == 0.0) {
+                        Couple couple = new Couple(currentCoupleCount++,
+                                people.get(i),
+                                people.get(j), people.get(i).getKitchen(),
+                                people.get(j).getKitchen(), people.get(i).getFoodPreference(),
+                                partyLoc);
+                        people.get(i).setPartner(people.get(j));
+                        people.get(j).setPartner(people.get(i));
+                        couples.add(couple);
+                        for(int k = 0; k < numberBox.length; k++){
+                            numberBox[i][k].setNumber(-1);
+                            numberBox[k][j].setNumber(-1);
+                        }
+                        break;
+                }
             }
         }
-        return resultMatrix;
     }
 
-
-    <T> void printMatrix(T[][] matrix) {
-        for (T[] ints : matrix) {
-            for (T anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-
-            System.out.println();
-        }
-    }
     //This is correct
     private double calculateCost(Person person1, Person person2) {
         int cost = 10;
@@ -283,6 +286,29 @@ class CoupleManager {
             cost += 200;
         return cost;
     }
+    private NumberBox[][] splitDiagonal(NumberBox[][] matrix) {
+        NumberBox[][] resultMatrix = new NumberBox[matrix.length][matrix.length];
+        //Here we cut the matrix diagonally
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (i <= j)
+                    resultMatrix[i][j] = matrix[i][j];
+                else
+                    resultMatrix[i][j] = new NumberBox(-1);
+            }
+        }
+        return resultMatrix;
+    }
+    <T> void printMatrix(T[][] matrix) {
+        for (T[] ints : matrix) {
+            for (T anInt : ints) {
+                System.out.print(anInt + " ");
+            }
+
+            System.out.println();
+        }
+    }
+
 
 
     public void addPerson(Person person) {
