@@ -21,7 +21,7 @@ public class NumberBox {
     }
 
     public boolean isCrossedOut() {
-        return crossedOut;
+        return crossedOut || horizontalCrossedOut;
     }
 
     public void setCrossedOut(boolean crossedOut, boolean horizontalCrossedOut) {

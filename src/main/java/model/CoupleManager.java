@@ -127,9 +127,11 @@ class CoupleManager {
 
     private void bringSingleTogether(NumberBox[][] matrix, List<Person> people) {
         crossingOutZeros(subtractSmallest(matrix));
-        //TODO: Till here everything is correct
+
         matrix = splitDiagonal(matrix);
         matchingSingleTogether(matrix, people);
+        printMatrix(matrix);
+
 
 
     }
@@ -217,13 +219,13 @@ class CoupleManager {
         return true;
     }
 
+    //This is correct, I think
     private void matchingSingleTogether(NumberBox[][] numberBox, List<Person> people){
 
 
         for (int i = 0; i < numberBox.length; i++) {
-            boolean partnerWasFound = false;
             for (int j = 0; j < numberBox[i].length; j++) {
-                if (numberBox[i][j].getNumber() == 0.0) {
+                if (numberBox[i][j].getNumber() == 0.0 && people.get(j).getPartner() == null && people.get(i).getPartner() == null) {
                         Couple couple = new Couple(currentCoupleCount++,
                                 people.get(i),
                                 people.get(j), people.get(i).getKitchen(),
@@ -232,19 +234,15 @@ class CoupleManager {
                         people.get(i).setPartner(people.get(j));
                         people.get(j).setPartner(people.get(i));
                         couples.add(couple);
-                        for(int k = 0; k < numberBox.length; k++){
-                            numberBox[i][k].setNumber(-1);
-                            numberBox[k][j].setNumber(-1);
-                        }
-                        partnerWasFound = true;
                         break;
                 }
             }
-            if(!partnerWasFound) {
-                stillSingle.add(people.get(i));
-            }
         }
 
+        for (int i = 0; i < numberBox.length; i++) {
+            if (people.get(i).getPartner() == null)
+                stillSingle.add(people.get(i));
+        }
     }
 
     //This is correct
