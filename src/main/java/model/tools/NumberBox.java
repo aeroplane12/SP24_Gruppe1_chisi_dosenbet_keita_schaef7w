@@ -34,6 +34,10 @@ public class NumberBox {
     }
 
     public void setNumber(double number) {
+        if (number == -1) {
+            this.crossedOut = false;
+            this.horizontalCrossedOut = false;
+        }
         this.number = number;
     }
 

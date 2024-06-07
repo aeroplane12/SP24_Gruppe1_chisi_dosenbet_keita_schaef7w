@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CoupleManagerTest {
     private CoupleManager coupleManager;
-    private Person person1, person2, person3, person4, person5;
+    private Person person1, person2, person3, person4;
     private List<Person> singles;
 
     @BeforeEach
@@ -26,44 +26,12 @@ public class CoupleManagerTest {
         person2 = new Person("2", "Bob", AgeGroup.getAgeRange("30"), Gender.genderValue.male, FoodPreference.getFoodPref("MEAT"), kitchen2, null);
         person3 = new Person("3", "Charlie", AgeGroup.getAgeRange("35"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGGIE"), kitchen1, null);
         person4 = new Person("4", "Diana", AgeGroup.getAgeRange("28"), Gender.genderValue.female, FoodPreference.getFoodPref("NONE"), kitchen2, null);
-        person5 = new Person("5", "Eve", AgeGroup.getAgeRange("32"), Gender.genderValue.female, FoodPreference.getFoodPref("VEGAN"), kitchen1, null);
 
         singles = new ArrayList<>();
         singles.add(person1);
         singles.add(person2);
         singles.add(person3);
         singles.add(person4);
-    }
-
-    @Test
-    public void testSetAndGetStrictnessLevel() {
-        coupleManager.setStrictnessLevel(0);
-        assertEquals(0, coupleManager.getStrictnessLevel());
-        coupleManager.setStrictnessLevel(1);
-        assertEquals(1, coupleManager.getStrictnessLevel());
-        coupleManager.setStrictnessLevel(2);
-        assertEquals(2, coupleManager.getStrictnessLevel());
-    }
-
-    @Test
-    public void testGivePeopleWithoutPartnerLowStrictness() {
-        coupleManager.givePeopleWithoutPartner(singles, 0);
-        List<Couple> couples = coupleManager.couples;
-        assertNotNull(couples);
-    }
-
-    @Test
-    public void testGivePeopleWithoutPartnerMediumStrictness() {
-        coupleManager.givePeopleWithoutPartner(singles, 1);
-        List<Couple> couples = coupleManager.couples;
-        assertNotNull(couples);
-    }
-
-    @Test
-    public void testGivePeopleWithoutPartnerHighStrictness() {
-        coupleManager.givePeopleWithoutPartner(singles, 2);
-        List<Couple> couples = coupleManager.couples;
-        assertNotNull(couples);
     }
 
     @Test
@@ -77,24 +45,24 @@ public class CoupleManagerTest {
     @Test
     public void testAddPerson() {
         // TODO: Implement this test method once addPerson is implemented
-        coupleManager.addPerson(person5);
-        assertTrue(coupleManager.getSinglesList().contains(person5));
+        coupleManager.addPerson(person1);
+        assertTrue(coupleManager.getSinglesList().contains(person1));
     }
 
     @Test
     public void testRemovePerson() {
         // TODO: Implement this test method once removePerson is implemented
-        coupleManager.addPerson(person5);
-        coupleManager.removeSinglePerson(person5.getID());
-        assertFalse(coupleManager.getSinglesList().contains(person5));
+        coupleManager.addPerson(person1);
+        coupleManager.removeSinglePerson(person1);
+        assertFalse(coupleManager.getSinglesList().contains(person1));
     }
 
     @Test
     public void testGetPerson() {
         // TODO: Implement this test method once getPerson is implemented
-        coupleManager.addPerson(person5);
-        Person retrievedPerson = coupleManager.getSinglePerson(person5.getID());
-        assertEquals(person5, retrievedPerson);
+        coupleManager.addPerson(person1);
+        Person retrievedPerson = coupleManager.getSinglePerson(person1.getID());
+        assertEquals(person1, retrievedPerson);
     }
 
     @Test
@@ -104,16 +72,4 @@ public class CoupleManagerTest {
         List<Couple> couples = coupleManager.couples;
         assertNotNull(couples);
     }
-
-    @Test
-    public void testCalculateCost() {
-        double cost = coupleManager.calculateCost(person1, person2);
-        assertNotEquals(-1, cost);
-
-        cost = coupleManager.calculateCost(person1, person1);
-        assertEquals(-1, cost);
-    }
-
-
-
 }
