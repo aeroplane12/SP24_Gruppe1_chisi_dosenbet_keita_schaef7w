@@ -17,7 +17,7 @@ public class CoupleManagerTest {
         // TODO: Initialize coupleManager with appropriate data
         coupleManager = CoupleManager.getInstance();
         coupleManager.setStrictnessLevel(0);
-        coupleManager.getSinglesList().clear(); // Ensure the list is empty before each test
+        coupleManager.getStillSingleList().clear(); // Ensure the list is empty before each test
 
         Kitchen kitchen1 = new Kitchen(10.0, 20.0, false, 1.0);
         Kitchen kitchen2 = new Kitchen(30.0, 40.0, true, 2.0);
@@ -37,8 +37,8 @@ public class CoupleManagerTest {
     @Test
     public void testCalcCouples() {
         // TODO: Implement this test method once calcCouples is implemented
-        coupleManager.givePeopleWithoutPartner(singles, 1);
-        List<Couple> couples = coupleManager.couples;
+        coupleManager.givePeopleWithoutPartner(singles, 1, 1, new Location(0.2, 0.4));
+        List<Couple> couples = coupleManager.getCouples();
         assertNotNull(couples);
     }
 
@@ -46,7 +46,7 @@ public class CoupleManagerTest {
     public void testAddPerson() {
         // TODO: Implement this test method once addPerson is implemented
         coupleManager.addPerson(person1);
-        assertTrue(coupleManager.getSinglesList().contains(person1));
+        assertTrue(coupleManager.getStillSingleList().contains(person1));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class CoupleManagerTest {
         // TODO: Implement this test method once removePerson is implemented
         coupleManager.addPerson(person1);
         coupleManager.removeSinglePerson(person1);
-        assertFalse(coupleManager.getSinglesList().contains(person1));
+        assertFalse(coupleManager.getStillSingleList().contains(person1));
     }
 
     @Test
@@ -65,10 +65,11 @@ public class CoupleManagerTest {
         assertEquals(person1, retrievedPerson);
     }
 
+    //TODO: Fix the following test
     @Test
     public void testGetCouple() {
         // TODO: Implement this test method once getCouple is implemented
-        coupleManager.givePeopleWithoutPartner(singles, 0);
+        coupleManager.givePeopleWithoutPartner(singles, 0,0,new Location(0.2,0.4));
         List<Couple> couples = coupleManager.couples;
         assertNotNull(couples);
     }

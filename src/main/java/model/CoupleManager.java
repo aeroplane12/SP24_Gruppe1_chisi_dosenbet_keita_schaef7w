@@ -20,7 +20,6 @@ class CoupleManager {
     CoupleManager(){
         instance=this;
     }
-
     /**
      * CoupleManager() is a singleton class
      * Has different levels of strictness, the higher the number, the more strict the algorithm in terms of pairing of food preferences
@@ -38,6 +37,8 @@ class CoupleManager {
         return instance;
     }
 
+    private List<Person> stillSingle = new ArrayList<>();
+
     List<Couple> couples = new ArrayList<>();
 
     // might need overview over all People
@@ -47,7 +48,7 @@ class CoupleManager {
 
     // Index numbers of Zeros in each row
 
-    List<Couple> givePeopleWithoutPartner(List<Person> singles, int strictnessLevel, int currentCoupleCount, Location partyLoc) {
+    void givePeopleWithoutPartner(List<Person> singles, int strictnessLevel, int currentCoupleCount, Location partyLoc) {
         if (strictnessLevel < 0 || strictnessLevel > 2)
             throw new IllegalArgumentException("Strictness level must be between 0 and 2");
 
@@ -56,7 +57,6 @@ class CoupleManager {
         this.partyLoc = partyLoc;
         allSingleParticipants.addAll(singles);
         calcCouples();
-        return couples;
     }
 
     void calcCouples() {
@@ -126,10 +126,11 @@ class CoupleManager {
     }
 
     private void bringSingleTogether(NumberBox[][] matrix, List<Person> people) {
-        //TODO: Till here everything is correct
         crossingOutZeros(subtractSmallest(matrix));
-        printMatrix(splitDiagonal(matrix));
-        matchingSingleTogether(splitDiagonal(matrix), people);
+        //TODO: Till here everything is correct
+        matrix = splitDiagonal(matrix);
+        matchingSingleTogether(matrix, people);
+
 
     }
 
@@ -220,6 +221,7 @@ class CoupleManager {
 
 
         for (int i = 0; i < numberBox.length; i++) {
+            boolean partnerWasFound = false;
             for (int j = 0; j < numberBox[i].length; j++) {
                 if (numberBox[i][j].getNumber() == 0.0) {
                         Couple couple = new Couple(currentCoupleCount++,
@@ -234,10 +236,15 @@ class CoupleManager {
                             numberBox[i][k].setNumber(-1);
                             numberBox[k][j].setNumber(-1);
                         }
+                        partnerWasFound = true;
                         break;
                 }
             }
+            if(!partnerWasFound) {
+                stillSingle.add(people.get(i));
+            }
         }
+
     }
 
     //This is correct
@@ -341,8 +348,12 @@ class CoupleManager {
         this.strictnessLevel = strictnessLevel;
     }
 
-    public List<Person> getSinglesList() {
-        return allSingleParticipants;
+    public List<Person> getStillSingleList() {
+        return stillSingle;
+    }
+
+    public List<Couple> getCouples() {
+        return couples;
     }
 
 }
