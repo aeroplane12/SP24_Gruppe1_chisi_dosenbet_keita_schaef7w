@@ -9,7 +9,7 @@ public class GroupManager {
     private Double AVGAGERANGEWEIGHT;
     private Double AVGGENDERDIVWEIGHT;
     public List<Couple> allCouples;
-    private List<Couple> succeedingCouples = new ArrayList<>();
+    public List<Couple> succeedingCouples = new ArrayList<>();
     public List<Couple> overBookedCouples = new ArrayList<>(); //couples that are sadly not usable unless a conflicting couple gets deleted
 
     private static GroupManager instance;
