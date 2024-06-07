@@ -84,4 +84,7 @@ public class Manager {
         return coupleManager;
     }
 
+    public static int getGroupCounter(){
+        return group_Counter++;
+    }
 }

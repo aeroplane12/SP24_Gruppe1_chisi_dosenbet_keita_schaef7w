@@ -13,6 +13,9 @@ class CoupleManager {
     private static final List<List<NumberBox[][]>> matrixList = new ArrayList<>();
     private static CoupleManager instance;
     private int strictnessLevel = 0;
+    CoupleManager(){
+        instance=this;
+    }
 
     /**
      * CoupleManager() is a singleton class
