@@ -8,17 +8,17 @@ public class GroupManager {
     private Double FOODPREFWEIGHT;
     private Double AVGAGERANGEWEIGHT;
     private Double AVGGENDERDIVWEIGHT;
-    private List<Couple> allCouples;
+    public List<Couple> allCouples;
     private List<Couple> succeedingCouples = new ArrayList<>();
-    private List<Couple> overBookedCouples = new ArrayList<>(); //couples that are sadly not usable unless a conflicting couple gets deleted
+    public List<Couple> overBookedCouples = new ArrayList<>(); //couples that are sadly not usable unless a conflicting couple gets deleted
 
     private static GroupManager instance;
-    private Map<Course,List<Group>> ledger = new HashMap<>(Map.of(
+    public Map<Course,List<Group>> ledger = new HashMap<>(Map.of(
             Course.DESSERT,new ArrayList<>(),
             Course.DINNER,new ArrayList<>(),
             Course.STARTER,new ArrayList<>()));
     private Map<Kitchen,List<Couple>> kitchenLedger;
-    private Location partyLoc;
+    public Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
         Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0?
                 0 : (x.getFoodPref().value - y.getFoodPref().value)) * FOODPREFWEIGHT
@@ -102,7 +102,7 @@ public class GroupManager {
      *                this as their primary kitchen
      * @return all conflicting Couples
      */
-    private List<Couple> kitchenConflicts(Kitchen kitchen){
+    public List<Couple> kitchenConflicts(Kitchen kitchen){
         List<Couple> output = new ArrayList<>();
         for (Couple i : allCouples) {
             if (i.getCurrentKitchen() == kitchen) {
@@ -117,7 +117,7 @@ public class GroupManager {
      * detects and resolves KitchenConflicts
      * by either switching the couple-kitchen or moving the couple to the succeedingCouples list
      */
-    private void resolveKitchenConflicts(){
+    public void resolveKitchenConflicts(){
         // first mapping all  kitchen to their owners
         Map<Kitchen,List<Couple>> kitchenAmountLedger = new HashMap<>();
         for (Couple i : allCouples){
@@ -157,7 +157,7 @@ public class GroupManager {
      * @param hosts all possible hosts
      * @return the Groups associated with the course
      */
-    private List<Group> fillCourse(List<Couple> hosts,Course course){
+    public List<Group> fillCourse(List<Couple> hosts, Course course){
         List<Group> assortedGroups = new ArrayList<>();
         while (!hosts.isEmpty()) {
             assortedGroups.add(findGuests(hosts.stream().filter(x->!x.WasHost() &&
@@ -167,7 +167,7 @@ public class GroupManager {
         return assortedGroups;
     }
 
-    private Group findGuests(Couple host,List<Couple> possibleMatches,Course course){
+    public Group findGuests(Couple host, List<Couple> possibleMatches, Course course){
         List<Couple> potentialGuests = possibleMatches.stream()
                 .filter(x->!x.getMetCouple().contains(host) ||
                         !x.equals(host))
