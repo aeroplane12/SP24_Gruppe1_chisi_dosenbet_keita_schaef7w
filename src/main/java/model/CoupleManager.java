@@ -121,12 +121,13 @@ class CoupleManager {
 
     private void bringSingleTogether(NumberBox[][] matrix) {
         //TODO: Till here everything is correct
-        System.out.println(crossingOutZeros(subtractSmallest(matrix)));
+        crossingOutZeros(subtractSmallest(matrix));
+        matchingSingleTogether(splitDiagonal(matrix));
 
     }
 
-
-    private int crossingOutZeros(NumberBox[][] matrix) {
+    //This is correct
+    private void crossingOutZeros(NumberBox[][] matrix) {
         List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
         // Index numbers of Zeros in each column
         List<int[]> indexOfNumberOfZerosInColumns = new ArrayList<>();
@@ -168,7 +169,7 @@ class CoupleManager {
         System.out.println(indexOfNumberOfZerosInRow.size());
         int numberOfLines = 0;
         // now we need to cross out the zeros by the row or column with the most zeros
-        while (!allZerosHaveALine(matrix)){
+        while (!allZerosHaveALine(matrix) && numberOfLines != matrix.length){
             int[] row = indexOfNumberOfZerosInRow.get(0);
             int[] column = indexOfNumberOfZerosInColumns.get(0);
             if (row[1] > column[1]) {
@@ -190,12 +191,8 @@ class CoupleManager {
             ++numberOfLines;
 
         }
-        System.out.println(indexOfNumberOfZerosInColumns.size());
-        System.out.println(indexOfNumberOfZerosInRow.size());
         indexOfNumberOfZerosInColumns.clear();
         indexOfNumberOfZerosInRow.clear();
-
-        return numberOfLines;
     }
 
 
@@ -212,7 +209,7 @@ class CoupleManager {
         return true;
     }
 
-    private void givePeoplePartner(NumberBox[][] numberBox) {
+    private void matchingSingleTogether(NumberBox[][] numberBox) {
 
     }
 
@@ -293,11 +290,11 @@ class CoupleManager {
         calcCouples();
     }
 
-    public void removeSinglePerson(String personID) {
-        if (allSingleParticipants.stream().noneMatch(x -> Objects.equals(x.getID(), personID)))
+    public void removeSinglePerson(Person person) {
+        if (allSingleParticipants.contains(person))
             throw new IllegalArgumentException("Person not found");
         else
-            allSingleParticipants.remove(personID);
+            allSingleParticipants.remove(person);
         calcCouples();
     }
 

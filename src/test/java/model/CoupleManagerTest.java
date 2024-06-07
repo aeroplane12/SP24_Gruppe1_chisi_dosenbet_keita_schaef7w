@@ -53,7 +53,7 @@ public class CoupleManagerTest {
     public void testRemovePerson() {
         // TODO: Implement this test method once removePerson is implemented
         coupleManager.addPerson(person1);
-        coupleManager.removeSinglePerson(person1.getID());
+        coupleManager.removeSinglePerson(person1);
         assertFalse(coupleManager.getSinglesList().contains(person1));
     }
 
