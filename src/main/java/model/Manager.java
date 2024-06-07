@@ -58,9 +58,9 @@ public class Manager {
             else
                 singles.add(x);
         });
-        couples.addAll(coupleManager.givePeopleWithoutPartner(singles, 0, couple_Counter++, partyLoc));
-
-        singles = coupleManager.getSinglesList();
+        coupleManager.givePeopleWithoutPartner(singles, 0, couple_Counter++, partyLoc);
+        couples.addAll(coupleManager.getCouples());
+        singles = coupleManager.getStillSingleList();
 
         //groupManager.calcGroups(couples);
     }
