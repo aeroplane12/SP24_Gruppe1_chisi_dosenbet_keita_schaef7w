@@ -1,5 +1,6 @@
 package model;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,10 +11,10 @@ public class Couple {
 
     // Integer is the Group ID
 
-    private final Map<Course,Integer> withWhomAmIEating = Map.of(
+    private final Map<Course,Integer> withWhomAmIEating = new HashMap<>(Map.of(
             Course.STARTER,-1,
             Course.DINNER,-1,
-            Course.DESSERT,-1);
+            Course.DESSERT,-1));
 
     private Person person1;
 
@@ -98,8 +99,8 @@ public class Couple {
         return whoseKitchen;
     }
 
-    public void setWhoseKitchen(boolean whoseKitchen) {
-        this.whoseKitchen = whoseKitchen;
+    public void toggleWhoseKitchen() {
+        whoseKitchen = !whoseKitchen;
     }
 
     public Map<Course, Integer> getWithWhomAmIEating() {
@@ -108,6 +109,9 @@ public class Couple {
 
     public Kitchen getCurrentKitchen(){
         return whoseKitchen? kitchen2:kitchen1;
+    }
+    public Kitchen getOtherKitchen(){
+        return !whoseKitchen? kitchen2:kitchen1;
     }
 
     public Set<Couple> getMetCouple() {
@@ -122,5 +126,13 @@ public class Couple {
     }
     public Double getAgeRAngeAVG(){
         return (person1.getAge().value+person2.getAge().value)/2d;
+    }
+
+    public boolean WasHost() {
+        return wasHost;
+    }
+
+    public void toggleWasHost() {
+        this.wasHost = !wasHost;
     }
 }

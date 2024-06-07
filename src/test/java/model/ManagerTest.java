@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ManagerTest {
 
     Manager manager;
-    CoupleManager coupleManager;
-    GroupManager groupManager;
+    CoupleManager coupleManager = new CoupleManager();
+    GroupManager groupManager = new GroupManager();
     List<Person> persons;
 
     @BeforeEach
