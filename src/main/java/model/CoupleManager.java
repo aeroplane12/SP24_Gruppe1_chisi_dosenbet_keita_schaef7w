@@ -246,7 +246,7 @@ class CoupleManager {
         }
     }
     //This is correct
-    private double calculateCost(Person person1, Person person2) {
+    public double calculateCost(Person person1, Person person2) {
         int cost = 10;
 
         if (person1.equals(person2))
