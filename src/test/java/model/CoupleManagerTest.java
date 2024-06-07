@@ -69,6 +69,11 @@ public class CoupleManagerTest {
     @Test
     public void testGetCouple() {
         // TODO: Implement this test method once getCouple is implemented
+        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person2);
+        coupleManager.addPerson(person3);
+        coupleManager.addPerson(person4);
+
         coupleManager.givePeopleWithoutPartner(singles, 0,0,new Location(0.2,0.4));
         List<Couple> couples = coupleManager.couples;
         assertNotNull(couples);
@@ -84,3 +89,5 @@ public class CoupleManagerTest {
     }
 
 }
+
+

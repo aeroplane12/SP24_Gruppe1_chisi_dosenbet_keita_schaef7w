@@ -135,4 +135,5 @@ public class Couple {
     public void toggleWasHost() {
         this.wasHost = !wasHost;
     }
+
 }
