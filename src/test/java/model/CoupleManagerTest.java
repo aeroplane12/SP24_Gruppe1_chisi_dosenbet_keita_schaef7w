@@ -72,4 +72,14 @@ public class CoupleManagerTest {
         List<Couple> couples = coupleManager.couples;
         assertNotNull(couples);
     }
+
+    @Test
+    public void testCalculateCost() {
+        double cost = coupleManager.calculateCost(person1, person2);
+        assertNotEquals(-1, cost);
+
+        cost = coupleManager.calculateCost(person1, person1);
+        assertEquals(-1, cost);
+    }
+
 }
