@@ -10,18 +10,22 @@ import model.Person;
  */
 public class NumberBox {
 
+    private boolean horizontalCrossedOut;
     private boolean crossedOut;
     private double number;
-    public NumberBox(double number){
+
+    public NumberBox(double number) {
         this.number = number;
         this.crossedOut = false;
+        this.horizontalCrossedOut = false;
     }
 
     public boolean isCrossedOut() {
         return crossedOut;
     }
 
-    public void setCrossedOut(boolean crossedOut) {
+    public void setCrossedOut(boolean crossedOut, boolean horizontalCrossedOut) {
+        this.horizontalCrossedOut = horizontalCrossedOut;
         this.crossedOut = crossedOut;
     }
 
@@ -35,10 +39,13 @@ public class NumberBox {
 
     @Override
     public String toString() {
-        if(crossedOut)
-            return "-" + number + "-";
+        if (crossedOut)
+            if (horizontalCrossedOut)
+                return "|" + number + "|";
+            else
+                return "-" + number + "-";
         else
-            return  Double.toString(number);
+            return Double.toString(number);
 
     }
 }

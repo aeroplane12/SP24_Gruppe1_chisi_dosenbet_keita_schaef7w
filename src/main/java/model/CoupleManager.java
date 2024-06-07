@@ -79,11 +79,6 @@ class CoupleManager {
         return matrix;
     }
 
-    private void bringSingleTogether(NumberBox[][] matrix) {
-        //TODO: Till here everything is correct
-        printMatrix(subtractSmallest(matrix));
-
-    }
         //This is correct
     private NumberBox[][] subtractSmallest(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
@@ -96,7 +91,6 @@ class CoupleManager {
             if (smallestNumberRow < 0)
                 throw new IllegalArgumentException("Smallest number in row is negative");
 
-            System.out.println("Smallest number in row: " + smallestNumberRow);
             // Subtract the smallest number from all numbers in the row
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j].getNumber() != -1)
@@ -112,7 +106,6 @@ class CoupleManager {
             if (smallestNumberColumn < 0)
                 throw new IllegalArgumentException("Smallest number in column is negative");
 
-            System.out.println("Smallest number in column: " + smallestNumberColumn);
             // Subtract the smallest number from all numbers in the column
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[j][i].getNumber() > -1)
@@ -123,8 +116,13 @@ class CoupleManager {
         return matrix;
     }
 
+    private void bringSingleTogether(NumberBox[][] matrix) {
+        //TODO: Till here everything is correct
+        System.out.println(crossingOutZeros(subtractSmallest(matrix)));
 
-    //TODO: This is wrong somehow I donÄT get the right number returned
+    }
+
+
     private int crossingOutZeros(NumberBox[][] matrix) {
         List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
         // Index numbers of Zeros in each column
@@ -157,31 +155,31 @@ class CoupleManager {
         indexOfNumberOfZerosInColumns.sort((x, y) -> Integer.compare(y[1], x[1]));
 
         //Print the sorted rows and columns
-        for (int[] ints : indexOfNumberOfZerosInRow)
-            System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
+//        for (int[] ints : indexOfNumberOfZerosInRow)
+//            System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
+//
+//        for (int[] ints : indexOfNumberOfZerosInColumns)
+//            System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
 
-        for (int[] ints : indexOfNumberOfZerosInColumns)
-            System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
-
-
+        System.out.println(indexOfNumberOfZerosInColumns.size());
+        System.out.println(indexOfNumberOfZerosInRow.size());
         int numberOfLines = 0;
         // now we need to cross out the zeros by the row or column with the most zeros
-        while (allZerosHaveALine(matrix)) {
-
+        while (!allZerosHaveALine(matrix)){
             int[] row = indexOfNumberOfZerosInRow.get(0);
             int[] column = indexOfNumberOfZerosInColumns.get(0);
             if (row[1] > column[1]) {
                 // Cross out the zeros in the row
                 for (int i = 0; i < matrix[row[0]].length; i++)
                     if (matrix[row[0]][i].getNumber() != -1)
-                        matrix[row[0]][i].setCrossedOut(true);
+                        matrix[row[0]][i].setCrossedOut(true, false);
 
                 indexOfNumberOfZerosInRow.remove(0);
             } else {
                 // Cross out the zeros in the column
                 for (int i = 0; i < matrix[column[0]].length; i++)
                     if (matrix[i][column[0]].getNumber() != -1)
-                        matrix[i][column[0]].setCrossedOut(true);
+                        matrix[i][column[0]].setCrossedOut(true, true);
 
                 indexOfNumberOfZerosInColumns.remove(0);
             }
@@ -189,8 +187,8 @@ class CoupleManager {
             ++numberOfLines;
 
         }
-        System.out.println(numberOfLines);
-        //printMatrix(matrix);
+        System.out.println(indexOfNumberOfZerosInColumns.size());
+        System.out.println(indexOfNumberOfZerosInRow.size());
         indexOfNumberOfZerosInColumns.clear();
         indexOfNumberOfZerosInRow.clear();
 
@@ -199,17 +197,14 @@ class CoupleManager {
 
 
     private boolean allZerosHaveALine(NumberBox[][] matrix) {
+
         for (int i = 0; i < matrix.length; i++) {
-            boolean rowHasZero = false;
-            boolean columnHasZero = false;
             for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j].getNumber() == 0 && !matrix[i][j].isCrossedOut())
-                    rowHasZero = true;
-                if (matrix[j][i].getNumber() == 0 && !matrix[j][i].isCrossedOut())
-                    columnHasZero = true;
+                if (matrix[i][j].getNumber() == 0.0 && !matrix[i][j].isCrossedOut())
+                    return false;
+                if (matrix[j][i].getNumber() == 0.0 && !matrix[j][i].isCrossedOut())
+                    return false;
             }
-            if (!rowHasZero || !columnHasZero)
-                return false;
         }
         return true;
     }
