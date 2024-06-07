@@ -10,7 +10,6 @@ import java.util.Objects;
 
 class CoupleManager {
 
-    private static final List<List<NumberBox[][]>> matrixList = new ArrayList<>();
     private static CoupleManager instance;
     private int strictnessLevel = 0;
 
@@ -130,10 +129,7 @@ class CoupleManager {
 
         matrix = splitDiagonal(matrix);
         matchingSingleTogether(matrix, people);
-        printMatrix(matrix);
-
-
-
+        printMatrix(createNumberBoxMatrix(stillSingle));
     }
 
     //This is correct
@@ -168,15 +164,6 @@ class CoupleManager {
         indexOfNumberOfZerosInRow.sort((x, y) -> Integer.compare(y[1], x[1]));
         indexOfNumberOfZerosInColumns.sort((x, y) -> Integer.compare(y[1], x[1]));
 
-        //Print the sorted rows and columns
-//        for (int[] ints : indexOfNumberOfZerosInRow)
-//            System.out.println("Row: " + ints[0] + " Zeros: " + ints[1]);
-//
-//        for (int[] ints : indexOfNumberOfZerosInColumns)
-//            System.out.println("Column: " + ints[0] + " Zeros: " + ints[1]);
-
-        System.out.println(indexOfNumberOfZerosInColumns.size());
-        System.out.println(indexOfNumberOfZerosInRow.size());
         int numberOfLines = 0;
         // now we need to cross out the zeros by the row or column with the most zeros
         while (!allZerosHaveALine(matrix) && numberOfLines != matrix.length){
@@ -205,7 +192,7 @@ class CoupleManager {
         indexOfNumberOfZerosInRow.clear();
     }
 
-
+    //This is correct
     private boolean allZerosHaveALine(NumberBox[][] matrix) {
 
         for (int i = 0; i < matrix.length; i++) {
@@ -226,14 +213,21 @@ class CoupleManager {
         for (int i = 0; i < numberBox.length; i++) {
             for (int j = 0; j < numberBox[i].length; j++) {
                 if (numberBox[i][j].getNumber() == 0.0 && people.get(j).getPartner() == null && people.get(i).getPartner() == null) {
-                        Couple couple = new Couple(currentCoupleCount++,
+                    FoodPreference.FoodPref foodPref = getFoodPref(people, i, j);
+                    Couple couple = new Couple(currentCoupleCount++,
                                 people.get(i),
-                                people.get(j), people.get(i).getKitchen(),
-                                people.get(j).getKitchen(), people.get(i).getFoodPreference(),
+                                people.get(j),
+                                people.get(i).getKitchen(),
+                                people.get(j).getKitchen(),
+                                foodPref,
                                 partyLoc);
                         people.get(i).setPartner(people.get(j));
                         people.get(j).setPartner(people.get(i));
                         couples.add(couple);
+                        for(int k = 0; k < numberBox.length; k++){
+                            numberBox[i][k].setNumber(-1);
+                            numberBox[k][j].setNumber(-1);
+                        }
                         break;
                 }
             }
@@ -246,6 +240,7 @@ class CoupleManager {
     }
 
     //This is correct
+
     public double calculateCost(Person person1, Person person2) {
         int cost = 10;
 
@@ -303,6 +298,21 @@ class CoupleManager {
             }
         }
         return resultMatrix;
+    }
+
+    //TODO: Finish this method
+    private static FoodPreference.FoodPref getFoodPref(List<Person> people, int i, int j) {
+        FoodPreference.FoodPref foodPref = people.get(i).getFoodPreference();
+        // Determine the main food preference for the couple
+        if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.NONE)) {
+            foodPref = people.get(j).getFoodPreference();
+        }
+        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)){
+            return FoodPreference.FoodPref.VEGAN;
+        }
+
+
+        return foodPref;
     }
     <T> void printMatrix(T[][] matrix) {
         for (T[] ints : matrix) {
