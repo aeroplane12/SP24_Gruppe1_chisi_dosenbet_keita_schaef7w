@@ -117,9 +117,9 @@ public class CSVReader {
                      */
                 }
                 output.add(n);
-                if (n.hasPartner()) {
-                    output.add(n.getPartner());
-                }
+                //if (n.hasPartner()) {
+                //    output.add(n.getPartner());
+                //}
 
             }
         } catch (IOException e) {

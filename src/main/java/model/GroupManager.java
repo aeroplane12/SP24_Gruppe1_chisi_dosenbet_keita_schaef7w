@@ -97,7 +97,7 @@ public class GroupManager {
             if (z != 0) {
                 return -1*z;
             }
-            return x.getCurrentKitchen()
+            return -1*x.getCurrentKitchen()
                     .distance(partyLoc)
                     .compareTo(y.getCurrentKitchen()
                             .distance(partyLoc));
@@ -147,22 +147,20 @@ public class GroupManager {
      * fillCourse
      * assigns everyone a group
      * @param course time at which the group gets together
-     * @param hosts all possible hosts
+     * @param participants everyone who participates
      * @return the Groups associated with the course
      */
-    public List<Group> fillCourse(List<Couple> hosts, Course course){
-        List<Group> assortedGroups = new ArrayList<>();
-        /*
-        List<Couple> possibleHosts = new ArrayList<>(hosts.stream().filter(x->!x.WasHost()).toList());
-        List<Couple> definiteGuests = new ArrayList<>(hosts.stream().filter(Couple::WasHost).toList());
-         */
-        int size = hosts.size()/3;
-        while (assortedGroups.size() != size) {
-            Couple host = hosts.stream().filter(x-> !x.WasHost() || x.getCurrentKitchen().checkUse(course)).findFirst().orElseThrow();
+    public List<Group> fillCourse(List<Couple> participants, Course course){
+        List<Group> assortedGroups = new ArrayList<>();// the output
+        int stepSize = participants.size()/3;
+        List<Couple> determinedHosts = new ArrayList<>(participants.subList(stepSize*(course.value-1),stepSize*course.value));
+        List<Couple> guests = new ArrayList<>(participants);
+        guests.removeAll(determinedHosts);
+        for (Couple host :determinedHosts) {
             assortedGroups.add(findGuests(host,
-                    new ArrayList<>(hosts.stream().filter(x->!x.equals(host)).toList()),
+                    guests,
                     course));
-            hosts = new ArrayList<>(hosts.stream().filter(x->x.getWithWhomAmIEating().get(course)==-1).toList());
+            guests.removeAll(assortedGroups.get(assortedGroups.size()-1).getAll());
         }
         return assortedGroups;
     }
@@ -177,15 +175,22 @@ public class GroupManager {
     public Group findGuests(Couple host, List<Couple> possibleGuests, Course course){
         List<Couple> potentialGuests = new ArrayList<>(possibleGuests.stream()
                 .filter(x->!x.getMetCouple().contains(host))
-                .sorted((x,y) ->{
-                    int z = Boolean.compare(x.WasHost(), y.WasHost());
-                    if (z != 0) {
-                        return -1*z;
-                    }
-                    return COUPLERANKGEN.rank(host,x).compareTo(COUPLERANKGEN.rank(host,y));
-                }).toList());
-        Couple g1 = potentialGuests.remove(0);
-        Couple g2 = potentialGuests.stream().filter(x->!x.getMetCouple().contains(g1)).toList().get(0);
+                .sorted((x,y) ->COUPLERANKGEN.rank(host,x).compareTo(COUPLERANKGEN.rank(host,y))).toList());
+        Couple g1 = null;
+        Couple g2 = null;
+        for (Couple i : potentialGuests){
+            for (Couple j: potentialGuests) {
+                if (!i.getMetCouple().contains(j)) {
+                    g1 = i;
+                    g2 = j;
+                    break;
+                }
+            }
+            if (g1 != null){
+                break;
+            }
+        }
+
         Group group = new Group(host,g1,g2,course,Manager.getGroupCounter());
         // toggling all flags
         host.meetsCouple(g1);
