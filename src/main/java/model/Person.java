@@ -40,7 +40,7 @@ public class Person {
             partner = new Person(
                     Arrays.copyOfRange(strings, 10, 14),
                     foodPreference,
-                    kitchen,
+                    null,
                     this);
         } else {
             partner = null;

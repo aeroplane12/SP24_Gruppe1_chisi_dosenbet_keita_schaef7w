@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 public class Kitchen extends Location {
     private double story;
     private boolean emergency;
-    private Map<Course,Boolean> inUse = Map.of(
+    private Map<Course,Boolean> inUse = new HashMap<>(Map.of(
             Course.STARTER,false,
             Course.DINNER,false,
-            Course.DESSERT,false);
+            Course.DESSERT,false));
     private Set<Person> owner = new HashSet<>(); // hashset contains complexity O(1)
 
     Kitchen(String[] strings){
@@ -52,7 +52,7 @@ public class Kitchen extends Location {
      */
     public boolean setUse(Course c){
         if (!inUse.get(c)){
-            inUse.replace(c,true);
+            inUse.put(c,true);
             return true;
         }
         return false;

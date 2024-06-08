@@ -5,6 +5,7 @@ import model.tools.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class Manager {
     static int couple_Counter = 0;
@@ -18,7 +19,7 @@ public class Manager {
     List<Person> allPersonList;
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
-    List<Group> groups;
+    List<Group> groups = new ArrayList<>();
 
     public Manager() {
         this.groupManager = GroupManager.getInstance();
@@ -62,7 +63,9 @@ public class Manager {
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getStillSingleList();
 
-        //groupManager.calcGroups(couples);
+        groupManager.calcGroups(couples);
+
+        groups.addAll(GroupManager.getLedger());
     }
 
     /**

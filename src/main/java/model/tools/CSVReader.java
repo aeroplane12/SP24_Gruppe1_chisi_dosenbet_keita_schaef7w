@@ -106,6 +106,7 @@ public class CSVReader {
                             j.getKitchen().distance(n.getKitchen()) < MAX_EQUAL_KITCHEN_DISTANCE) {
                         j.getKitchen().mergeKitchen(n.getKitchen());
                     }
+                    /* redundant, changed person constructor
                     if (n.hasPartner() &&
                             n.getPartner().getKitchen() != null &&
                             j.getKitchen() != null &&
@@ -113,6 +114,7 @@ public class CSVReader {
                             j.getKitchen().distance(n.getPartner().getKitchen()) < MAX_EQUAL_KITCHEN_DISTANCE) {
                         j.getKitchen().mergeKitchen(n.getPartner().getKitchen());
                     }
+                     */
                 }
                 output.add(n);
                 if (n.hasPartner()) {
