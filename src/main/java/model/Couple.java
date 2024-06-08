@@ -108,6 +108,13 @@ public class Couple {
     }
 
     public Kitchen getCurrentKitchen(){
+        if (whoseKitchen && kitchen2==null) {
+            toggleWhoseKitchen();
+            return kitchen1;
+        } else if (!whoseKitchen && kitchen1==null){
+            toggleWhoseKitchen();
+            return kitchen2;
+        }
         return whoseKitchen? kitchen2:kitchen1;
     }
     public Kitchen getOtherKitchen(){
