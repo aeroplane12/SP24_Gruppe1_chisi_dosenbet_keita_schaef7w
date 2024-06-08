@@ -3,36 +3,31 @@ package model;
 import model.tools.Rankable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
 public class GroupManager {
-    private Double FOODPREFWEIGHT;
-    private Double AVGAGERANGEWEIGHT;
-    private Double AVGGENDERDIVWEIGHT;
+    private Double FoodPrefWeight;
+    private Double AVGAgeRangeWeight;
+    private Double AVGGenderDIVWeight;
     public List<Couple> succeedingCouples = new ArrayList<>();
     public List<Couple> overBookedCouples = new ArrayList<>(); //couples that are sadly not usable unless a conflicting couple gets deleted
     private Double distanceWeight;
     private Double optimalDistance;
-
     private static GroupManager instance;
     private static List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger;
-    private Map<Course,List<Couple>> courseLedger = new HashMap<>(Map.of(Course.STARTER,new ArrayList<>(),
-            Course.DINNER,new ArrayList<>(),
-            Course.DESSERT,new ArrayList<>()));
     public Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
         Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0?
-                0 : (x.getFoodPref().value - y.getFoodPref().value)) * FOODPREFWEIGHT
-                + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * AVGAGERANGEWEIGHT
+                0 : (x.getFoodPref().value - y.getFoodPref().value)) * FoodPrefWeight
+                + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * AVGAgeRangeWeight
                 + Math.pow(x.getCurrentKitchen().distance(y.getCurrentKitchen())-optimalDistance,2)* distanceWeight
-                - Math.abs(x.getGenderAVG() - y.getGenderAVG()) * AVGGENDERDIVWEIGHT);
+                - Math.abs(x.getGenderAVG() - y.getGenderAVG()) * AVGGenderDIVWeight);
     public GroupManager(){
-        FOODPREFWEIGHT = 1d;
-        AVGAGERANGEWEIGHT = 1d;
-        AVGGENDERDIVWEIGHT = 1d;
+        FoodPrefWeight = 1d;
+        AVGAgeRangeWeight = 1d;
+        AVGGenderDIVWeight = 1d;
         distanceWeight = 1d;
         optimalDistance = 100d;
         this.partyLoc = new Location(0d,0d);
@@ -45,11 +40,11 @@ public class GroupManager {
                         Double optimalDistance,
                         Double distanceWeight,
                         Location partyLoc){
-        FOODPREFWEIGHT = foodPrefWeight;
-        AVGAGERANGEWEIGHT = avgAgeRangeWeight;
-        AVGGENDERDIVWEIGHT = avgGenderDiffWeight;
+        FoodPrefWeight = foodPrefWeight;
+        AVGAgeRangeWeight = avgAgeRangeWeight;
+        AVGGenderDIVWeight = avgGenderDiffWeight;
         this.optimalDistance = optimalDistance;
-        this.distanceWeight =distanceWeight;
+        this.distanceWeight = distanceWeight;
         this.partyLoc = partyLoc;
         instance = this;
     }
@@ -118,11 +113,13 @@ public class GroupManager {
      * by either switching the couple-kitchen or moving the couple to the succeedingCouples list
      */
     public List<Couple> resolveKitchenConflicts(List<Couple> allCouples){
-        // first mapping all  kitchen to their owners
+        // first mapping all kitchen to their owners
         kitchenLedger = new HashMap<>(allCouples.stream().collect(groupingBy(Couple::getCurrentKitchen)));
-        // removing all kitchen with less than three owners
         for (List<Couple> couples : kitchenLedger.values()){
             int size = couples.size();
+            //for each kitchen with more than three owners:
+            // switch if the couple in question has another less booked kitchen
+            // else, remove couple from participating until "kitchen-space" frees up
             if (size > 3) {
                 for (Couple c : couples) {
                     if (c.getOtherKitchen()!=null
@@ -136,6 +133,7 @@ public class GroupManager {
                     }
                 }
             }
+            // removing all couples with overbooked kitchen until it isn't overbooked anymore
             while (size > 3) {
                 // removes all conflicting entries until there are no more than three
                 allCouples.remove(couples.get(0));
@@ -212,31 +210,35 @@ public class GroupManager {
         return group;
     }
 
-    public Double getFOODPREFWEIGHT() {
-        return FOODPREFWEIGHT;
+    public Double getFoodPrefWeight() {
+        return FoodPrefWeight;
     }
 
-    public void setFOODPREFWEIGHT(Double FOODPREFWEIGHT) {
-        this.FOODPREFWEIGHT = FOODPREFWEIGHT;
+    public void setFoodPrefWeight(Double foodPrefWeight) {
+        this.FoodPrefWeight = foodPrefWeight;
     }
 
-    public Double getAVGAGERANGEWEIGHT() {
-        return AVGAGERANGEWEIGHT;
+    public Double getAVGAgeRangeWeight() {
+        return AVGAgeRangeWeight;
     }
 
-    public void setAVGAGERANGEWEIGHT(Double AVGAGERANGEWEIGHT) {
-        this.AVGAGERANGEWEIGHT = AVGAGERANGEWEIGHT;
+    public void setAVGAgeRangeWeight(Double AVGAgeRangeWeight) {
+        this.AVGAgeRangeWeight = AVGAgeRangeWeight;
     }
 
-    public Double getAVGGENDERDIVWEIGHT() {
-        return AVGGENDERDIVWEIGHT;
+    public Double getAVGGenderDIVWeight() {
+        return AVGGenderDIVWeight;
     }
 
-    public void setAVGGENDERDIVWEIGHT(Double AVGGENDERDIVWEIGHT) {
-        this.AVGGENDERDIVWEIGHT = AVGGENDERDIVWEIGHT;
+    public void setAVGGenderDIVWeight(Double AVGGenderDIVWeight) {
+        this.AVGGenderDIVWeight = AVGGenderDIVWeight;
     }
 
     public static List<Group> getLedger() {
         return ledger;
     }
+    public static void clear(){
+        ledger.clear();
+    }
+
 }

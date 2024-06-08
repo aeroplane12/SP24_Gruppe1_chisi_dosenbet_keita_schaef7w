@@ -52,7 +52,7 @@ public class Kitchen extends Location {
      * setUse
      * sets an inUse tag at the specified time on the kitchen
      * @param c the course for which the kitchen is to be booked
-     * @return whether the setting was successful
+     * @return whether the setting was successful or if its already booked
      */
     public boolean setUse(Course c){
         if (!inUse.get(c)){
@@ -62,28 +62,6 @@ public class Kitchen extends Location {
         return false;
     }
 
-    /**
-     * isOverbooked
-     * @return whether there is still space in the kitchen
-     */
-    public boolean isOverbooked(){
-        for (boolean i : inUse.values()) {
-            if (!i) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    /**
-     * determines if the kitchen is available at that time
-     * @param c the "timeslot"
-     * @return availability
-     */
-    public boolean checkUse(Course c){
-        return inUse.get(c);
-    }
     public boolean isEmergency() {
         return emergency;
     }
@@ -133,13 +111,7 @@ public class Kitchen extends Location {
         return Objects.hash(latitude,longitude,story);
     }
 
-    public void setUsedBy(Map<Course, Integer> usedBy) {
-        this.usedBy = usedBy;
-    }
 
-    public Map<Course, Integer> getUsedBy() {
-        return usedBy;
-    }
     public boolean checkAndSetUser(Course course,int id){
         if (usedBy.get(course) == -1) {
             usedBy.put(course,id);

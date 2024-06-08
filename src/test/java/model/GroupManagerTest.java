@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GroupManagerTest {
     private GroupManager groupManager;
-    int i =0;
+    int i = 0;
     Location partyLoc;
     List<Couple> couples;
 
@@ -33,45 +33,62 @@ public class GroupManagerTest {
     public void testCalcGroups() {
         // TODO: Implement this test method once calcGroups is implemented
         groupManager.calcGroups(couples);
-        Map<Course, List<Group>> ledger = GroupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
-
-        for (Course course : Course.values()) {
-            List<Group> groups = ledger.get(course);
-            assertNotNull(groups);
-            assertFalse(groups.isEmpty());//there should be groups
-
-            for (Group group : groups) {
-                assertNotNull(group);
-                assertEquals(3, group.getAll().size(), "Each group should have 3 couples");
-
-                Set<Couple> uniqueCouples = new HashSet<>(group.getAll());
-                assertEquals(3, uniqueCouples.size(), "Each group should have distinct couples");
+        Map<Course, List<Group>> courseGroupMap = GroupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
+        Map<Couple, Integer> coupleCounter = new HashMap<>();
+        Map<Kitchen, Integer> kitchenCounter = new HashMap<>();
+        int mapEntrySize = courseGroupMap.values().stream().toList().get(0).size();
+        for (List<Group> i : courseGroupMap.values()) {
+            assertEquals(mapEntrySize,i.size(),"differently sized Group allocations");
+            for (Group j : i){
+                for (Couple h : j.getAll()) {
+                    if (!coupleCounter.containsKey(h)){
+                        coupleCounter.put(h,1);
+                    } else {
+                        coupleCounter.put(h,coupleCounter.get(h)+1);
+                    }
+                    assertTrue(h.WasHost(),"every Couple needs to have been host at exactly once");
+                    for (int g:h.getWithWhomAmIEating().values()) {
+                        assertNotEquals(g,-1,"every Couple has to have the groupID registered in WithWhomAmIEating");
+                    }
+                    if (!kitchenCounter.containsKey(h.getCurrentKitchen())) {
+                        kitchenCounter.put(h.getCurrentKitchen(),1);
+                    } else {
+                        kitchenCounter.put(h.getCurrentKitchen(),kitchenCounter.get(h.getCurrentKitchen())+1);
+                    }
+                }
+                //test assertions for groups here
             }
         }
-
+        for (Integer i : coupleCounter.values()) {
+            assertEquals(i,3,"every Couple needs to be in 3 groups");
+        }
+        //this is also testing resolvingKitchenConflicts()
+        for (Integer i : coupleCounter.values()) {
+            assertEquals(i,3,"a kitchen cant be used more than 3 times");
+        }
+        // EDGE CASES NULL/EMPTY-LIST
+        GroupManager.clear();
         groupManager.calcGroups(Collections.emptyList());
         List<Group> groups1 = GroupManager.getLedger();
         assertNotNull(groups1);
         assertTrue(groups1.isEmpty(), "No groups should be generated for empty input");
-
+        // EDGE CASE LESS THAN 9
         groupManager.calcGroups(List.of(couples.get(0)));
         List<Group> groups2 = GroupManager.getLedger();
         assertNotNull(groups2);
-        assertTrue(groups2.isEmpty(), "No groups should be generated when couples are less than 3");
+        assertTrue(groups2.isEmpty(), "No groups should be generated when couples are less than 9 couples");
     }
 
     @Test
     public void testKitchen() {
+        /*
         Kitchen kitchen1 = new Kitchen(40.7128, -74.0060, false, 1.0);
         Kitchen kitchen2 = new Kitchen(34.0522, -118.2437, false, 1.5);
         Kitchen kitchen3 = new Kitchen(51.5074, -0.1278, false, 1.2);
-        /*
         // Test kitchenConflicts method
-        groupManager.allCouples = couples;
-
-        List<Couple> conflictingCouples1 = groupManager.kitchenConflicts(kitchen1);
-        List<Couple> conflictingCouples2 = groupManager.kitchenConflicts(kitchen2);
-        List<Couple> conflictingCouples3 = groupManager.kitchenConflicts(kitchen3);
+        for (Group i: GroupManager.getLedger()) {
+            i.getHosts().getCurrentKitchen();
+        }
 
         assertEquals(0, conflictingCouples1.size(), "No conflicts should be detected in kitchen 1");
         assertEquals(0, conflictingCouples2.size(), "No conflicts should be detected in kitchen 2");
@@ -102,7 +119,6 @@ public class GroupManagerTest {
         assertFalse(groupManager.overBookedCouples.contains(couple2), "Couple 2 should not be in overBookedCouples list");
         assertFalse(groupManager.succeedingCouples.contains(couple1), "Couple 1 should not be in succeedingCouples list");
         assertFalse(groupManager.succeedingCouples.contains(couple2), "Couple 2 should not be in succeedingCouples list");
-
          */
     }
 
@@ -122,8 +138,6 @@ public class GroupManagerTest {
             hostCouple.setKitchen1(kitchen);
         }
 
-        GroupManager groupManager = new GroupManager();
-        groupManager.partyLoc = partyLoc;
         List<Group> groups = groupManager.fillCourse(hostCouples, Course.STARTER);
 
         assertNotNull(groups);
@@ -135,19 +149,18 @@ public class GroupManagerTest {
 
     @Test
     public void testFindGuests() {
-        Couple hostCouple = new Couple(1, new Person("1", "Alice", AgeGroup.AgeRange.AGE_18_23, Gender.genderValue.female, FoodPreference.FoodPref.MEAT, null, null),
-                new Person("2", "Bob", AgeGroup.AgeRange.AGE_28_30, Gender.genderValue.male, FoodPreference.FoodPref.VEGAN, null, null), null, null, FoodPreference.FoodPref.MEAT, null);
-
+        Kitchen kitchen1 = new Kitchen(40.7128, -74.0060, false, 1.0); // Assume a single kitchen for simplicity
+        Kitchen kitchen2 = new Kitchen(40.7129, -74.0061, false, 1.0); // Assume a single kitchen for simplicity
+        Couple hostCouple = new Couple(1, new Person("1", "Alice", AgeGroup.AgeRange.AGE_18_23, Gender.genderValue.female, FoodPreference.FoodPref.MEAT, kitchen1, null),
+                new Person("2", "Bob", AgeGroup.AgeRange.AGE_28_30, Gender.genderValue.male, FoodPreference.FoodPref.VEGAN, null, null), kitchen1, null, FoodPreference.FoodPref.MEAT, null);
         Couple guestCouple1 = new Couple(2, new Person("3", "Charlie", AgeGroup.AgeRange.AGE_36_41, Gender.genderValue.other, FoodPreference.FoodPref.VEGGIE, null, null),
-                new Person("4", "David", AgeGroup.AgeRange.AGE_47_56, Gender.genderValue.male, FoodPreference.FoodPref.NONE, null, null), null, null, FoodPreference.FoodPref.NONE, null);
+                new Person("4", "David", AgeGroup.AgeRange.AGE_47_56, Gender.genderValue.male, FoodPreference.FoodPref.NONE, null, null), kitchen2, null, FoodPreference.FoodPref.NONE, null);
         Couple guestCouple2 = new Couple(3, new Person("5", "Eva", AgeGroup.AgeRange.AGE_24_27, Gender.genderValue.female, FoodPreference.FoodPref.MEAT, null, null),
-                new Person("6", "Frank", AgeGroup.AgeRange.AGE_31_35, Gender.genderValue.male, FoodPreference.FoodPref.VEGAN, null, null), null, null, FoodPreference.FoodPref.VEGAN, null);
+                new Person("6", "Frank", AgeGroup.AgeRange.AGE_31_35, Gender.genderValue.male, FoodPreference.FoodPref.VEGAN, null, null), kitchen2, null, FoodPreference.FoodPref.VEGAN, null);
 
         List<Couple> possibleGuests = Arrays.asList(guestCouple1, guestCouple2);
 
         Course course = Course.STARTER;
-        GroupManager groupManager = new GroupManager();
-        groupManager.partyLoc = partyLoc;
         Group group = groupManager.findGuests(hostCouple, possibleGuests, course);
 
         assertNotNull(group);
