@@ -198,6 +198,7 @@ public class GroupManager {
         host.meetsCouple(g2);
         host.getWithWhomAmIEating().put(course,group.getID());
         host.getCurrentKitchen().setUse(course);
+        host.toggleWasHost();
         g1.meetsCouple(g2);
         g1.meetsCouple(host);
         g1.getWithWhomAmIEating().put(course,group.getID());
