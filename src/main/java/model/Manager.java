@@ -90,4 +90,8 @@ public class Manager {
     public static int getGroupCounter(){
         return group_Counter++;
     }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
 }

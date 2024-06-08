@@ -122,7 +122,9 @@ public class GroupManager {
             int size = couples.size();
             if (size > 3) {
                 for (Couple c : couples) {
-                    if (c.getOtherKitchen()!=null && !c.getOtherKitchen().equals(c.getCurrentKitchen())) {
+                    if (c.getOtherKitchen()!=null
+                            && !c.getOtherKitchen().equals(c.getCurrentKitchen())
+                            && kitchenLedger.get(c.getOtherKitchen()).size()<3) {
                         //if the partner has another kitchen, and it's not also overbooked, use it
                         kitchenLedger.get(c.getCurrentKitchen()).remove(c);
                         c.toggleWhoseKitchen();
@@ -150,13 +152,16 @@ public class GroupManager {
      */
     public List<Group> fillCourse(List<Couple> hosts, Course course){
         List<Group> assortedGroups = new ArrayList<>();
-        while (!hosts.isEmpty()) {
+        for (int i = 0;i<hosts.size()/3;i++) {
+
             Couple host = hosts.stream().filter(x->!x.WasHost() &&
                     !x.getCurrentKitchen().checkUse(course)).toList().get(0);
+
             assortedGroups.add(findGuests(host,
                     new ArrayList<>(hosts.stream().filter(x->!x.equals(host)).toList()),
                     course));
-            hosts.removeAll(assortedGroups.get(assortedGroups.size()-1).getAll());
+
+            hosts = hosts.stream().filter(x->!assortedGroups.get(assortedGroups.size()-1).getAll().contains(x)).toList();
         }
         return assortedGroups;
     }
@@ -174,13 +179,12 @@ public class GroupManager {
                 .sorted((x,y) ->{
                     int z = Boolean.compare(x.getCurrentKitchen().checkUse(course), y.getCurrentKitchen().checkUse(course));
                     if (z != 0) {
-                        return z;
+                        return -1*z;
                     }
                     return COUPLERANKGEN.rank(host,x).compareTo(COUPLERANKGEN.rank(host,y));
                 }).toList());
-        potentialGuests.removeIf(x->x.getMetCouple().stream().anyMatch(potentialGuests::contains));
-        Couple g1 = potentialGuests.get(0);
-        Couple g2 = potentialGuests.get(1);
+        Couple g1 = potentialGuests.remove(0);
+        Couple g2 = potentialGuests.stream().filter(x->!x.getMetCouple().contains(g1)).toList().get(0);
         Group group = new Group(host,g1,g2,course,Manager.getGroupCounter());
         // toggling all flags
         host.meetsCouple(g1);

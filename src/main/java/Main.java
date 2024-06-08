@@ -17,9 +17,8 @@ public class Main {
         person1.setPartner(person2);
         Couple couple1 = new Couple(1512431 ,person1, person2, kitchen1, kitchen2, FoodPreference.FoodPref.MEAT, partyLoc);
         Group group1 = new Group(couple1, null, null ,Course.DINNER,15231);
-        ArrayList<Group> groups = new ArrayList<>(2);
-        groups.add(group1);
-        groups.add(group1);
-        CSVWriter.write(groups, "Dokumentation/TestingData/outputTest.csv");
+
+
+        CSVWriter.write(Manager.getGroups(), "Dokumentation/TestingData/outputTest.csv");
     }
 }

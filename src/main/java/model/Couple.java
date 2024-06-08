@@ -43,7 +43,8 @@ public class Couple {
         //needs to have one kitchen, only one can be null
         if (partyLoc == null) {
             whoseKitchen = false; //simply a default value, will delete if partyLoc always notNull
-        } else if (kitchen1 == null || kitchen2 == null) {
+        }
+        if (kitchen1 == null || kitchen2 == null) {
             whoseKitchen = kitchen1 == null;
         } else {
             whoseKitchen = kitchen1.distance(partyLoc) > kitchen2.distance(partyLoc);
@@ -108,13 +109,18 @@ public class Couple {
     }
 
     public Kitchen getCurrentKitchen(){
-        if (whoseKitchen && kitchen2==null) {
-            toggleWhoseKitchen();
+        if (kitchen1==null && kitchen2==null) {
+            throw new NullPointerException("what the fuck");
+        }
+        if (kitchen2==null) {
+            whoseKitchen = false;
             return kitchen1;
-        } else if (!whoseKitchen && kitchen1==null){
-            toggleWhoseKitchen();
+        }
+        if (kitchen1==null){
+            whoseKitchen = true;
             return kitchen2;
         }
+
         return whoseKitchen? kitchen2:kitchen1;
     }
     public Kitchen getOtherKitchen(){
