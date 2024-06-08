@@ -87,7 +87,7 @@ class ManagerTest {
 
     @Test
     public void testGroupManager() {
-        /* TODO GroupManagerTests
+        /*TODO GroupManagerTests
         coupleManager.calcCouples();
         coupleManager.giveToGroupManager(groupManager);
         String ID = "1"; //TODO: Default ID think about how to implement ID Couple
@@ -97,8 +97,9 @@ class ManagerTest {
         // Check if couple from CV file is correct
 
         assertEquals(coupleManager.getCouple("ID Couple"), "ID Couple");
-         */
+        */
     }
+
     /**
      * This test checks the functionality of the inputPeople method in the Manager class
      * and the csvReaderPeople method in the CSVReader-class.
