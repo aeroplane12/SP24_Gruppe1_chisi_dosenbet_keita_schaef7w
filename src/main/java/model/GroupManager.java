@@ -4,7 +4,6 @@ import model.tools.Rankable;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.groupingBy;
 
 public class GroupManager {
     private Double FoodPrefWeight;
@@ -67,8 +66,13 @@ public class GroupManager {
          - finally by gender, keeping genders in each group as diverse as possible
          - AVOID USING A KITCHEN MORE THAN THREE TIMES
          */
-
+        if (allCouples.isEmpty()) {
+            return;
+        }
         List<Couple> possibleHosts = resolveKitchenConflicts(new ArrayList<>(allCouples));
+        if (possibleHosts.isEmpty()) {
+            return;
+        }
         possibleHosts.sort( (x,y) ->{
             int z = Integer.compare(
                     kitchenLedger.get(x.getCurrentKitchen()).size(),
@@ -114,36 +118,44 @@ public class GroupManager {
      */
     public List<Couple> resolveKitchenConflicts(List<Couple> allCouples){
         // first mapping all kitchen to their owners
-        kitchenLedger = new HashMap<>(allCouples.stream().collect(groupingBy(Couple::getCurrentKitchen)));
-        for (List<Couple> couples : kitchenLedger.values()){
-            int size = couples.size();
-            //for each kitchen with more than three owners:
-            // switch if the couple in question has another less booked kitchen
-            // else, remove couple from participating until "kitchen-space" frees up
-            if (size > 3) {
-                for (Couple c : couples) {
-                    if (c.getOtherKitchen()!=null
-                            && !c.getOtherKitchen().equals(c.getCurrentKitchen())
-                            && kitchenLedger.get(c.getOtherKitchen()).size()<3) {
-                        //if the partner has another kitchen, and it's not also overbooked, use it
-                        kitchenLedger.get(c.getCurrentKitchen()).remove(c);
-                        c.toggleWhoseKitchen();
-                        kitchenLedger.get(c.getCurrentKitchen()).add(c);
-                        size--;
+        List<Couple> output = new ArrayList<>(allCouples);
+        kitchenLedger = new HashMap<>();
+        for (Couple couple : allCouples) {
+            Kitchen currKitchen = couple.getCurrentKitchen();
+
+            if (!kitchenLedger.containsKey(currKitchen)) {
+                //if there are no kitchen like this in the register
+                kitchenLedger.put(currKitchen,new ArrayList<>(List.of(couple)));
+            } else if (kitchenLedger.get(couple.getCurrentKitchen()).size() <= 3){
+                // if there are less than 3 kitchen of that type present
+                kitchenLedger.get(couple.getCurrentKitchen()).add(couple);
+            } else {
+
+                if (couple.getOtherKitchen()!=null) {
+                    //if there is another kitchen
+                    if (kitchenLedger.get(couple.getOtherKitchen()).size() < 3) {
+                        // and there are less than 3 kitchen in this registry
+                        kitchenLedger.get(currKitchen).remove(couple);
+                        couple.toggleWhoseKitchen();
+                        if (kitchenLedger.containsKey(couple.getCurrentKitchen())) {
+                            // if the other kitchen is already in the ledger, add to it
+                            kitchenLedger.get(couple.getCurrentKitchen()).add(couple);
+                        } else {
+                            // else
+                            kitchenLedger.put(couple.getCurrentKitchen(),new ArrayList<>(List.of(couple)));
+                        }
                     }
+                } else {
+                    // if there are more than 3 of this kitchen already in the ledger remove
+                    // all further couples owning this kitchen
+                    overBookedCouples.add(couple);
+                    output.remove(couple);
                 }
             }
-            // removing all couples with overbooked kitchen until it isn't overbooked anymore
-            while (size > 3) {
-                // removes all conflicting entries until there are no more than three
-                allCouples.remove(couples.get(0));
-                overBookedCouples.add(couples.get(0));
-                kitchenLedger.get(couples.get(0).getCurrentKitchen()).remove(couples.get(0));
-                size--;
-            }
         }
-        return allCouples;
+        return output;
     }
+
     /**
      * fillCourse
      * assigns everyone a group
@@ -182,15 +194,18 @@ public class GroupManager {
         Couple g2 = null;
         for (Couple i : potentialGuests){
             for (Couple j: potentialGuests) {
-                if (!i.getMetCouple().contains(j) && j != i) {
+                if (!i.getMetCouple().contains(j) && j.getID() != i.getID()) {
                     g1 = i;
                     g2 = j;
                     break;
                 }
             }
-            if (g1 != null){
+            if (g1 != null && g2 != null){
                 break;
             }
+        }
+        if (g1 == null || g2 == null) {
+            throw new RuntimeException("no Group could be Created with given Guests and Host");
         }
 
         Group group = new Group(host,g1,g2,course,Manager.getGroupCounter());

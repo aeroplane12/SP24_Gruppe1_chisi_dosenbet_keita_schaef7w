@@ -1,7 +1,6 @@
 import model.*;
 import model.tools.CSVWriter;
 
-import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,6 +8,7 @@ public class Main {
         Manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
         Manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
         // CSV-Writer Test
+        /*
         Kitchen kitchen1 = new Kitchen(3.2, 4.4, false, 3.2);
         Kitchen kitchen2 = new Kitchen(3.4, 4.6, false, 3.2);
         Location partyLoc = new Location(421.2, 51.0);
@@ -17,6 +17,7 @@ public class Main {
         person1.setPartner(person2);
         Couple couple1 = new Couple(1512431 ,person1, person2, kitchen1, kitchen2, FoodPreference.FoodPref.MEAT, partyLoc);
         Group group1 = new Group(couple1, null, null ,Course.DINNER,15231);
+         */
 
 
         CSVWriter.write(Manager.getGroups(), "Dokumentation/TestingData/outputTest.csv");
