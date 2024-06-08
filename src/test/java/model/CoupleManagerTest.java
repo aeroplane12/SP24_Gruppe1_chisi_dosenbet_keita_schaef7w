@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CoupleManagerTest {
     private CoupleManager coupleManager;
-    private Person person1, person2, person3, person4;
+    private Person person1, person2, person3, person4, person5, person6;
     private List<Person> singles;
 
     @BeforeEach
@@ -26,20 +26,36 @@ public class CoupleManagerTest {
         person2 = new Person("2", "Bob", AgeGroup.getAgeRange("30"), Gender.genderValue.male, FoodPreference.getFoodPref("MEAT"), kitchen2, null);
         person3 = new Person("3", "Charlie", AgeGroup.getAgeRange("35"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGGIE"), kitchen1, null);
         person4 = new Person("4", "Diana", AgeGroup.getAgeRange("28"), Gender.genderValue.female, FoodPreference.getFoodPref("NONE"), kitchen2, null);
+        person5 = new Person("5", "Mark", AgeGroup.getAgeRange("40"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGAN"), null, null);
+        person6 = new Person("6", "Frank", AgeGroup.getAgeRange("50"), Gender.genderValue.male, FoodPreference.getFoodPref("NONE"), null, null);
 
         singles = new ArrayList<>();
         singles.add(person1);
         singles.add(person2);
         singles.add(person3);
         singles.add(person4);
+        singles.add(person5);
+        singles.add(person6);
     }
 
     @Test
     public void testCalcCouples() {
         // TODO: Implement this test method once calcCouples is implemented
-        coupleManager.givePeopleWithoutPartner(singles, 1, 1, new Location(0.2, 0.4));
+        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person2);
+        coupleManager.addPerson(person3);
+        coupleManager.addPerson(person4);
+
+        coupleManager.calcCouples();
+
         List<Couple> couples = coupleManager.getCouples();
+
         assertNotNull(couples);
+        assertFalse(couples.isEmpty());
+        for (Couple couple : couples) {
+            assertNotNull(couple.getPerson1());
+            assertNotNull(couple.getPerson2());
+        }
     }
 
     @Test
@@ -81,11 +97,38 @@ public class CoupleManagerTest {
 
     @Test
     public void testCalculateCost() {
-        double cost = coupleManager.calculateCost(person1, person2);
-        assertNotEquals(-1, cost);
+        // Same person
+        assertEquals(-1, coupleManager.calculateCost(person1, person1));
 
-        cost = coupleManager.calculateCost(person1, person1);
-        assertEquals(-1, cost);
+        // Same kitchen
+        assertEquals(-1, coupleManager.calculateCost(person1, person3));
+
+        // Different food preferences: MEAT and VEGAN
+        double cost = coupleManager.calculateCost(person1, person2);
+        assertTrue(cost > 100);
+
+        // Different food preferences: MEAT and VEGGIE
+        cost = coupleManager.calculateCost(person2, person3);
+        assertTrue(cost > 80);
+
+        // Different food preferences: VEGAN and VEGGIE
+        cost = coupleManager.calculateCost(person5, person3);
+        assertTrue(cost > 40);
+
+        // One person has no kitchen
+        cost = coupleManager.calculateCost(person1, person6);
+        assertTrue(cost >= 0);
+
+        // Both have no kitchen
+        assertEquals(-1, coupleManager.calculateCost(person5, person6));
+
+        // Age difference and same gender
+        cost = coupleManager.calculateCost(person2, person3);
+        assertTrue(cost > 200);
+
+        // Different kitchens and food preferences
+        cost = coupleManager.calculateCost(person4, person5);
+        assertTrue(cost >= 0);
     }
 
 }
