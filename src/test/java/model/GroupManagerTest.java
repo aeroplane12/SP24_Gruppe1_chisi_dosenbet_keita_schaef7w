@@ -19,43 +19,43 @@ public class GroupManagerTest {
         partyLoc = new Location(10.0, 20.0);
         groupManager = new GroupManager();
         groupManager.partyLoc = partyLoc;
-        couples = new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream().filter(Person::hasPartner).map(x->new Couple(i++ ,
-                x,
-                x.getPartner(),
-                x.getKitchen(),
-                x.getPartner().getKitchen(),
-                x.getCouplePreference(),
-                partyLoc)).toList());
-        couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
+        // adding it a few times so that I can definitively test for kitchenConflicts
+        couples = new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
                 .filter(Person::hasPartner)
-                .map(x-> new Couple(i++ ,
+                .map(x->new Couple(i++ ,
                         x,
                         x.getPartner(),
                         x.getKitchen(),
                         x.getPartner().getKitchen(),
                         x.getCouplePreference(),
-                        partyLoc))
-                .toList()));
+                        partyLoc)).toList());
         couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
                 .filter(Person::hasPartner)
-                .map(x-> new Couple(i++ ,
+                .map(x->new Couple(i++ ,
                         x,
                         x.getPartner(),
                         x.getKitchen(),
                         x.getPartner().getKitchen(),
                         x.getCouplePreference(),
-                        partyLoc))
-                .toList()));
+                        partyLoc)).toList()));
         couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
                 .filter(Person::hasPartner)
-                .map(x-> new Couple(i++ ,
+                .map(x->new Couple(i++ ,
                         x,
                         x.getPartner(),
                         x.getKitchen(),
                         x.getPartner().getKitchen(),
                         x.getCouplePreference(),
-                        partyLoc))
-                .toList()));
+                        partyLoc)).toList()));
+        couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
+                .filter(Person::hasPartner)
+                .map(x->new Couple(i++ ,
+                        x,
+                        x.getPartner(),
+                        x.getKitchen(),
+                        x.getPartner().getKitchen(),
+                        x.getCouplePreference(),
+                        partyLoc)).toList()));
     }
 
     @Test
