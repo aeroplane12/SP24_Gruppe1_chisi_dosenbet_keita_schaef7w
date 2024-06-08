@@ -10,6 +10,10 @@ public class Kitchen extends Location {
             Course.STARTER,false,
             Course.DINNER,false,
             Course.DESSERT,false));
+    private Map<Course,Integer> usedBy = new HashMap<>(Map.of(
+            Course.STARTER,-1,
+            Course.DINNER,-1,
+            Course.DESSERT,-1));
     private Set<Person> owner = new HashSet<>(); // hashset contains complexity O(1)
 
     Kitchen(String[] strings){
@@ -127,5 +131,20 @@ public class Kitchen extends Location {
     @Override
     public int hashCode() {
         return Objects.hash(latitude,longitude,story);
+    }
+
+    public void setUsedBy(Map<Course, Integer> usedBy) {
+        this.usedBy = usedBy;
+    }
+
+    public Map<Course, Integer> getUsedBy() {
+        return usedBy;
+    }
+    public boolean checkAndSetUser(Course course,int id){
+        if (usedBy.get(course) == -1) {
+            usedBy.put(course,id);
+            return true;
+        }
+        return false;
     }
 }

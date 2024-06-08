@@ -153,7 +153,8 @@ public class GroupManager {
     public List<Group> fillCourse(List<Couple> participants, Course course){
         List<Group> assortedGroups = new ArrayList<>();// the output
         int stepSize = participants.size()/3;
-        List<Couple> determinedHosts = new ArrayList<>(participants.subList(stepSize*(course.value-1),stepSize*course.value));
+        List<Couple> determinedHosts = participants.stream().filter(x->!x.WasHost()&&
+                x.getCurrentKitchen().checkAndSetUser(course, x.getID())).limit(stepSize).toList();
         List<Couple> guests = new ArrayList<>(participants);
         guests.removeAll(determinedHosts);
         for (Couple host :determinedHosts) {
@@ -197,7 +198,6 @@ public class GroupManager {
         host.meetsCouple(g2);
         host.getWithWhomAmIEating().put(course,group.getID());
         host.getCurrentKitchen().setUse(course);
-        host.toggleWasHost();
         g1.meetsCouple(g2);
         g1.meetsCouple(host);
         g1.getWithWhomAmIEating().put(course,group.getID());
