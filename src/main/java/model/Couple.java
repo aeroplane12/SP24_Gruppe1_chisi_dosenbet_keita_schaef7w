@@ -109,6 +109,9 @@ public class Couple {
     }
     public boolean putWithWhomAmIEating(Course course, int id) {
         int out = withWhomAmIEating.put(course,id);
+        if (out != -1) {
+            System.out.println("ALARM!!");
+        }
         return -1 == out;
     }
     public Kitchen getCurrentKitchen(){

@@ -209,7 +209,6 @@ public class GroupManager {
         g2.meetsCouple(host);
         g2.putWithWhomAmIEating(course, group.getID());
         //not very efficient but hopefully functional
-        System.out.println(group.getID());
         return group;
     }
 
