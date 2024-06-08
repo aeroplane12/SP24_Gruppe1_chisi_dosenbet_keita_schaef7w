@@ -152,16 +152,17 @@ public class GroupManager {
      */
     public List<Group> fillCourse(List<Couple> hosts, Course course){
         List<Group> assortedGroups = new ArrayList<>();
-        for (int i = 0;i<hosts.size()/3;i++) {
-
-            Couple host = hosts.stream().filter(x->!x.WasHost() &&
-                    !x.getCurrentKitchen().checkUse(course)).toList().get(0);
-
+        /*
+        List<Couple> possibleHosts = new ArrayList<>(hosts.stream().filter(x->!x.WasHost()).toList());
+        List<Couple> definiteGuests = new ArrayList<>(hosts.stream().filter(Couple::WasHost).toList());
+         */
+        int size = hosts.size()/3;
+        while (assortedGroups.size() != size) {
+            Couple host = hosts.stream().filter(x-> !x.WasHost() || x.getCurrentKitchen().checkUse(course)).findFirst().orElseThrow();
             assortedGroups.add(findGuests(host,
                     new ArrayList<>(hosts.stream().filter(x->!x.equals(host)).toList()),
                     course));
-
-            hosts = hosts.stream().filter(x->!assortedGroups.get(assortedGroups.size()-1).getAll().contains(x)).toList();
+            hosts = new ArrayList<>(hosts.stream().filter(x->x.getWithWhomAmIEating().get(course)==-1).toList());
         }
         return assortedGroups;
     }
@@ -169,15 +170,15 @@ public class GroupManager {
     /**
      * findGuests
      * @param host the host
-     * @param possibleMatches all possible matches
+     * @param possibleGuests all possible matches of people who already hosted
      * @param course the time
      * @return the formed group
      */
-    public Group findGuests(Couple host, List<Couple> possibleMatches, Course course){
-        List<Couple> potentialGuests = new ArrayList<>(possibleMatches.stream()
+    public Group findGuests(Couple host, List<Couple> possibleGuests, Course course){
+        List<Couple> potentialGuests = new ArrayList<>(possibleGuests.stream()
                 .filter(x->!x.getMetCouple().contains(host))
                 .sorted((x,y) ->{
-                    int z = Boolean.compare(x.getCurrentKitchen().checkUse(course), y.getCurrentKitchen().checkUse(course));
+                    int z = Boolean.compare(x.WasHost(), y.WasHost());
                     if (z != 0) {
                         return -1*z;
                     }
