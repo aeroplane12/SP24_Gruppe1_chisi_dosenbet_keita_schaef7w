@@ -129,7 +129,7 @@ class CoupleManager {
 
         matrix = splitDiagonal(matrix);
         matchingSingleTogether(matrix, people);
-        printMatrix(createNumberBoxMatrix(stillSingle));
+        //printMatrix(createNumberBoxMatrix(stillSingle));
     }
 
     //This is correct

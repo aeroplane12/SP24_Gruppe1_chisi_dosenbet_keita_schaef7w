@@ -107,7 +107,10 @@ public class Couple {
     public Map<Course, Integer> getWithWhomAmIEating() {
         return withWhomAmIEating;
     }
-
+    public boolean putWithWhomAmIEating(Course course, int id) {
+        int out = withWhomAmIEating.put(course,id);
+        return -1 == out;
+    }
     public Kitchen getCurrentKitchen(){
         if (kitchen1==null && kitchen2==null) {
             throw new NullPointerException("what the fuck");
@@ -145,8 +148,8 @@ public class Couple {
         return wasHost;
     }
 
-    public void toggleWasHost() {
-        this.wasHost = !wasHost;
+    public void isHost() {
+        this.wasHost = true;
     }
 
 }

@@ -19,6 +19,9 @@ public class GroupManager {
     private static GroupManager instance;
     private static List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger;
+    private Map<Course,List<Couple>> courseLedger = new HashMap<>(Map.of(Course.STARTER,new ArrayList<>(),
+            Course.DINNER,new ArrayList<>(),
+            Course.DESSERT,new ArrayList<>()));
     public Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
         Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0?
@@ -153,16 +156,16 @@ public class GroupManager {
     public List<Group> fillCourse(List<Couple> participants, Course course){
         List<Group> assortedGroups = new ArrayList<>();// the output
         int stepSize = participants.size()/3;
-        List<Couple> determinedHosts = participants.stream().filter(x->!x.WasHost()&&
-                x.getCurrentKitchen().checkAndSetUser(course, x.getID())).limit(stepSize).toList();
+        List<Couple> determinedHosts = participants.stream().filter(x->!x.WasHost() &&
+                x.getCurrentKitchen().checkAndSetUser(course, x.getID()))
+                .limit(stepSize).toList();
         List<Couple> guests = new ArrayList<>(participants);
         guests.removeAll(determinedHosts);
         for (Couple host :determinedHosts) {
-            assortedGroups.add(findGuests(host,
-                    guests,
-                    course));
+            assortedGroups.add(findGuests(host, guests, course));
             guests.removeAll(assortedGroups.get(assortedGroups.size()-1).getAll());
         }
+
         return assortedGroups;
     }
 
@@ -181,7 +184,7 @@ public class GroupManager {
         Couple g2 = null;
         for (Couple i : potentialGuests){
             for (Couple j: potentialGuests) {
-                if (!i.getMetCouple().contains(j)) {
+                if (!i.getMetCouple().contains(j) && j != i) {
                     g1 = i;
                     g2 = j;
                     break;
@@ -196,16 +199,17 @@ public class GroupManager {
         // toggling all flags
         host.meetsCouple(g1);
         host.meetsCouple(g2);
-        host.getWithWhomAmIEating().put(course,group.getID());
+        host.putWithWhomAmIEating(course,group.getID());
         host.getCurrentKitchen().setUse(course);
-        host.toggleWasHost();
+        host.isHost();
         g1.meetsCouple(g2);
         g1.meetsCouple(host);
-        g1.getWithWhomAmIEating().put(course,group.getID());
+        g1.putWithWhomAmIEating(course,group.getID());
         g2.meetsCouple(g1);
         g2.meetsCouple(host);
-        g2.getWithWhomAmIEating().put(course,group.getID());
+        g2.putWithWhomAmIEating(course, group.getID());
         //not very efficient but hopefully functional
+        System.out.println(group.getID());
         return group;
     }
 
