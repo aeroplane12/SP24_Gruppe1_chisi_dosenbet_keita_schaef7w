@@ -34,14 +34,28 @@ public class CoupleManagerTest {
         singles.add(person2);
         singles.add(person3);
         singles.add(person4);
+        singles.add(person5);
+        singles.add(person6);
     }
 
     @Test
     public void testCalcCouples() {
         // TODO: Implement this test method once calcCouples is implemented
-        coupleManager.givePeopleWithoutPartner(singles, 1, 1, new Location(0.2, 0.4));
+        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person2);
+        coupleManager.addPerson(person3);
+        coupleManager.addPerson(person4);
+
+        coupleManager.calcCouples();
+
         List<Couple> couples = coupleManager.getCouples();
+
         assertNotNull(couples);
+        assertFalse(couples.isEmpty());
+        for (Couple couple : couples) {
+            assertNotNull(couple.getPerson1());
+            assertNotNull(couple.getPerson2());
+        }
     }
 
     @Test
