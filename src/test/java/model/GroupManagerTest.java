@@ -20,7 +20,7 @@ public class GroupManagerTest {
         groupManager = new GroupManager();
         groupManager.partyLoc = partyLoc;
         // adding it a few times so that I can definitively test for kitchenConflicts
-        couples = new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
+        couples = new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/csvtestdateMult.csv").stream()
                 .filter(Person::hasPartner)
                 .map(x->new Couple(i++ ,
                         x,
@@ -29,33 +29,6 @@ public class GroupManagerTest {
                         x.getPartner().getKitchen(),
                         x.getCouplePreference(),
                         partyLoc)).toList());
-        couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
-                .filter(Person::hasPartner)
-                .map(x->new Couple(i++ ,
-                        x,
-                        x.getPartner(),
-                        x.getKitchen(),
-                        x.getPartner().getKitchen(),
-                        x.getCouplePreference(),
-                        partyLoc)).toList()));
-        couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
-                .filter(Person::hasPartner)
-                .map(x->new Couple(i++ ,
-                        x,
-                        x.getPartner(),
-                        x.getKitchen(),
-                        x.getPartner().getKitchen(),
-                        x.getCouplePreference(),
-                        partyLoc)).toList()));
-        couples.addAll( new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/teilnehmerliste.csv").stream()
-                .filter(Person::hasPartner)
-                .map(x->new Couple(i++ ,
-                        x,
-                        x.getPartner(),
-                        x.getKitchen(),
-                        x.getPartner().getKitchen(),
-                        x.getCouplePreference(),
-                        partyLoc)).toList()));
     }
 
     @Test
