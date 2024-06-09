@@ -112,7 +112,23 @@ public class Kitchen extends Location {
     }
 
 
-    public boolean checkAndSetUser(Course course,int id){
+    /**
+     * checkUser
+     * @param course the time
+     * @param id the CoupleID
+     * @return whether the person is using the kitchen at that time
+     */
+    public boolean checkUser(Course course,int id){
+        return usedBy.get(course)==id;
+    }
+
+    /**
+     * sets the KitchenUser at the specified time
+     * @param course the time
+     * @param id the coupleID using the  Kitchen at that time
+     * @return true if it was successful
+     */
+    public boolean setUser(Course course,int id){
         if (usedBy.get(course) == -1) {
             usedBy.put(course,id);
             return true;

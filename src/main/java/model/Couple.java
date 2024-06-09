@@ -27,7 +27,7 @@ public class Couple {
     private boolean whoseKitchen; //whose kitchen is used, can change
     //-Field-Parameters for Group-Manager-
     private boolean wasHost = false;
-    private Set<Couple> metCouple = new HashSet<>();
+    private final Set<Couple> metCouples = new HashSet<>(Set.of(this));
     //-Field-Parameters for Group-Manager- End
 
     public Couple(int ID,
@@ -107,12 +107,18 @@ public class Couple {
     public Map<Course, Integer> getWithWhomAmIEating() {
         return withWhomAmIEating;
     }
-    public boolean putWithWhomAmIEating(Course course, int id) {
-        int out = withWhomAmIEating.put(course,id);
-        if (out != -1) {
-            System.out.println("ALARM!!");
+
+    /**
+     * putWithWhomAmIEating
+     *
+     * @param course
+     * @param id
+     */
+    public void putWithWhomAmIEating(Course course, int id) {
+        int x = withWhomAmIEating.put(course,id);
+        if (x != -1) {
+            throw new RuntimeException("attempt at overriding " + withWhomAmIEating.get(course) + " with " + id);
         }
-        return -1 == out;
     }
     public Kitchen getCurrentKitchen(){
         if (kitchen1==null && kitchen2==null) {
@@ -133,13 +139,28 @@ public class Couple {
         return !whoseKitchen? kitchen2:kitchen1;
     }
 
-    public Set<Couple> getMetCouple() {
-        return metCouple;
-    }
-    public void meetsCouple(Couple couple){
-        metCouple.add(couple);
+    public Set<Couple> getMetCouples() {
+        return metCouples;
     }
 
+    /**
+     * checks whether the given couple has already been met
+     * @param couple the couple in question
+     * @return true or false
+     */
+    public boolean checkMetCouple(Couple couple) {
+        return metCouples.contains(couple);
+    }
+
+    /**
+     * setting the given Couple a met
+     * @param couple the couple this.couple is meeting right now :P
+     */
+    public void meetsCouple(Couple couple){
+        metCouples.add(couple);
+    }
+
+    // Values associated with the calculation of Ranks
     public Double getGenderAVG() {
         return (person1.getGender().value+person2.getGender().value)/2d;
     }
@@ -147,10 +168,17 @@ public class Couple {
         return (person1.getAge().value+person2.getAge().value)/2d;
     }
 
-    public boolean WasHost() {
+    /**
+     * wasHost()
+     * @return whether this Couple has already hosted a Group
+     */
+    public boolean wasHost() {
         return wasHost;
     }
-
+    /**
+     * isHost
+     * sets the wasHost flag to true
+     */
     public void isHost() {
         this.wasHost = true;
     }
