@@ -19,7 +19,7 @@ public class GroupManager {
     private static GroupManager instance;
     private final static List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger = new HashMap<>();
-    public Location partyLoc;
+    private Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
         Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0? 0 : (x.getFoodPref().value - y.getFoodPref().value)) * FoodPrefWeight
                 + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * AVGAgeRangeWeight
@@ -327,5 +327,9 @@ public class GroupManager {
             history.addAll(g1.getMetCouples());
         }
 
+    }
+
+    public static void setPartyLoc(Location partyLoc) {
+        instance.partyLoc = partyLoc;
     }
 }

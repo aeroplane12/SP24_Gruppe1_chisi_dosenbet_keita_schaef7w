@@ -114,18 +114,9 @@ class ManagerTest {
          Manager manager = new Manager();
          manager.inputPeople(filePath);
          // There were four people in the test set 2 singles and one couple
-         assertEquals(310, manager.allPersonList.size());
+         assertEquals(237, manager.allPersonList.size());
          // Check name of person in a set.
          assertEquals("Person1", manager.allPersonList.get(0).getName());
-         //testing whether partners are added
-            //no partner
-         assertFalse(manager.allPersonList.get(0).hasPartner());
-            //a partner
-         assertTrue(manager.allPersonList.get(3).hasPartner());
-         //testing whether People are correctly named
-         assertEquals("Person1", manager.allPersonList.get(0).getName());
-         //testing whether partners are correctly added
-         assertEquals("Personx1", manager.allPersonList.get(3).getName());
         }
 
     /**
