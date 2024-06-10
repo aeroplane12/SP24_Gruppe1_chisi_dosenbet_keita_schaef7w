@@ -60,8 +60,6 @@ class CoupleManager {
     void calcCouples() {
         if (strictnessLevel == 0) {
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
-            if(allSingleParticipants.size() > 1 && bothKitchenNull(allSingleParticipants))
-                givePeopleWithoutPartner(allSingleParticipants, 0, currentCoupleCount, partyLoc);
 
             System.out.println("Couples: " + couples.size() + " Singles: " + allSingleParticipants.size());
 
@@ -225,6 +223,7 @@ class CoupleManager {
             for (int j = 0; j < numberBox[i].length; j++) {
                 if (numberBox[i][j].getNumber() == 0.0 && people.get(j).getPartner() == null && people.get(i).getPartner() == null) {
                     FoodPreference.FoodPref foodPref = getFoodPref(people, i, j);
+
                     Couple couple = new Couple(currentCoupleCount++,
                             people.get(i),
                             people.get(j),
@@ -251,13 +250,16 @@ class CoupleManager {
 
         allSingleParticipants = stillSingle;
     }
-
     //This is correct
     public double calculateCost(Person person1, Person person2) {
         int cost = 10;
 
         if (person1.equals(person2))
             return -1;
+
+        if(person1.getKitchen() == null && person2.getKitchen() == null) {
+            return -1;
+        }
 
         //Can't have singles build a pair if they are in the same building
         // or have the same kitchen and are not registered as a couple
@@ -282,13 +284,11 @@ class CoupleManager {
         if (person1.getKitchen() != null && person2.getKitchen() != null) {
             cost += person1.getKitchen().distance(person2.getKitchen());
         } else if ((person1.getKitchen() != null && person2.getKitchen() == null) || (person1.getKitchen() == null && person2.getKitchen() != null)) {
-            if (cost < 30)
+            if (cost < 100)
                 cost = 0;
             else
-                cost -= 30;
-        } else
-            return -1;
-
+                cost -= 100;
+        }
 
         //If age difference is too big
         cost += Math.abs(person1.getAge().ordinal() - person2.getAge().ordinal()) * 20;
