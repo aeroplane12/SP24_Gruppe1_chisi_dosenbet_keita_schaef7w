@@ -41,12 +41,10 @@ public class CoupleManagerTest {
     @Test
     public void testCalcCouples() {
         // TODO: Implement this test method once calcCouples is implemented
-        coupleManager.addPerson(person1);
-        coupleManager.addPerson(person2);
-        coupleManager.addPerson(person3);
-        coupleManager.addPerson(person4);
 
-        coupleManager.calcCouples();
+
+
+        coupleManager.givePeopleWithoutPartner(singles, 0, 0, new Location(20.00, 15.00));
 
         List<Couple> couples = coupleManager.getCouples();
 

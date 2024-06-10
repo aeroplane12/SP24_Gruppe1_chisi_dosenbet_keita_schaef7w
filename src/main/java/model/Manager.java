@@ -62,7 +62,7 @@ public class Manager {
         coupleManager.givePeopleWithoutPartner(singles, 0, couple_Counter++, partyLoc);
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getStillSingleList();
-
+        couple_Counter = coupleManager.getCurrentCoupleCount();
         groupManager.calcGroups(couples);
 
         groups.addAll(GroupManager.getLedger());
