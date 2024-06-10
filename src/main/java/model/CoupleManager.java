@@ -2,11 +2,8 @@ package model;
 
 import model.tools.NumberBox;
 
-import java.util.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 class CoupleManager {
 
@@ -17,9 +14,10 @@ class CoupleManager {
 
     private int currentCoupleCount;
 
-    CoupleManager(){
-        instance=this;
+    CoupleManager() {
+        instance = this;
     }
+
     /**
      * CoupleManager() is a singleton class
      * Has different levels of strictness, the higher the number, the more strict the algorithm in terms of pairing of food preferences
@@ -36,7 +34,6 @@ class CoupleManager {
 
         return instance;
     }
-    private List<Person> stillSingle = new ArrayList<>();
 
     List<Couple> couples = new ArrayList<>();
 
@@ -56,11 +53,19 @@ class CoupleManager {
         this.partyLoc = partyLoc;
         allSingleParticipants.addAll(singles);
         calcCouples();
+
     }
 
+    //TODO This is wrong the break point for the recursion
     void calcCouples() {
-        if (strictnessLevel == 0)
+        if (strictnessLevel == 0) {
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
+            if(allSingleParticipants.size() > 1 && bothKitchenNull(allSingleParticipants))
+                givePeopleWithoutPartner(allSingleParticipants, 0, currentCoupleCount, partyLoc);
+
+            System.out.println("Couples: " + couples.size() + " Singles: " + allSingleParticipants.size());
+
+        }
         else if (strictnessLevel == 1) {
             List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
             List<Person> meatAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
@@ -77,6 +82,10 @@ class CoupleManager {
         }
     }
 
+    private boolean bothKitchenNull(List<Person> allSingleParticipants) {
+        return allSingleParticipants.stream().allMatch(x -> x.getKitchen() == null);
+    }
+
     //This is correct
     private NumberBox[][] createNumberBoxMatrix(List<Person> people) {
         NumberBox[][] matrix = new NumberBox[people.size()][people.size()];
@@ -87,7 +96,7 @@ class CoupleManager {
 
         return matrix;
     }
-        //This is correct
+    //This is correct
 
     private NumberBox[][] subtractSmallest(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
@@ -124,6 +133,7 @@ class CoupleManager {
 
         return matrix;
     }
+
     private void bringSingleTogether(NumberBox[][] matrix, List<Person> people) {
         crossingOutZeros(subtractSmallest(matrix));
 
@@ -167,7 +177,7 @@ class CoupleManager {
 
         int numberOfLines = 0;
         // now we need to cross out the zeros by the row or column with the most zeros
-        while (!allZerosHaveALine(matrix) && numberOfLines != matrix.length){
+        while (!allZerosHaveALine(matrix) && numberOfLines != matrix.length) {
             int[] row = indexOfNumberOfZerosInRow.get(0);
             int[] column = indexOfNumberOfZerosInColumns.get(0);
             if (row[1] > column[1]) {
@@ -208,28 +218,28 @@ class CoupleManager {
     }
     //This is correct, I think
 
-    private void matchingSingleTogether(NumberBox[][] numberBox, List<Person> people){
+    private void matchingSingleTogether(NumberBox[][] numberBox, List<Person> people) {
 
-
+        List<Person> stillSingle = new ArrayList<>();
         for (int i = 0; i < numberBox.length; i++) {
             for (int j = 0; j < numberBox[i].length; j++) {
                 if (numberBox[i][j].getNumber() == 0.0 && people.get(j).getPartner() == null && people.get(i).getPartner() == null) {
                     FoodPreference.FoodPref foodPref = getFoodPref(people, i, j);
                     Couple couple = new Couple(currentCoupleCount++,
-                                people.get(i),
-                                people.get(j),
-                                people.get(i).getKitchen(),
-                                people.get(j).getKitchen(),
-                                foodPref,
-                                partyLoc);
-                        people.get(i).setPartner(people.get(j));
-                        people.get(j).setPartner(people.get(i));
-                        couples.add(couple);
-                        for(int k = 0; k < numberBox.length; k++){
-                            numberBox[i][k].setNumber(-1);
-                            numberBox[k][j].setNumber(-1);
-                        }
-                        break;
+                            people.get(i),
+                            people.get(j),
+                            people.get(i).getKitchen(),
+                            people.get(j).getKitchen(),
+                            foodPref,
+                            partyLoc);
+                    people.get(i).setPartner(people.get(j));
+                    people.get(j).setPartner(people.get(i));
+                    couples.add(couple);
+                    for (int k = 0; k < numberBox.length; k++) {
+                        numberBox[i][k].setNumber(-1);
+                        numberBox[k][j].setNumber(-1);
+                    }
+                    break;
                 }
             }
         }
@@ -238,6 +248,8 @@ class CoupleManager {
             if (people.get(i).getPartner() == null)
                 stillSingle.add(people.get(i));
         }
+
+        allSingleParticipants = stillSingle;
     }
 
     //This is correct
@@ -268,14 +280,13 @@ class CoupleManager {
 
         // If both have a kitchen distance is the added cost if one doesn't and the other does the cost is reduced
         if (person1.getKitchen() != null && person2.getKitchen() != null) {
-            cost +=  person1.getKitchen().distance(person2.getKitchen());
+            cost += person1.getKitchen().distance(person2.getKitchen());
         } else if ((person1.getKitchen() != null && person2.getKitchen() == null) || (person1.getKitchen() == null && person2.getKitchen() != null)) {
             if (cost < 30)
                 cost = 0;
             else
                 cost -= 30;
-        }
-        else
+        } else
             return -1;
 
 
@@ -306,29 +317,21 @@ class CoupleManager {
         // Determine the main food preference for the couple
         if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.NONE) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.NONE)) {
             foodPref = FoodPreference.FoodPref.MEAT;
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.NONE)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.NONE)) {
             return people.get(j).getFoodPreference();
-        }
-        else if(people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.NONE)){
+        } else if (people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.NONE)) {
             return people.get(i).getFoodPreference();
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)) {
             return FoodPreference.FoodPref.VEGAN;
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)) {
             return FoodPreference.FoodPref.VEGAN;
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.MEAT)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.MEAT)) {
             return FoodPreference.FoodPref.VEGAN;
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)) {
             return FoodPreference.FoodPref.VEGAN;
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.MEAT) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)) {
             return FoodPreference.FoodPref.VEGGIE;
-        }
-        else if(people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.MEAT)){
+        } else if (people.get(i).getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE) && people.get(j).getFoodPreference().equals(FoodPreference.FoodPref.MEAT)) {
             return FoodPreference.FoodPref.VEGGIE;
         } else {
 
@@ -338,6 +341,7 @@ class CoupleManager {
 
         return foodPref;
     }
+
     <T> void printMatrix(T[][] matrix) {
         for (T[] ints : matrix) {
             for (T anInt : ints) {
@@ -379,8 +383,8 @@ class CoupleManager {
         this.strictnessLevel = strictnessLevel;
     }
 
-    public List<Person> getStillSingleList() {
-        return stillSingle;
+    public List<Person> getSingleList() {
+        return allSingleParticipants;
     }
 
     public List<Couple> getCouples() {

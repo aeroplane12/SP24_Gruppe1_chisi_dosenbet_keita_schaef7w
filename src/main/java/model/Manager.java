@@ -4,8 +4,6 @@ import model.tools.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 public class Manager {
     static int couple_Counter = 0;
@@ -61,7 +59,7 @@ public class Manager {
         });
         coupleManager.givePeopleWithoutPartner(singles, 0, couple_Counter++, partyLoc);
         couples.addAll(coupleManager.getCouples());
-        singles = coupleManager.getStillSingleList();
+        singles = coupleManager.getSingleList();
         couple_Counter = coupleManager.getCurrentCoupleCount();
         groupManager.calcGroups(couples);
 
