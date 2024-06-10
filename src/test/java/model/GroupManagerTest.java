@@ -19,9 +19,9 @@ public class GroupManagerTest {
         GroupManager.clear();
         partyLoc = new Location(10.0, 20.0);
         groupManager = new GroupManager();
-        groupManager.partyLoc = partyLoc;
-        // the entries of teilnehmerliste * 5 so we can guarantee
-        couples = new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/csvtestdateMult.csv").stream()
+        GroupManager.setPartyLoc(partyLoc);
+        // the entries of teilnehmerliste * 5 so we can guarantee kitchen Conflicts
+        couples = new ArrayList<>(Objects.requireNonNull(CSVReader.csvReaderPeople("Dokumentation/TestingData/csvtestdateMult.csv")).stream()
                 .filter(Person::hasPartner)
                 .map(x->new Couple(i++ ,
                         x,

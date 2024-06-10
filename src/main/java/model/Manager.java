@@ -25,10 +25,12 @@ public class Manager {
         this.couples = new ArrayList<>();
     }
     public Manager(String path){
+        inputLocation(path);
         this.groupManager = GroupManager.getInstance();
+        GroupManager.setPartyLoc(partyLoc);
         this.coupleManager = CoupleManager.getInstance();
         this.couples = new ArrayList<>();
-        inputLocation(path);
+
     }
 
 
@@ -75,6 +77,7 @@ public class Manager {
      */
     public void inputLocation(String path) {
         partyLoc = CSVReader.csvReaderPartyLocation(path);
+        GroupManager.setPartyLoc(partyLoc);
     }
 
     public GroupManager getGroupManager() {

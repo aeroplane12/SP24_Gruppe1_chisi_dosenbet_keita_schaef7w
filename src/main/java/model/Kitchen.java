@@ -6,10 +6,6 @@ import java.util.stream.Collectors;
 public class Kitchen extends Location {
     private double story;
     private boolean emergency;
-    private Map<Course,Boolean> inUse = new HashMap<>(Map.of(
-            Course.STARTER,false,
-            Course.DINNER,false,
-            Course.DESSERT,false));
     private Map<Course,Integer> usedBy = new HashMap<>(Map.of(
             Course.STARTER,-1,
             Course.DINNER,-1,
@@ -46,20 +42,6 @@ public class Kitchen extends Location {
                 ", Kitchen_Latitude: " + latitude +
                 ", Kitchen_Story: " + story +
                 "]";
-    }
-
-    /**
-     * setUse
-     * sets an inUse tag at the specified time on the kitchen
-     * @param c the course for which the kitchen is to be booked
-     * @return whether the setting was successful or if its already booked
-     */
-    public boolean setUse(Course c){
-        if (!inUse.get(c)){
-            inUse.put(c,true);
-            return true;
-        }
-        return false;
     }
 
     public boolean isEmergency() {
@@ -124,15 +106,13 @@ public class Kitchen extends Location {
 
     /**
      * sets the KitchenUser at the specified time
+     *
      * @param course the time
-     * @param id the coupleID using the  Kitchen at that time
-     * @return true if it was successful
+     * @param id     the coupleID using the  Kitchen at that time
      */
-    public boolean setUser(Course course,int id){
+    public void setUser(Course course, int id){
         if (usedBy.get(course) == -1) {
             usedBy.put(course,id);
-            return true;
         }
-        return false;
     }
 }

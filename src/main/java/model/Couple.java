@@ -110,9 +110,9 @@ public class Couple {
 
     /**
      * putWithWhomAmIEating
-     *
-     * @param course
-     * @param id
+     * @param course the time
+     * @param id the GroupID,
+     *          with which this Couple is associated
      */
     public void putWithWhomAmIEating(Course course, int id) {
         int x = withWhomAmIEating.put(course,id);
@@ -161,8 +161,11 @@ public class Couple {
     }
 
     // Values associated with the calculation of Ranks
-    public Double getGenderAVG() {
-        return (person1.getGender().value+person2.getGender().value)/2d;
+    public Set<Gender.genderValue> getGenderDiv() {
+        Set<Gender.genderValue> out = new HashSet<>();
+        out.add(person1.getGender());
+        out.add(person2.getGender());
+        return out;
     }
     public Double getAgeRAngeAVG(){
         return (person1.getAge().value+person2.getAge().value)/2d;

@@ -19,23 +19,24 @@ public class GroupManager {
     private static GroupManager instance;
     private final static List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger = new HashMap<>();
-    public Location partyLoc;
+    private Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
-        Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0?
-                0 : (x.getFoodPref().value - y.getFoodPref().value)) * FoodPrefWeight
+        Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0? 0 : (x.getFoodPref().value - y.getFoodPref().value)) * FoodPrefWeight
                 + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * AVGAgeRangeWeight
-                + Math.pow(x.getCurrentKitchen().distance(y.getCurrentKitchen())-optimalDistance,2)* distanceWeight
-                - Math.abs(x.getGenderAVG() - y.getGenderAVG()) * AVGGenderDIVWeight);
+                + Math.pow(x.getCurrentKitchen().distance(y.getCurrentKitchen())-optimalDistance,2) * distanceWeight
+                - (getGenderDiversity(x.getGenderDiv(),y.getGenderDiv())) * AVGGenderDIVWeight);
     public GroupManager(){
-        FoodPrefWeight = 1d;
-        AVGAgeRangeWeight = 1d;
+        // empty constructor
+        FoodPrefWeight = 5d;
+        AVGAgeRangeWeight = 2d;
         AVGGenderDIVWeight = 1d;
-        distanceWeight = 1d;
+        distanceWeight = 3d;
+        // distance in meters
         optimalDistance = 100d;
+        // needs to be set for it to work unless the party happens at Null island
         this.partyLoc = new Location(0d,0d);
         instance = this;
     }
-
     public GroupManager(Double foodPrefWeight,
                         Double avgAgeRangeWeight,
                         Double avgGenderDiffWeight,
@@ -50,7 +51,6 @@ public class GroupManager {
         this.partyLoc = partyLoc;
         instance = this;
     }
-
     public static GroupManager getInstance() {
         if(instance == null)
             instance = new GroupManager();
@@ -58,9 +58,8 @@ public class GroupManager {
         return instance;
     }
 
-
     public void calcGroups(List<Couple> allCouples){
-        /*TODO sorting couples into Groups according to specifications
+        /*DONE sorting couples into Groups according to specifications
          - each group consists of three couples, one host and two guests
          - create groups according to the following specifications
          - first by food preference, meaties with meaties and nones ,veggies with vegans and other veggies
@@ -73,9 +72,6 @@ public class GroupManager {
             return;
         }
         List<Couple> possibleHosts = resolveKitchenConflicts(new ArrayList<>(allCouples));
-        if (possibleHosts.isEmpty()) {
-            return;
-        }
         possibleHosts.sort((x,y) ->{
             int z = Integer.compare(
                     kitchenLedger.get(x.getCurrentKitchen()).size(),
@@ -89,23 +85,18 @@ public class GroupManager {
                                 .distance(partyLoc));
         });
         while (possibleHosts.size()%9 != 0) {
-            // moves the most conflicting and furthest away kitchen Couples first
+            // removes the most conflicting and furthest away kitchen Couples first
             // until it reaches a point at which there are possible solutions
             succeedingCouples.add(possibleHosts.remove(0));
             kitchenLedger.get(succeedingCouples.get(succeedingCouples.size()-1).getCurrentKitchen())
                     .remove(succeedingCouples.get(succeedingCouples.size()-1));
         }
-        possibleHosts.sort((x,y) ->{
-            // priority must be reserved for kitchen with high ownership
-            int z = -1*Integer.compare(kitchenLedger.get(x.getCurrentKitchen()).size(),kitchenLedger.get(y.getCurrentKitchen()).size());
-            if (z != 0) {
-                return z;
-            }
-            return x.getCurrentKitchen()
-                    .distance(partyLoc)
-                    .compareTo(y.getCurrentKitchen()
-                            .distance(partyLoc));
-        });
+        //sort all couples from closest to furthest away from party-Location
+        possibleHosts.sort((x,y) ->
+                x.getCurrentKitchen()
+                .distance(partyLoc)
+                .compareTo(y.getCurrentKitchen()
+                        .distance(partyLoc)));
         processedCouples = new ArrayList<>(possibleHosts);
         // need everyone from conflicting kitchen to host first, then sort by distance
         for (Course course : new Course[]{Course.DESSERT,Course.DINNER,Course.STARTER}) {
@@ -167,7 +158,6 @@ public class GroupManager {
      * @return the Groups associated with the course
      */
     public List<Group> fillCourse(List<Couple> participants, Course course){
-        //List<Group> assortedGroups = new ArrayList<>(); // the output
         List<CouplePair> couplePairList = new ArrayList<>();
         int stepSize = participants.size()/3;
         List<Couple> determinedHosts = participants.stream()
@@ -182,7 +172,7 @@ public class GroupManager {
                 .filter(x -> !x.wasHost() &&
                                 x.getCurrentKitchen().checkUser(course,x.getID())
                         // filter all those who aren't kitchenUsers
-                ).distinct()
+                )
                 .limit(stepSize)
                 .toList();
         List<Couple> guests = new ArrayList<>(participants);
@@ -195,16 +185,24 @@ public class GroupManager {
             guests.remove(firstGuest);
             couplePairList.add(new CouplePair(host,firstGuest));
         }
-        //kitchenUsageLedger.put(course,kitchenUserMap);
 
         return findValidCouplePairMatching(
-                new ArrayList<>(couplePairList),
-                new ArrayList<>(guests),
+                couplePairList,
+                guests,
                 course,
                 new ArrayList<>());
     }
 
-
+    /**
+     * findValidCouplePairMatching
+     * iterates through each CouplePair Combo and assigns
+     * to the least matchable pair their best possible match recursively
+     * @param hostGuestCombo tbe hosting Couple and their best guest possible
+     * @param allRemainingCouples everyone who isn't already included in hostGuestCombo
+     * @param course the time
+     * @param groups the groups / the output
+     * @return all groups for the specified time
+     */
     List<Group> findValidCouplePairMatching(List<CouplePair> hostGuestCombo, List<Couple> allRemainingCouples, Course course,List<Group> groups){
         if (allRemainingCouples.isEmpty()) {
             return groups;
@@ -217,33 +215,7 @@ public class GroupManager {
                                         .filter(y->!x.history.contains(y))
                                         .sorted((a,b)->COUPLERANKGEN.rank(x.host,a).compareTo(COUPLERANKGEN.rank(x.host,b)))
                                         .toList()))));
-        for (Map.Entry<CouplePair, List<Couple>> hostMatches : hostMatchMap.entrySet()) {
-            if (hostMatches.getValue().size() == 1) {
-                Couple guest2 = hostMatches.getValue().stream().findFirst().get();
-                Group group = new Group(hostMatches.getKey().host,
-                        hostMatches.getKey().guest,
-                        guest2,
-                        course,
-                        Manager.getGroupCounter());
-                // toggle all flags
-                toggleGroupFlags(hostMatches.getKey().host,
-                        hostMatches.getKey().guest,
-                        guest2,
-                        course,
-                        group.getID());
-                groups.add(group);
-                hostGuestCombo.remove(hostMatches.getKey());
-                allRemainingCouples.remove(guest2);
 
-                return findValidCouplePairMatching(hostGuestCombo,
-                        allRemainingCouples,
-                        course,
-                        groups);
-            }
-        }
-        if (allRemainingCouples.isEmpty()) {
-            return groups;
-        }
         Map.Entry<CouplePair,List<Couple>> leastMatchablePair = hostMatchMap.entrySet()
                 .stream()
                 .min(Comparator.comparingInt(x -> x.getValue().size()))
@@ -256,20 +228,23 @@ public class GroupManager {
                 course,
                 Manager.getGroupCounter());
 
+        //toggles all necessary flags to indicate, that the couples met and the host hosted
         toggleGroupFlags(leastMatchablePair.getKey().host,
                 leastMatchablePair.getKey().guest,
                 guest2,
                 course,
                 group.getID());
 
+        //add the group to the output, remove the guest and the pair
         groups.add(group);
         hostGuestCombo.remove(leastMatchablePair.getKey());
         allRemainingCouples.remove(guest2);
 
-        return findValidCouplePairMatching(new ArrayList<>(hostGuestCombo),
-                new ArrayList<>(allRemainingCouples),
+        return findValidCouplePairMatching(
+                hostGuestCombo,
+                allRemainingCouples,
                 course,
-                new ArrayList<>(groups));
+                groups);
     }
 
     public Double getFoodPrefWeight() {
@@ -300,6 +275,9 @@ public class GroupManager {
         return ledger;
     }
     public static void clear(){
+        getInstance().succeedingCouples.clear();
+        getInstance().overBookedCouples.clear();
+        getInstance().kitchenLedger.clear();
         ledger.clear();
     }
 
@@ -321,10 +299,23 @@ public class GroupManager {
         guest2.meetsCouple(guest1);
         guest2.meetsCouple(host);
         guest2.putWithWhomAmIEating(course,groupID);
-        host.getCurrentKitchen().setUse(course);
         host.isHost();
     }
 
+    /**
+     * getGenderDiversity
+     * @param x genderSet of the first Couple
+     * @param y genderSet of the second Couple
+     * @return the size of the set divided by the amount of possibilities, in this case 3, meaning values range from 1/3 to 1
+     */
+    Double getGenderDiversity(Set<Gender.genderValue> x, Set<Gender.genderValue> y){
+        x.addAll(y);
+        return x.size()/3d;
+    }
+
+    /**
+     * inner-class for grouping a host and a guest together
+     */
     private class CouplePair{
         Couple host;
         Couple guest;
@@ -336,5 +327,9 @@ public class GroupManager {
             history.addAll(g1.getMetCouples());
         }
 
+    }
+
+    public static void setPartyLoc(Location partyLoc) {
+        instance.partyLoc = partyLoc;
     }
 }
