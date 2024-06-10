@@ -16,9 +16,11 @@ public class GroupManagerTest {
 
     @BeforeEach
     public void setUp() {
+        GroupManager.clear();
         partyLoc = new Location(10.0, 20.0);
         groupManager = new GroupManager();
         groupManager.partyLoc = partyLoc;
+        // the entries of teilnehmerliste * 5 so we can guarantee
         couples = new ArrayList<>(CSVReader.csvReaderPeople("Dokumentation/TestingData/csvtestdateMult.csv").stream()
                 .filter(Person::hasPartner)
                 .map(x->new Couple(i++ ,
@@ -58,6 +60,8 @@ public class GroupManagerTest {
         for (Integer i : coupleCounter.values()) {
             assertEquals(i,3,"every Couple needs to be in 3 groups");
         }
+        //test for size
+        assertEquals(groupManager.processedCouples.size(),GroupManager.getLedger().size());
         // EDGE CASES NULL/EMPTY-LIST
         GroupManager.clear();
         groupManager.calcGroups(Collections.emptyList());

@@ -13,6 +13,7 @@ public class GroupManager {
     private Double AVGGenderDIVWeight;
     public List<Couple> succeedingCouples = new ArrayList<>();
     public List<Couple> overBookedCouples = new ArrayList<>(); //couples that are sadly not usable unless a conflicting couple gets deleted
+    public List<Couple> processedCouples = new ArrayList<>(); //just for testing
     private Double distanceWeight;
     private Double optimalDistance;
     private static GroupManager instance;
@@ -105,6 +106,7 @@ public class GroupManager {
                     .compareTo(y.getCurrentKitchen()
                             .distance(partyLoc));
         });
+        processedCouples = new ArrayList<>(possibleHosts);
         // need everyone from conflicting kitchen to host first, then sort by distance
         for (Course course : new Course[]{Course.DESSERT,Course.DINNER,Course.STARTER}) {
             ledger.addAll(fillCourse(new ArrayList<>(possibleHosts),course));
@@ -195,8 +197,9 @@ public class GroupManager {
         }
         //kitchenUsageLedger.put(course,kitchenUserMap);
 
-        return findValidCouplePairMatching(couplePairList,
-                guests,
+        return findValidCouplePairMatching(
+                new ArrayList<>(couplePairList),
+                new ArrayList<>(guests),
                 course,
                 new ArrayList<>());
     }
@@ -214,7 +217,6 @@ public class GroupManager {
                                         .filter(y->!x.history.contains(y))
                                         .sorted((a,b)->COUPLERANKGEN.rank(x.host,a).compareTo(COUPLERANKGEN.rank(x.host,b)))
                                         .toList()))));
-        boolean changeFlag = false;
         for (Map.Entry<CouplePair, List<Couple>> hostMatches : hostMatchMap.entrySet()) {
             if (hostMatches.getValue().size() == 1) {
                 Couple guest2 = hostMatches.getValue().stream().findFirst().get();
@@ -232,7 +234,11 @@ public class GroupManager {
                 groups.add(group);
                 hostGuestCombo.remove(hostMatches.getKey());
                 allRemainingCouples.remove(guest2);
-                return findValidCouplePairMatching(hostGuestCombo, allRemainingCouples, course, groups);
+
+                return findValidCouplePairMatching(hostGuestCombo,
+                        allRemainingCouples,
+                        course,
+                        groups);
             }
         }
         if (allRemainingCouples.isEmpty()) {
@@ -242,25 +248,28 @@ public class GroupManager {
                 .stream()
                 .min(Comparator.comparingInt(x -> x.getValue().size()))
                 .orElseThrow();
+
         Couple guest2 = leastMatchablePair.getValue().stream().findFirst().orElseThrow();
         Group group = new Group(leastMatchablePair.getKey().host,
                 leastMatchablePair.getKey().guest,
                 guest2,
                 course,
                 Manager.getGroupCounter());
+
         toggleGroupFlags(leastMatchablePair.getKey().host,
                 leastMatchablePair.getKey().guest,
                 guest2,
                 course,
                 group.getID());
+
         groups.add(group);
         hostGuestCombo.remove(leastMatchablePair.getKey());
         allRemainingCouples.remove(guest2);
 
-        return findValidCouplePairMatching(hostGuestCombo,
-                allRemainingCouples,
+        return findValidCouplePairMatching(new ArrayList<>(hostGuestCombo),
+                new ArrayList<>(allRemainingCouples),
                 course,
-                groups);
+                new ArrayList<>(groups));
     }
 
     public Double getFoodPrefWeight() {
@@ -316,7 +325,7 @@ public class GroupManager {
         host.isHost();
     }
 
-    class CouplePair{
+    private class CouplePair{
         Couple host;
         Couple guest;
         Set<Couple> history;
