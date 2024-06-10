@@ -306,11 +306,11 @@ public class GroupManager {
      * getGenderDiversity
      * @param x genderSet of the first Couple
      * @param y genderSet of the second Couple
-     * @return the size of the set divided by the amount of people, in this case 4, meaning values range from 1/4 to 3/4
+     * @return the size of the set divided by the amount of possibilities, in this case 3, meaning values range from 1/3 to 1
      */
     Double getGenderDiversity(Set<Gender.genderValue> x, Set<Gender.genderValue> y){
         x.addAll(y);
-        return x.size()/4d;
+        return x.size()/3d;
     }
 
     /**
