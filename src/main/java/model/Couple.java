@@ -162,9 +162,8 @@ public class Couple {
 
     // Values associated with the calculation of Ranks
     public Set<Gender.genderValue> getGenderDiv() {
-        Set<Gender.genderValue> out = new HashSet<>();
-        out.add(person1.getGender());
-        out.add(person2.getGender());
+        Set<Gender.genderValue> out = new HashSet<>(Set.of(getPerson1().getGender()));
+        out.add(getPerson2().getGender());
         return out;
     }
     public Double getAgeRAngeAVG(){

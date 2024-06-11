@@ -18,6 +18,6 @@ public class Main {
         Couple couple1 = new Couple(1512431 ,person1, person2, kitchen1, kitchen2, FoodPreference.FoodPref.MEAT, partyLoc);
         Group group1 = new Group(couple1, null, null ,Course.DINNER,15231);
          */
-        CSVWriter.write(Manager.getGroups(), "Dokumentation/TestingData/outputTest.csv");
+        CSVWriter.write(Manager.getGroups(), "Dokumentation/TestingData/teilnehmerlisteProcessed.csv");
     }
 }
