@@ -72,6 +72,7 @@ public class GroupManager {
             return;
         }
         List<Couple> possibleHosts = resolveKitchenConflicts(new ArrayList<>(allCouples));
+        //O(n)
         possibleHosts.sort((x,y) ->{
             int z = Integer.compare(
                     kitchenLedger.get(x.getCurrentKitchen()).size(),
@@ -84,6 +85,7 @@ public class GroupManager {
                         .compareTo(y.getCurrentKitchen()
                                 .distance(partyLoc));
         });
+        //O(n*log(n)+n)=O(n*log(n))
         while (possibleHosts.size()%9 != 0) {
             // removes the most conflicting and furthest away kitchen Couples first
             // until it reaches a point at which there are possible solutions
@@ -91,16 +93,20 @@ public class GroupManager {
             kitchenLedger.get(succeedingCouples.get(succeedingCouples.size()-1).getCurrentKitchen())
                     .remove(succeedingCouples.get(succeedingCouples.size()-1));
         }
+
         //sort all couples from closest to furthest away from party-Location
         possibleHosts.sort((x,y) ->
                 x.getCurrentKitchen()
                 .distance(partyLoc)
                 .compareTo(y.getCurrentKitchen()
                         .distance(partyLoc)));
+        //O(n*log(n)+n*log(n))=O(n*log(n))
         processedCouples = new ArrayList<>(possibleHosts);
+        //O(n*log(n)+n) = O(n*log(n))
         // need everyone from conflicting kitchen to host first, then sort by distance
         for (Course course : new Course[]{Course.DESSERT,Course.DINNER,Course.STARTER}) {
             ledger.addAll(fillCourse(new ArrayList<>(possibleHosts),course));
+            //O(n^3*log(n))
         }
 
     }
@@ -112,10 +118,10 @@ public class GroupManager {
      */
     public List<Couple> resolveKitchenConflicts(List<Couple> allCouples){
         // first mapping all kitchen to their owners
-        List<Couple> output = new ArrayList<>(allCouples);
+        List<Couple> output = new ArrayList<>(allCouples);//O(n)
         kitchenLedger = new HashMap<>();
         int maxKitchenUsage = 3;
-        for (Couple couple : allCouples) {
+        for (Couple couple : allCouples) {//O(n)
             Kitchen currKitchen = couple.getCurrentKitchen();
 
             if (!kitchenLedger.containsKey(currKitchen)) {
@@ -148,6 +154,7 @@ public class GroupManager {
             }
         }
         return output;
+        //O(n)
     }
 
     /**
@@ -168,25 +175,28 @@ public class GroupManager {
                         x.getCurrentKitchen().setUser(course,x.getID());
                         //kitchenUserMap.put(x.getCurrentKitchen(), x.getID());
                     }
-                })
+                })//O(1+n/3) = O(n)
                 .filter(x -> !x.wasHost() &&
                                 x.getCurrentKitchen().checkUser(course,x.getID())
                         // filter all those who aren't kitchenUsers
-                )
+                )//O(n/3+n) = O(n)
                 .limit(stepSize)
                 .toList();
+        //O(n)
         List<Couple> guests = new ArrayList<>(participants);
-        guests.removeAll(determinedHosts);
-        for (Couple host : determinedHosts) {
+        guests.removeAll(determinedHosts);//O(n^2)
+        //O(n+n^2) = O(n^2)
+        for (Couple host : determinedHosts) {//O(n*(...))
             Couple firstGuest = guests.stream()
-                    .filter(x -> !x.checkMetCouple(host))
-                    .min((x,y) -> COUPLERANKGEN.rank(host,x).compareTo(COUPLERANKGEN.rank(host,y)))
+                    .filter(x -> !x.checkMetCouple(host))//O(n)
+                    .min((x,y) -> COUPLERANKGEN.rank(host,x).compareTo(COUPLERANKGEN.rank(host,y)))//O(n)
                     .orElseThrow();
-            guests.remove(firstGuest);
-            couplePairList.add(new CouplePair(host,firstGuest));
+            guests.remove(firstGuest);//O(n)
+            couplePairList.add(new CouplePair(host,firstGuest));//O(1)
         }
+        //O(n^2+n*(n+n+n+1))=O(n^2)
 
-        return findValidCouplePairMatching(
+        return findValidCouplePairMatching(//O(n^2+n^3*log(n)) = O(n^3*log(n))
                 couplePairList,
                 guests,
                 course,
@@ -204,23 +214,26 @@ public class GroupManager {
      * @return all groups for the specified time
      */
     List<Group> findValidCouplePairMatching(List<CouplePair> hostGuestCombo, List<Couple> allRemainingCouples, Course course,List<Group> groups){
-        if (allRemainingCouples.isEmpty()) {
+        //runtime Complexity of findValidCouplePairMatching,
+        // given hostGuestCombo and allRemainingCouples both have the same size of n/3,
+        // therefore we'll define n/3 as m
+        if (allRemainingCouples.isEmpty()) { //O(1)
             return groups;
         }
         Map<CouplePair,List<Couple>> hostMatchMap = new HashMap<>(hostGuestCombo.stream()
                 .collect(Collectors
-                        .toMap(Function.identity(),
+                        .toMap(Function.identity(),//O(m)
                                 // Host-Couple pairs mapped to lowest ranking remaining Couples
                                 x -> new ArrayList<>(allRemainingCouples.stream()
-                                        .filter(y->!x.history.contains(y))
-                                        .sorted((a,b)->COUPLERANKGEN.rank(x.host,a).compareTo(COUPLERANKGEN.rank(x.host,b)))
+                                        .filter(y->!x.history.contains(y))// O(m)
+                                        .sorted((a,b)->COUPLERANKGEN.rank(x.host,a).compareTo(COUPLERANKGEN.rank(x.host,b))) //O(m*log(m))
                                         .toList()))));
-
+        //O(m*(m+m*log(m))) = O(m^2*log(m))
         Map.Entry<CouplePair,List<Couple>> leastMatchablePair = hostMatchMap.entrySet()
                 .stream()
-                .min(Comparator.comparingInt(x -> x.getValue().size()))
+                .min(Comparator.comparingInt(x -> x.getValue().size()))//O(m)
                 .orElseThrow();
-
+        //O(m+m^2*log(m))= O(m^2*log(m))
         Couple guest2 = leastMatchablePair.getValue().stream().findFirst().orElseThrow();
         Group group = new Group(leastMatchablePair.getKey().host,
                 leastMatchablePair.getKey().guest,
@@ -229,22 +242,23 @@ public class GroupManager {
                 Manager.getGroupCounter());
 
         //toggles all necessary flags to indicate, that the couples met and the host hosted
-        toggleGroupFlags(leastMatchablePair.getKey().host,
+        toggleGroupFlags(leastMatchablePair.getKey().host, // O(1)
                 leastMatchablePair.getKey().guest,
                 guest2,
                 course,
                 group.getID());
-
+        //O(1+m^2*log(m))= O(m^2*log(m))
         //add the group to the output, remove the guest and the pair
-        groups.add(group);
-        hostGuestCombo.remove(leastMatchablePair.getKey());
-        allRemainingCouples.remove(guest2);
-
+        groups.add(group);//O(1)
+        hostGuestCombo.remove(leastMatchablePair.getKey());//O(m)
+        allRemainingCouples.remove(guest2);//O(m)
+        //O(1+2m+m^2*log(m))= O(m^2*log(m))
         return findValidCouplePairMatching(
                 hostGuestCombo,
                 allRemainingCouples,
                 course,
                 groups);
+        //O(m*m^2*log(m))= O(m^3*log(m))
     }
 
     public Double getFoodPrefWeight() {
