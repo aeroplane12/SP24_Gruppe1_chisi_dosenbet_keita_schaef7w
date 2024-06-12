@@ -359,7 +359,7 @@ class CoupleManager {
     }
 
     public void removeSinglePerson(Person person) {
-        if (allSingleParticipants.contains(person))
+        if (!allSingleParticipants.contains(person))
             throw new IllegalArgumentException("Person not found");
         else
             allSingleParticipants.remove(person);
