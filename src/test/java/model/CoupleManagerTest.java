@@ -10,6 +10,7 @@ import java.util.List;
 public class CoupleManagerTest {
     private CoupleManager coupleManager;
     private Person person1, person2, person3, person4, person5, person6;
+    private Couple couple1, couple2;
     private List<Person> singles;
 
     @BeforeEach
@@ -28,6 +29,9 @@ public class CoupleManagerTest {
         person4 = new Person("4", "Diana", AgeGroup.getAgeRange("28"), Gender.genderValue.female, FoodPreference.getFoodPref("NONE"), kitchen2, person3);
         person5 = new Person("5", "Mark", AgeGroup.getAgeRange("40"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGAN"), null, null);
         person6 = new Person("6", "Frank", AgeGroup.getAgeRange("50"), Gender.genderValue.male, FoodPreference.getFoodPref("NONE"), null, null);
+
+        couple1 = new Couple(person1, person2);
+        couple2 = new Couple(person3, person4);
 
         singles = new ArrayList<>();
         singles.add(person1);
@@ -127,6 +131,64 @@ public class CoupleManagerTest {
         // Different kitchens and food preferences
         cost = coupleManager.calculateCost(person4, person5);
         assertTrue(cost >= 0);
+    }
+
+    @Test
+    public void testCancelPerson() {
+        // Add debug prints
+        System.out.println("Initial singles: " + coupleManager.getAllSingleParticipants());
+        System.out.println("Initial couples: " + coupleManager.getCouples());
+
+        // Add persons
+        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person2);
+        coupleManager.addPerson(person3);
+        coupleManager.addPerson(person4);
+
+        // Print state after adding persons
+        System.out.println("Singles after adding persons: " + coupleManager.getAllSingleParticipants());
+        System.out.println("Couples after adding persons: " + coupleManager.getCouples());
+
+        // Form initial couples
+        coupleManager.givePeopleWithoutPartner(singles, 0, 0, new Location(0.2, 0.4));
+        List<Couple> initialCouples = coupleManager.getCouples();
+        System.out.println("Initial couples after forming: " + initialCouples);
+
+        // Check initial state
+        assertNotNull(initialCouples);
+        assertFalse(initialCouples.isEmpty());
+
+        // Cancel person1
+        coupleManager.cancelPerson(person1);
+
+        // Print state after cancellation
+        System.out.println("Singles after cancelling person1: " + coupleManager.getAllSingleParticipants());
+        System.out.println("Couples after cancelling person1: " + coupleManager.getCouples());
+
+        // Get updated couples
+        List<Couple> updatedCouples = coupleManager.getCouples();
+        System.out.println("Updated couples after cancelling person1: " + updatedCouples);
+
+        // Assert that the couples have changed
+        assertNotEquals(initialCouples, updatedCouples);
+    }
+
+    @Test
+    public void testCancelCouple() {
+        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person2);
+        coupleManager.addPerson(person3);
+        coupleManager.addPerson(person4);
+
+        coupleManager.givePeopleWithoutPartner(singles, 0, 0, new Location(0.2, 0.4));
+        List<Couple> initialCouples = coupleManager.getCouples();
+        assertNotNull(initialCouples);
+        assertFalse(initialCouples.isEmpty());
+
+        Couple coupleToCancel = initialCouples.get(0);
+        coupleManager.cancelCouple(coupleToCancel);
+        List<Couple> updatedCouples = coupleManager.getCouples();
+        assertNotEquals(initialCouples, updatedCouples);
     }
 
 }
