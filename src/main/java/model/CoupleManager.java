@@ -217,11 +217,11 @@ class CoupleManager {
     //This is correct, I think
 
     private void matchingSingleTogether(NumberBox[][] numberBox, List<Person> people) {
-
         List<Person> stillSingle = new ArrayList<>();
         for (int i = 0; i < numberBox.length; i++) {
             for (int j = 0; j < numberBox[i].length; j++) {
                 if (numberBox[i][j].getNumber() == 0.0 && people.get(j).getPartner() == null && people.get(i).getPartner() == null) {
+
                     FoodPreference.FoodPref foodPref = getFoodPref(people, i, j);
 
                     Couple couple = new Couple(currentCoupleCount++,

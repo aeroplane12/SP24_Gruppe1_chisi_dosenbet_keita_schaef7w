@@ -22,10 +22,10 @@ public class CoupleManagerTest {
         Kitchen kitchen1 = new Kitchen(10.0, 20.0, false, 1.0);
         Kitchen kitchen2 = new Kitchen(30.0, 40.0, true, 2.0);
 
-        person1 = new Person("1", "Alice", AgeGroup.getAgeRange("25"), Gender.genderValue.female, FoodPreference.getFoodPref("VEGAN"), kitchen1, null);
-        person2 = new Person("2", "Bob", AgeGroup.getAgeRange("30"), Gender.genderValue.male, FoodPreference.getFoodPref("MEAT"), kitchen2, null);
-        person3 = new Person("3", "Charlie", AgeGroup.getAgeRange("35"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGGIE"), kitchen1, null);
-        person4 = new Person("4", "Diana", AgeGroup.getAgeRange("28"), Gender.genderValue.female, FoodPreference.getFoodPref("NONE"), kitchen2, null);
+        person1 = new Person("1", "Alice", AgeGroup.getAgeRange("25"), Gender.genderValue.female, FoodPreference.getFoodPref("VEGAN"), kitchen1, person2);
+        person2 = new Person("2", "Bob", AgeGroup.getAgeRange("30"), Gender.genderValue.male, FoodPreference.getFoodPref("MEAT"), kitchen2, person1);
+        person3 = new Person("3", "Charlie", AgeGroup.getAgeRange("35"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGGIE"), kitchen1, person4);
+        person4 = new Person("4", "Diana", AgeGroup.getAgeRange("28"), Gender.genderValue.female, FoodPreference.getFoodPref("NONE"), kitchen2, person3);
         person5 = new Person("5", "Mark", AgeGroup.getAgeRange("40"), Gender.genderValue.male, FoodPreference.getFoodPref("VEGAN"), null, null);
         person6 = new Person("6", "Frank", AgeGroup.getAgeRange("50"), Gender.genderValue.male, FoodPreference.getFoodPref("NONE"), null, null);
 
