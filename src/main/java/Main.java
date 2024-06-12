@@ -4,9 +4,9 @@ import model.tools.CSVWriter;
 
 public class Main {
     public static void main(String[] args) {
-        Manager Manager = new Manager();
-        Manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
-        Manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
+        Manager manager = new Manager();
+        manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
+        manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
         // CSV-Writer Test
         /*
         Kitchen kitchen1 = new Kitchen(3.2, 4.4, false, 3.2);
@@ -18,6 +18,7 @@ public class Main {
         Couple couple1 = new Couple(1512431 ,person1, person2, kitchen1, kitchen2, FoodPreference.FoodPref.MEAT, partyLoc);
         Group group1 = new Group(couple1, null, null ,Course.DINNER,15231);
          */
-        CSVWriter.write(Manager.getGroups(), "Dokumentation/TestingData/teilnehmerlisteProcessed.csv");
+        manager.calcAll();
+        CSVWriter.write(manager.getGroups(), "Dokumentation/TestingData/teilnehmerlisteProcessed.csv");
     }
 }

@@ -101,7 +101,7 @@ public class Kitchen extends Location {
      * @return whether the person is using the kitchen at that time
      */
     public boolean checkUser(Course course,int id){
-        return usedBy.get(course)==id;
+        return usedBy.get(course) == id;
     }
 
     /**
@@ -113,6 +113,18 @@ public class Kitchen extends Location {
     public void setUser(Course course, int id){
         if (usedBy.get(course) == -1) {
             usedBy.put(course,id);
+        }
+    }
+    public void clearFlags(){
+        usedBy.put(Course.STARTER,-1);
+        usedBy.put(Course.DINNER,-1);
+        usedBy.put(Course.DESSERT,-1);
+    }
+    public void clearUser(Couple couple){
+        for (Map.Entry<Course,Integer> i : usedBy.entrySet()){
+            if (i.getValue() == couple.getID()) {
+                i.setValue(-1);
+            }
         }
     }
 }

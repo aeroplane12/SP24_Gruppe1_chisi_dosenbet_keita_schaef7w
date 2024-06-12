@@ -8,6 +8,7 @@ import java.util.List;
 public class Manager {
     static int couple_Counter = 0;
     static int group_Counter = 0;
+    public static int maxGuests = 400;
     GroupManager groupManager;
     CoupleManager coupleManager;
     Location partyLoc;//temporary filler
@@ -33,11 +34,18 @@ public class Manager {
 
     }
 
+    /**
+     * calcAll
+     * calculates all Couples first,
+     * then assigns all to Groups
+     */
+    public void calcAll(){
+        calcCouples();
+    }
 
     /**
      * Reads .csv File at Path,
      * then transforms entries into People
-     *
      * @param path path to csv. File
      */
     public void inputPeople(String path) {
@@ -59,13 +67,57 @@ public class Manager {
             else
                 singles.add(x);
         });
-        coupleManager.givePeopleWithoutPartner(singles, 0, couple_Counter++, partyLoc);
+    }
+
+    /**
+     * calculates the couples using the initialized coupleManager
+     */
+    private void calcCouples(){
+        coupleManager.givePeopleWithoutPartner(singles,0,couple_Counter,partyLoc);
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getSingleList();
         couple_Counter = coupleManager.getCurrentCoupleCount();
+        calcGroups();
+    }
+    /**
+     * calculates the groups using the initialized coupleManager
+     */
+    public void calcGroups(){
         groupManager.calcGroups(couples);
+        groups.addAll(groupManager.getLedger());
+    }
 
-        groups.addAll(GroupManager.getLedger());
+    /**
+     * removes both the given couples and singles
+     * @param couples the couples
+     * @param singles the singles
+     */
+    public void removeAll(List<Couple> couples,List<Person> singles){
+        for (Person person : singles) {
+            removePerson(person);
+        }
+        for (Couple couple : couples) {
+            removeCouple(couple);
+        }
+    }
+
+    /**
+     * removePerson,
+     * removes person from the couples,
+     * if possible pulls a substitute from successor lists otherwise removes person and recalculates couples
+     * @param person person that is to be removed
+     */
+    public void removePerson(Person person){
+        coupleManager.removeSinglePerson(person);
+    }
+    /**
+     * removeCouple, removes given Couple from Groups,
+     * if there is a substitute replace it
+     * @param couple the couple that is to be removed
+     */
+    public void removeCouple(Couple couple){
+        groupManager.remove(couple);
+        groups = groupManager.getLedger();
     }
 
     /**

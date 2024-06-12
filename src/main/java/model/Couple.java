@@ -9,9 +9,8 @@ public class Couple {
 
     private int ID;
 
-    // Integer is the Group ID
 
-    private final Map<Course,Integer> withWhomAmIEating = new HashMap<>(Map.of(
+    private Map<Course,Integer> withWhomAmIEating = new HashMap<>(Map.of(
             Course.STARTER,-1,
             Course.DINNER,-1,
             Course.DESSERT,-1));
@@ -27,7 +26,8 @@ public class Couple {
     private boolean whoseKitchen; //whose kitchen is used, can change
     //-Field-Parameters for Group-Manager-
     private boolean wasHost = false;
-    private final Set<Couple> metCouples = new HashSet<>(Set.of(this));
+    private Course hosts;
+    private Set<Couple> metCouples = new HashSet<>(Set.of(this));
     //-Field-Parameters for Group-Manager- End
 
     public Couple(int ID,
@@ -115,10 +115,7 @@ public class Couple {
      *          with which this Couple is associated
      */
     public void putWithWhomAmIEating(Course course, int id) {
-        int x = withWhomAmIEating.put(course,id);
-        if (x != -1) {
-            throw new RuntimeException("attempt at overriding " + withWhomAmIEating.get(course) + " with " + id);
-        }
+        withWhomAmIEating.put(course,id);
     }
     public Kitchen getCurrentKitchen(){
         if (kitchen1==null && kitchen2==null) {
@@ -184,5 +181,22 @@ public class Couple {
     public void isHost() {
         this.wasHost = true;
     }
-
+    public void setHosts(Course time){
+        hosts = time;
+    }
+    public Course getHosts(){
+        return hosts;
+    }
+    public void setMetCouples(Set<Couple> metCouples){
+        this.metCouples = metCouples;
+    }
+    public void clearFlags(){
+        wasHost = false;
+        metCouples = new HashSet<>(Set.of(this));
+        hosts = null;
+        withWhomAmIEating = new HashMap<>(Map.of(
+                Course.STARTER,-1,
+                Course.DINNER,-1,
+                Course.DESSERT,-1));
+    }
 }
