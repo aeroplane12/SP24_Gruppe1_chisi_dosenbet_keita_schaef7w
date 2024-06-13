@@ -17,7 +17,7 @@ public class GroupManager {
     private Double distanceWeight;
     private Double optimalDistance;
     private static GroupManager instance;
-    private final static List<Group> ledger = new ArrayList<>();
+    private final List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger = new HashMap<>();
     private Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
@@ -86,7 +86,8 @@ public class GroupManager {
                                 .distance(partyLoc));
         });
         //O(n*log(n)+n)=O(n*log(n))
-        while (possibleHosts.size()%9 != 0) {
+        while (possibleHosts.size()%9 != 0 ||
+                possibleHosts.size() > (Manager.maxGuests/2) ) {
             // removes the most conflicting and furthest away kitchen Couples first
             // until it reaches a point at which there are possible solutions
             succeedingCouples.add(possibleHosts.remove(0));
@@ -173,6 +174,7 @@ public class GroupManager {
                     if (!x.wasHost() &&
                             x.getCurrentKitchen().checkUser(course,-1)){
                         x.getCurrentKitchen().setUser(course,x.getID());
+                        x.setHosts(course);
                         //kitchenUserMap.put(x.getCurrentKitchen(), x.getID());
                     }
                 })//O(1+n/3) = O(n)
@@ -285,14 +287,14 @@ public class GroupManager {
         this.AVGGenderDIVWeight = AVGGenderDIVWeight;
     }
 
-    public static List<Group> getLedger() {
+    public List<Group> getLedger() {
         return ledger;
     }
     public static void clear(){
         getInstance().succeedingCouples.clear();
         getInstance().overBookedCouples.clear();
         getInstance().kitchenLedger.clear();
-        ledger.clear();
+        getInstance().ledger.clear();
     }
 
     /**
@@ -306,6 +308,7 @@ public class GroupManager {
     private void toggleGroupFlags(Couple host, Couple guest1, Couple guest2, Course course, int groupID){
         host.meetsCouple(guest1);
         host.meetsCouple(guest2);
+        host.isHost();
         host.putWithWhomAmIEating(course,groupID);
         guest1.meetsCouple(guest2);
         guest1.meetsCouple(host);
@@ -313,7 +316,6 @@ public class GroupManager {
         guest2.meetsCouple(guest1);
         guest2.meetsCouple(host);
         guest2.putWithWhomAmIEating(course,groupID);
-        host.isHost();
     }
 
     /**
@@ -342,8 +344,70 @@ public class GroupManager {
         }
 
     }
-
     public static void setPartyLoc(Location partyLoc) {
         instance.partyLoc = partyLoc;
+    }
+
+    public void remove(Couple couple){
+        if (couple == null) {
+            return;
+        }
+
+        List<Group> pendingGroup = ledger.stream()
+                .filter(x->x.getAll().contains(couple)).toList();
+        if (pendingGroup.isEmpty()||!processedCouples.contains(couple)) {
+            // if element is not in ledger, it must already be in succeeding list or overbooked list
+            overBookedCouples.remove(couple);
+            succeedingCouples.remove(couple);
+            return;
+        }
+        Course coupleCourse = couple.getHosts();
+        List<Couple> possibleSuccessors = new ArrayList<>(succeedingCouples);
+        // if it is from an overbooked kitchen, get all ppl. who also are from that kitchen and add them as successors
+        if (kitchenLedger.get(couple.getCurrentKitchen()).size()==3) {
+            possibleSuccessors.addAll(new ArrayList<>(overBookedCouples.stream()
+                    .filter(x->x.getCurrentKitchen()
+                            .equals(couple.getCurrentKitchen()))
+                    .toList()));
+        }
+        processedCouples.remove(couple);
+        //remove from kitchen ledger and the other kitchen registries
+        couple.getCurrentKitchen().clearUser(couple);
+        kitchenLedger.get(couple.getCurrentKitchen()).remove(couple);
+        // choose couple, which has a free kitchen
+        Couple replacement = possibleSuccessors.stream()
+                .filter(x->kitchenLedger.containsKey(x.getCurrentKitchen())
+                        && x.getCurrentKitchen().checkUser(coupleCourse,-1))
+                .min((x,y)-> COUPLERANKGEN.rank(couple,x)
+                        .compareTo(COUPLERANKGEN.rank(couple,y))).orElse(null);
+        if (replacement == null) {
+            // if you can't pull from successors just recalculate everything
+            List<Couple> retry = new ArrayList<>(processedCouples);
+            retry.addAll(overBookedCouples);
+            retry.addAll(succeedingCouples);
+            retry.forEach(x->{
+                x.getCurrentKitchen().clearFlags();
+                x.clearFlags();});
+            clear();
+            calcGroups(retry);
+            return;
+        }
+        succeedingCouples.remove(replacement);
+        overBookedCouples.remove(replacement);
+        processedCouples.add(replacement);
+        replacement.setMetCouples(new HashSet<>(couple.getMetCouples().stream()
+                .filter(x->!x.equals(couple))
+                .collect(Collectors.toSet())));
+        replacement.meetsCouple(replacement);
+        replacement.isHost();
+        List<Group> groupsForRemoval = pendingGroup.stream().toList();
+        for (Group group : groupsForRemoval) {
+            group.replaceCouple(couple,replacement);
+            for (Couple i: group.getAll()) {
+                i.getMetCouples().remove(couple);
+                i.meetsCouple(replacement);
+            }
+            replacement.putWithWhomAmIEating(group.course,group.getID());
+        }
     }
 }

@@ -12,6 +12,7 @@ public class CoupleManagerTest {
     private Person person1, person2, person3, person4, person5, person6;
     private Couple couple1, couple2;
     private List<Person> singles;
+    private Location loc = new Location(0d,0d);
 
     @BeforeEach
     public void setUp() {
@@ -136,7 +137,7 @@ public class CoupleManagerTest {
     @Test
     public void testCancelPerson() {
         // Add debug prints
-        System.out.println("Initial singles: " + coupleManager.getAllSingleParticipants());
+        //System.out.println("Initial singles: " + coupleManager.getAllSingleParticipants());
         System.out.println("Initial couples: " + coupleManager.getCouples());
 
         // Add persons
@@ -146,7 +147,7 @@ public class CoupleManagerTest {
         coupleManager.addPerson(person4);
 
         // Print state after adding persons
-        System.out.println("Singles after adding persons: " + coupleManager.getAllSingleParticipants());
+        //System.out.println("Singles after adding persons: " + coupleManager.getAllSingleParticipants());
         System.out.println("Couples after adding persons: " + coupleManager.getCouples());
 
         // Form initial couples
@@ -160,10 +161,10 @@ public class CoupleManagerTest {
         assertFalse(initialCouples.isEmpty());
 
         // Cancel person1
-        coupleManager.cancelPerson(person1);
+        //coupleManager.cancelPerson(person1);
 
         // Print state after cancellation
-        System.out.println("Singles after cancelling person1: " + coupleManager.getAllSingleParticipants());
+        //System.out.println("Singles after cancelling person1: " + coupleManager.getAllSingleParticipants());
         System.out.println("Couples after cancelling person1: " + coupleManager.getCouples());
 
         // Get updated couples

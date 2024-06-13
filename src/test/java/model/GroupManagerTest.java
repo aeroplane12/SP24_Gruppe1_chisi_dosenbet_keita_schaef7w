@@ -36,7 +36,7 @@ public class GroupManagerTest {
     @Test
     public void testCalcGroups() {
         // TODO: Implement this test method once calcGroups is implemented
-        Map<Course, List<Group>> courseGroupMap = GroupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
+        Map<Course, List<Group>> courseGroupMap = groupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
         Map<Couple, Integer> coupleCounter = new HashMap<>();
         int mapEntrySize = courseGroupMap.values().stream().toList().get(0).size();
         for (List<Group> i : courseGroupMap.values()) {
@@ -58,26 +58,26 @@ public class GroupManagerTest {
             }
         }
         for (Integer i : coupleCounter.values()) {
-            assertEquals(i,3,"every Couple needs to be in 3 groups");
+            assertEquals(i,3,"every Couple needs to be in exactly 3 groups");
         }
         //test for size
-        assertEquals(groupManager.processedCouples.size(),GroupManager.getLedger().size());
+        assertEquals(groupManager.processedCouples.size(),groupManager.getLedger().size());
         // EDGE CASES NULL/EMPTY-LIST
         GroupManager.clear();
         groupManager.calcGroups(Collections.emptyList());
-        List<Group> groups1 = GroupManager.getLedger();
+        List<Group> groups1 = groupManager.getLedger();
         assertNotNull(groups1);
         assertTrue(groups1.isEmpty(), "No groups should be generated for empty input");
         // EDGE CASE LESS THAN 9
         groupManager.calcGroups(List.of(couples.get(0)));
-        List<Group> groups2 = GroupManager.getLedger();
+        List<Group> groups2 = groupManager.getLedger();
         assertNotNull(groups2);
         assertTrue(groups2.isEmpty(), "No groups should be generated when couples are less than 9 couples");
     }
 
     @Test
     public void testKitchen() {
-        Map<Course, List<Group>> courseGroupMap = GroupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
+        Map<Course, List<Group>> courseGroupMap = groupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
         Map<Kitchen, Integer> kitchenCounter = new HashMap<>();
         for (List<Group> i : courseGroupMap.values()) {
             for (Group j : i){
@@ -158,5 +158,61 @@ public class GroupManagerTest {
         Group group = groups.get(0);
         assertNotNull(group);
         assertEquals(3, group.getAll().size());
+    }
+
+
+    @Test
+    public void testRemoveCouple() {
+        Person person3 = new Person("2,01be5c1f-4aa1-458d-a530-b1c109ffbb55,Person3,vegan,22,male,yes,,8.681372017093311,50.5820794170933,117ee996-14d3-44e8-8bcb-eb2d29fddda5,Personx1,25.0,male".split(","));
+        Person personx1 = person3.getPartner();
+        Couple unkownCouple = new Couple(i,person3,personx1,person3.getKitchen(),personx1.getKitchen(),person3.getCouplePreference(),partyLoc);
+        List<Couple> toDelete = new ArrayList<>(groupManager.processedCouples);
+        List<Group> l = groupManager.getLedger();
+        // nothing should happen
+        groupManager.remove(unkownCouple);
+        // removing couples that are in overbooked and in succeeding lists
+        int before =groupManager.succeedingCouples.size();
+        groupManager.remove(groupManager.succeedingCouples.get(0));
+        assertEquals(before-1,groupManager.succeedingCouples.size());
+        before = groupManager.overBookedCouples.size();
+        groupManager.remove(groupManager.overBookedCouples.get(0));
+        assertEquals(before-1,groupManager.overBookedCouples.size());
+        assertEquals(groupManager.getLedger(),l);
+        for (int j = 0; j<toDelete.size();j++) {
+            //remove from manager, commented out due to performance concerns
+            groupManager.remove(toDelete.get(j));
+
+            assertFalse(groupManager.processedCouples.contains(toDelete.get(j)));
+        }
+
+        /*
+        // checking integrity of all things again
+        Map<Course, List<Group>> courseGroupMap = groupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
+        Map<Couple, Integer> coupleCounter = new HashMap<>();
+        int mapEntrySize = courseGroupMap.values().stream().toList().get(0).size();
+        for (List<Group> i : courseGroupMap.values()) {
+            assertEquals(mapEntrySize,i.size(),"differently sized Group allocations");
+            for (Group j : i){
+                for (Couple h : j.getAll()) {
+                    if (!coupleCounter.containsKey(h)){
+                        coupleCounter.put(h,1);
+                    } else {
+                        coupleCounter.put(h,coupleCounter.get(h)+1);
+                    }
+                    assertTrue(h.wasHost(),"every Couple needs to have been host at exactly once");
+                    assertEquals(7,h.getMetCouples().size(),"every Couple needs to have met exactly 6 other Couples and themselves");
+                    for (int g:h.getWithWhomAmIEating().values()) {
+                        assertNotEquals(-1,g,"every Couple has to have the groupID registered in WithWhomAmIEating");
+                    }
+                }
+                //test assertions for groups here
+            }
+        }
+        for (Integer i : coupleCounter.values()) {
+            assertEquals(i,3,"every Couple needs to be in exactly 3 groups");
+        }
+        //test for size
+        assertEquals(groupManager.processedCouples.size(),groupManager.getLedger().size());
+         */
     }
 }

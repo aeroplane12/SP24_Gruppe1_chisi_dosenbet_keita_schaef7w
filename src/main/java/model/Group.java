@@ -5,9 +5,9 @@ import java.util.List;
 public class Group {
     private final int ID;
 
-    private final Couple HOST;
-    private final Couple GUEST1;
-    private final Couple GUEST2;
+    private Couple host;
+    private Couple guest1;
+    private Couple guest2;
     FoodPreference.FoodPref foodPreference;
     Course course;
     public Group(Couple host,
@@ -15,13 +15,13 @@ public class Group {
                  Couple guest2,
                  Course course,
                  int id){
-        HOST = host;
-        GUEST1 = guest1;
-        GUEST2 = guest2;
+        this.host = host;
+        this.guest1 = guest1;
+        this.guest2 = guest2;
         ID = id;
-        int hostFoodPref = host.getFoodPref().value;
-        int guest1FoodPref = GUEST1.getFoodPref().value;
-        int guest2FoodPref = GUEST2.getFoodPref().value;
+        int hostFoodPref = this.host.getFoodPref().value;
+        int guest1FoodPref = this.guest1.getFoodPref().value;
+        int guest2FoodPref = this.guest2.getFoodPref().value;
 
         if (hostFoodPref + guest1FoodPref + guest2FoodPref == 0) {
             foodPreference = FoodPreference.FoodPref.MEAT;
@@ -39,12 +39,43 @@ public class Group {
         return ID;
     }
     public Couple getHosts() {
-        return HOST;
+        return host;
     }
     public Course getCourse() {
         return course;
     }
     public List<Couple> getAll(){
-        return List.of(HOST,GUEST1,GUEST2);
+        return List.of(host,guest1,guest2);
+    }
+
+    public void setHost(Couple host) {
+        this.host = host;
+    }
+
+    public void setGuest1(Couple guest1) {
+        this.guest1 = guest1;
+    }
+
+    public void setGuest2(Couple guest2) {
+        this.guest2 = guest2;
+    }
+
+    public Couple getHost() {
+        return host;
+    }
+    public Couple getGuest1() {
+        return guest1;
+    }
+    public Couple getGuest2() {
+        return guest2;
+    }
+    public void replaceCouple(Couple couple, Couple replacement){
+        if (couple.equals(host)) {
+            host = replacement;
+        } else if (couple.equals(guest1)) {
+            guest1 = replacement;
+        } else if (couple.equals(guest2)) {
+            guest2 = replacement;
+        }
     }
 }
