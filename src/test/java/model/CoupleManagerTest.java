@@ -161,7 +161,7 @@ public class CoupleManagerTest {
         assertFalse(initialCouples.isEmpty());
 
         // Cancel person1
-        //coupleManager.cancelPerson(person1);
+        coupleManager.cancelPerson(person1);
 
         // Print state after cancellation
         //System.out.println("Singles after cancelling person1: " + coupleManager.getAllSingleParticipants());
