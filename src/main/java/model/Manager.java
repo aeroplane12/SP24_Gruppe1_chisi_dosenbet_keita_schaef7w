@@ -109,6 +109,11 @@ public class Manager {
      */
     public void removePerson(Person person){
         coupleManager.removeSinglePerson(person);
+        singles = coupleManager.getSingleList();
+        couples = coupleManager.getCouples();
+        GroupManager.clear();
+        groupManager.calcGroups(couples);
+        groups = groupManager.getLedger();
     }
     /**
      * removeCouple, removes given Couple from Groups,
@@ -116,6 +121,7 @@ public class Manager {
      * @param couple the couple that is to be removed
      */
     public void removeCouple(Couple couple){
+        couples.remove(couple);
         groupManager.remove(couple);
         groups = groupManager.getLedger();
     }

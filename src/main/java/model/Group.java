@@ -77,5 +77,21 @@ public class Group {
         } else if (couple.equals(guest2)) {
             guest2 = replacement;
         }
+
+        // reassign FoodPreference, just in case
+        int hostFoodPref = this.host.getFoodPref().value;
+        int guest1FoodPref = this.guest1.getFoodPref().value;
+        int guest2FoodPref = this.guest2.getFoodPref().value;
+
+        if (hostFoodPref + guest1FoodPref + guest2FoodPref == 0) {
+            foodPreference = FoodPreference.FoodPref.MEAT;
+        } else if (hostFoodPref == 3 || guest1FoodPref == 3 || guest2FoodPref == 3) {
+            foodPreference = FoodPreference.FoodPref.VEGAN;
+        } else if (hostFoodPref == 2 || guest1FoodPref == 2 || guest2FoodPref == 2) {
+            foodPreference = FoodPreference.FoodPref.VEGGIE;
+        } else {
+            foodPreference = FoodPreference.FoodPref.MEAT;
+        }
+
     }
 }
