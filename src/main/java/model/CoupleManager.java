@@ -40,10 +40,11 @@ class CoupleManager {
     // might need overview over all People
 
     List<Person> allSingleParticipants = new ArrayList<>();
+
     // everyone who is left
     private List<Person> any;
-
     // Index numbers of Zeros in each row
+
     void givePeopleWithoutPartner(List<Person> singles, int strictnessLevel, int currentCoupleCount, Location partyLoc) {
         if (strictnessLevel < 0 || strictnessLevel > 2)
             throw new IllegalArgumentException("Strictness level must be between 0 and 2");
@@ -55,29 +56,30 @@ class CoupleManager {
         calcCouples();
 
     }
-
     //TODO This is wrong the break point for the recursion
+
     void calcCouples() {
+        if(allSingleParticipants.size() < 2)
+            return;
         if (strictnessLevel == 0) {
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
 
             System.out.println("Couples: " + couples.size() + " Singles: " + allSingleParticipants.size());
-
         }
-        else if (strictnessLevel == 1) {
-            List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
-            List<Person> meatAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
-            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie), veganAndVeggie);
-            bringSingleTogether(createNumberBoxMatrix(meatAndAny), meatAndAny);
-        } else if (strictnessLevel == 2) {
-            List<Person> vegan = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
-            List<Person> meat = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT)).toList();
-            List<Person> veggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
-            this.any = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
-            bringSingleTogether(createNumberBoxMatrix(vegan), vegan);
-            bringSingleTogether(createNumberBoxMatrix(meat), meat);
-            bringSingleTogether(createNumberBoxMatrix(veggie), veggie);
-        }
+//        } else if (strictnessLevel == 1) {
+//            List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+//            List<Person> meatAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+//            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie), veganAndVeggie);
+//            bringSingleTogether(createNumberBoxMatrix(meatAndAny), meatAndAny);
+//        } else if (strictnessLevel == 2) {
+//            List<Person> vegan = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
+//            List<Person> meat = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT)).toList();
+//            List<Person> veggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+//            this.any = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+//            bringSingleTogether(createNumberBoxMatrix(vegan), vegan);
+//            bringSingleTogether(createNumberBoxMatrix(meat), meat);
+//            bringSingleTogether(createNumberBoxMatrix(veggie), veggie);
+//        }
     }
 
     private boolean bothKitchenNull(List<Person> allSingleParticipants) {
@@ -85,6 +87,7 @@ class CoupleManager {
     }
 
     //This is correct
+
     private NumberBox[][] createNumberBoxMatrix(List<Person> people) {
         NumberBox[][] matrix = new NumberBox[people.size()][people.size()];
         for (int i = 0; i < people.size(); i++)
@@ -94,8 +97,8 @@ class CoupleManager {
 
         return matrix;
     }
-    //This is correct
 
+    //This is correct
     private NumberBox[][] subtractSmallest(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             // Find the smallest number in the row
@@ -140,8 +143,8 @@ class CoupleManager {
         //printMatrix(createNumberBoxMatrix(stillSingle));
     }
 
-    //This is correct
 
+    //This is correct
     private void crossingOutZeros(NumberBox[][] matrix) {
         List<int[]> indexOfNumberOfZerosInRow = new ArrayList<>();
         // Index numbers of Zeros in each column
@@ -200,8 +203,8 @@ class CoupleManager {
         indexOfNumberOfZerosInColumns.clear();
         indexOfNumberOfZerosInRow.clear();
     }
-    //This is correct
 
+    //This is correct
     private boolean allZerosHaveALine(NumberBox[][] matrix) {
 
         for (int i = 0; i < matrix.length; i++) {
@@ -214,8 +217,8 @@ class CoupleManager {
         }
         return true;
     }
-    //This is correct, I think
 
+    //This is correct, I think
     private void matchingSingleTogether(NumberBox[][] numberBox, List<Person> people) {
         List<Person> stillSingle = new ArrayList<>();
         for (int i = 0; i < numberBox.length; i++) {
@@ -250,14 +253,16 @@ class CoupleManager {
 
         allSingleParticipants = stillSingle;
     }
+
     //This is correct
+
     public double calculateCost(Person person1, Person person2) {
         int cost = 10;
 
         if (person1.equals(person2))
             return -1;
 
-        if(person1.getKitchen() == null && person2.getKitchen() == null) {
+        if (person1.getKitchen() == null && person2.getKitchen() == null) {
             return -1;
         }
 
@@ -366,6 +371,20 @@ class CoupleManager {
         calcCouples();
     }
 
+    public void cancelPerson(Person person) {
+
+        if (!allSingleParticipants.contains(person) && person.hasPartner()) {
+            allSingleParticipants.add(person.getPartner());
+            couples.stream().reduce((x, y) -> x.getPerson1().equals(person) || x.getPerson2().equals(person) ? x : y).ifPresent(couples::remove);
+            calcCouples();
+        } else if (allSingleParticipants.contains(person)) {
+            throw new IllegalArgumentException("Person already is single");
+        } else {
+            throw new IllegalArgumentException("Person not found");
+        }
+
+    }
+
 
     public Person getSinglePerson(String ID) {
         return allSingleParticipants.stream()
@@ -393,6 +412,16 @@ class CoupleManager {
 
     public int getCurrentCoupleCount() {
         return currentCoupleCount;
+    }
+
+    public List<Person> getAllSingleParticipants() {
+        return allSingleParticipants;
+    }
+
+    public void cancelCouple(Couple couple) {
+        if (couples.contains(couple))
+            couples.remove(couple);
+        else throw new IllegalArgumentException("Couple not found");
     }
 
 }
