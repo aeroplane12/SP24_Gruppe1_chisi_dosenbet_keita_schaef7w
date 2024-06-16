@@ -64,7 +64,7 @@ class CoupleManager {
 
         List<Person> withKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() != null).toList();
         List<Person> noKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() == null).toList();
-        if (withKitchen.size() > noKitchen.size()) {
+        if (withKitchen.size() > noKitchen.size() && strictnessLevel == 0) {
             arrWithKitchen = new Person[withKitchen.size()];
             for (int i = 0; i < withKitchen.size(); i++) {
                 arrWithKitchen[i] = withKitchen.get(i);
@@ -82,25 +82,22 @@ class CoupleManager {
                 allSingleParticipants.get(1).setPartner(allSingleParticipants.get(0));
                 allSingleParticipants.clear();
             }
-            System.out.println(couples.size());
-            System.out.println(allSingleParticipants.size());
         } else if (strictnessLevel == 0) {
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
-
-            System.out.println("Couples: " + couples.size() + " Singles: " + allSingleParticipants.size());
-        } else if (strictnessLevel == 1) {
-            List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
-            List<Person> meatAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
-            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie), veganAndVeggie);
-            bringSingleTogether(createNumberBoxMatrix(meatAndAny), meatAndAny);
-        } else if (strictnessLevel == 2) {
-            List<Person> vegan = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
-            List<Person> meat = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT)).toList();
-            List<Person> veggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
-            this.any = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
-            bringSingleTogether(createNumberBoxMatrix(vegan), vegan);
-            bringSingleTogether(createNumberBoxMatrix(meat), meat);
-            bringSingleTogether(createNumberBoxMatrix(veggie), veggie);
+//        } else if (strictnessLevel == 1) {
+//            List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+//            List<Person> meatAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) || x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+//            bringSingleTogether(createNumberBoxMatrix(veganAndVeggie), veganAndVeggie);
+//            bringSingleTogether(createNumberBoxMatrix(meatAndAny), meatAndAny);
+//        } else if (strictnessLevel == 2) {
+//            List<Person> vegan = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
+//            List<Person> meat = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT)).toList();
+//            List<Person> veggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+//            this.any = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+//            bringSingleTogether(createNumberBoxMatrix(vegan), vegan);
+//            bringSingleTogether(createNumberBoxMatrix(meat), meat);
+//            bringSingleTogether(createNumberBoxMatrix(veggie), veggie);
+//        }
         }
     }
 
