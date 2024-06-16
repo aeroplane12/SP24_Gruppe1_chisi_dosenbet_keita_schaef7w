@@ -101,21 +101,21 @@ public class CoupleManagerTest {
     @Test
     public void testCalculateCost() {
         // Same person
-        assertEquals(-1, coupleManager.calculateCost(person1, person1));
+        assertEquals(-1, coupleManager.calculateCost(person1, person1 ));
 
         // Same kitchen
-        assertEquals(-1, coupleManager.calculateCost(person1, person3));
+        assertEquals(-1, coupleManager.calculateCost(person1, person3 ));
 
         // Different food preferences: MEAT and VEGAN
-        double cost = coupleManager.calculateCost(person1, person2);
+        double cost = coupleManager.calculateCost(person1, person2 );
         assertTrue(cost > 100);
 
         // Different food preferences: MEAT and VEGGIE
-        cost = coupleManager.calculateCost(person2, person3);
+        cost = coupleManager.calculateCost(person2, person3 );
         assertTrue(cost > 80);
 
         // Different food preferences: VEGAN and VEGGIE
-        cost = coupleManager.calculateCost(person5, person3);
+        cost = coupleManager.calculateCost(person5, person3 );
         assertTrue(cost > 40);
 
         // One person has no kitchen
