@@ -15,6 +15,8 @@ public class Couple {
             Course.DINNER,-1,
             Course.DESSERT,-1));
 
+    private final HashSet<Couple> dqSet = new HashSet<>();
+
     private Person person1;
 
     private Person person2;

@@ -2,6 +2,7 @@ package model;
 
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -9,7 +10,7 @@ public class Person {
     private final String ID;
     private String name;
     private FoodPreference.FoodPref foodPreference;
-
+    private final HashSet<Person> notAllowed = new HashSet<>();
     private AgeGroup.AgeRange age;
     private Gender.genderValue gender;
     private Kitchen kitchen;

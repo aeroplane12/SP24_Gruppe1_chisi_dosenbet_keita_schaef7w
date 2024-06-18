@@ -153,4 +153,8 @@ public class Manager {
     public List<Group> getGroups() {
         return groups;
     }
+
+    public Container getContainer(){
+        return new Container(allPersonList, couples, groups);
+    }
 }
