@@ -11,6 +11,7 @@ public class Container {
     private List<Person> personList;
     private List<Couple> coupleList;
     private List<Group> groupList;
+    private int maxGuests;
 
     //-CONSTANTS FOR GROUP MANAGER-
     private Double FoodPrefWeight;
@@ -25,6 +26,7 @@ public class Container {
     public Container(List<Person> personList,
                      List<Couple> coupleList,
                      List<Group> groupList,
+                     int mG,
                      Double FPW,
                      Double avgARW,
                      Double avgGDW,
@@ -35,7 +37,7 @@ public class Container {
         this.personList = personList;
         this.coupleList = coupleList;
         this.groupList = groupList;
-
+        maxGuests = mG;
         //GROUP MANAGER HERE
         FoodPrefWeight =FPW;
         AVGAgeRangeWeight = avgARW;

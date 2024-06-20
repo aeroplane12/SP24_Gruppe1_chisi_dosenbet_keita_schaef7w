@@ -13,8 +13,8 @@ public class Manager {
     static int couple_Counter = 0;
     static int group_Counter = 0;
     public static int maxGuests = 400;
-    GroupManager groupManager;
-    CoupleManager coupleManager;
+    private GroupManager groupManager;
+    private CoupleManager coupleManager;
     Location partyLoc;//temporary filler
 
     // maximum distance between kitchens for it to be measured as equal in meters
@@ -23,10 +23,11 @@ public class Manager {
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();
-      /////////////////////////////
-     // Group-Manager Constants //
-    /////////////////////////////
-
+      /////////////////////////////////
+     //   Group-Manager Constants   //
+    /////////////////////////////////
+   // filled with default values  //
+  /////////////////////////////////
     private Double FoodPrefWeight = 5d;
     private Double AVGAgeRangeWeight = 2d;
     private Double AVGGenderDIVWeight = 1d;
@@ -114,6 +115,7 @@ public class Manager {
      * @param singles the singles
      */
     public void removeAll(List<Couple> couples,List<Person> singles){
+        changedSomething();
         for (Person person : singles) {
             removePerson(person);
         }
@@ -129,6 +131,7 @@ public class Manager {
      * @param person person that is to be removed
      */
     public void removePerson(Person person){
+        changedSomething();
         coupleManager.removeSinglePerson(person);
         singles = coupleManager.getSingleList();
         couples = coupleManager.getCouples();
@@ -142,6 +145,7 @@ public class Manager {
      * @param couple the couple that is to be removed
      */
     public void removeCouple(Couple couple){
+        changedSomething();
         couples.remove(couple);
         groupManager.remove(couple);
         groups = groupManager.getLedger();
@@ -177,7 +181,7 @@ public class Manager {
 
     /**
      * setToPrev / undo-function
-     * sets to and returns the previous container
+     * sets to and returns the previous container as the current image
      * @return the current container
      */
     public Container setToPrev(){
@@ -185,6 +189,7 @@ public class Manager {
         future.add(new Container(allPersonList,
                 couples,
                 groups,
+                maxGuests,
                 //GROUP MANAGER STUFF
                 FoodPrefWeight,
                 AVGAgeRangeWeight,
@@ -197,6 +202,34 @@ public class Manager {
         switchTO(curr);
         return curr;
     }
+
+    /**
+     * setToFuture / redo-function
+     * sets to and returns the last entry of the future container as the current
+     * @return the current container
+     */
+    public Container setToFuture(){
+        // adds the current status as a container to the previous stack
+        prev.add(new Container(allPersonList,
+                couples,
+                groups,
+                maxGuests,
+                //GROUP MANAGER STUFF
+                FoodPrefWeight,
+                AVGAgeRangeWeight,
+                AVGGenderDIVWeight,
+                distanceWeight,
+                optimalDistance,
+                GroupManager.getInstance().succeedingCouples,
+                GroupManager.getInstance().overBookedCouples));
+        Container curr = future.pop();
+        switchTO(curr);
+        return curr;
+    }
+    /**
+     * switches the current manager to another image
+     * @param container the image, to switch to
+     */
     private void switchTO(Container container){
         allPersonList = container.getPersonList();
         couples = container.getCoupleList();
@@ -236,7 +269,7 @@ public class Manager {
     }
 
     /**
-     * changedSomething
+     * changedSomething()
      * needs to be called when making a change.
      * method creates container
      * then adds container to prev stack
@@ -246,6 +279,7 @@ public class Manager {
         prev.add(new Container(allPersonList,
                 couples,
                 groups,
+                maxGuests,
                 //GROUP MANAGER STUFF
                 FoodPrefWeight,
                 AVGAgeRangeWeight,
@@ -255,6 +289,23 @@ public class Manager {
                 GroupManager.getInstance().succeedingCouples,
                 GroupManager.getInstance().overBookedCouples));
         future.clear();
+    }
+
+    /**
+     * changeParameter
+     * changes the Parameters to the given values
+     * @param parameterValues all parameter Values changed or otherwise
+     */
+    public void changeParameter(Double[] parameterValues){
+        changedSomething();
+        maxGuests = parameterValues[0].intValue();
+        // last 5 entries for Group-Manager
+        int GroupManagerIndex = parameterValues.length-5;
+        FoodPrefWeight = parameterValues[GroupManagerIndex];
+        AVGAgeRangeWeight = parameterValues[GroupManagerIndex + 1];
+        AVGGenderDIVWeight = parameterValues[GroupManagerIndex + 2];
+        distanceWeight = parameterValues[GroupManagerIndex + 3];
+        optimalDistance = parameterValues[GroupManagerIndex + 4];
     }
 
 }
