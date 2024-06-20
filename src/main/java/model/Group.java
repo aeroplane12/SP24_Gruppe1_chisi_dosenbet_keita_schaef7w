@@ -47,28 +47,6 @@ public class Group {
     public List<Couple> getAll(){
         return List.of(host,guest1,guest2);
     }
-
-    public void setHost(Couple host) {
-        this.host = host;
-    }
-
-    public void setGuest1(Couple guest1) {
-        this.guest1 = guest1;
-    }
-
-    public void setGuest2(Couple guest2) {
-        this.guest2 = guest2;
-    }
-
-    public Couple getHost() {
-        return host;
-    }
-    public Couple getGuest1() {
-        return guest1;
-    }
-    public Couple getGuest2() {
-        return guest2;
-    }
     public void replaceCouple(Couple couple, Couple replacement){
         if (couple.equals(host)) {
             host = replacement;

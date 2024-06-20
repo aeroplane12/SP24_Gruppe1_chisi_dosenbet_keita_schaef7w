@@ -4,8 +4,12 @@ import model.tools.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Manager {
+    static Manager instance;
+    private Stack<Container> prev;
+    private Stack<Container> future;
     static int couple_Counter = 0;
     static int group_Counter = 0;
     public static int maxGuests = 400;
@@ -19,11 +23,28 @@ public class Manager {
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();
+      /////////////////////////////
+     // Group-Manager Constants //
+    /////////////////////////////
+
+    private Double FoodPrefWeight = 5d;
+    private Double AVGAgeRangeWeight = 2d;
+    private Double AVGGenderDIVWeight = 1d;
+    private Double distanceWeight = 3d;
+    private Double optimalDistance = 10d;
+
 
     public Manager() {
         this.groupManager = GroupManager.getInstance();
         this.coupleManager = CoupleManager.getInstance();
         this.couples = new ArrayList<>();
+        instance = this;
+    }
+    public static Manager getInstance(){
+        if (instance == null) {
+            return new Manager();
+        }
+        return instance;
     }
     public Manager(String path){
         inputLocation(path);
@@ -83,7 +104,7 @@ public class Manager {
      * calculates the groups using the initialized coupleManager
      */
     public void calcGroups(){
-        groupManager.calcGroups(couples);
+        groupManager.calcGroups(couples,false);
         groups.addAll(groupManager.getLedger());
     }
 
@@ -112,7 +133,7 @@ public class Manager {
         singles = coupleManager.getSingleList();
         couples = coupleManager.getCouples();
         GroupManager.clear();
-        groupManager.calcGroups(couples);
+        groupManager.calcGroups(couples,false);
         groups = groupManager.getLedger();
     }
     /**
@@ -154,7 +175,86 @@ public class Manager {
         return groups;
     }
 
-    public Container getContainer(){
-        return new Container(allPersonList, couples, groups);
+    /**
+     * setToPrev / undo-function
+     * sets to and returns the previous container
+     * @return the current container
+     */
+    public Container setToPrev(){
+        // adds the current status as a container to the future stack
+        future.add(new Container(allPersonList,
+                couples,
+                groups,
+                //GROUP MANAGER STUFF
+                FoodPrefWeight,
+                AVGAgeRangeWeight,
+                AVGGenderDIVWeight,
+                distanceWeight,
+                optimalDistance,
+                GroupManager.getInstance().succeedingCouples,
+                GroupManager.getInstance().overBookedCouples));
+        Container curr = prev.pop();
+        switchTO(curr);
+        return curr;
     }
+    private void switchTO(Container container){
+        allPersonList = container.getPersonList();
+        couples = container.getCoupleList();
+        groups = container.getGroupList();
+        // INPUT COUPLE MANAGER CONSTANTS HERE
+        // START GROUP MANAGER CONSTANTS
+        FoodPrefWeight = container.getFoodPrefWeight();
+        AVGAgeRangeWeight = container.getAVGAgeRangeWeight();
+        AVGGenderDIVWeight = container.getAVGGenderDIVWeight();
+        distanceWeight = container.getDistanceWeight();
+        optimalDistance = container.getOptimalDistance();
+        GroupManager.getInstance().overBookedCouples = container.getOverBookedCouples();
+        GroupManager.getInstance().succeedingCouples = container.getSucceedingCouples();
+        GroupManager.getInstance().ledger = container.getGroupList();
+        // END GROUP MANAGER CONSTANTS
+
+    }
+
+    public Double getFoodPrefWeight() {
+        return FoodPrefWeight;
+    }
+
+    public Double getAVGAgeRangeWeight() {
+        return AVGAgeRangeWeight;
+    }
+
+    public Double getAVGGenderDIVWeight() {
+        return AVGGenderDIVWeight;
+    }
+
+    public Double getDistanceWeight() {
+        return distanceWeight;
+    }
+
+    public Double getOptimalDistance() {
+        return optimalDistance;
+    }
+
+    /**
+     * changedSomething
+     * needs to be called when making a change.
+     * method creates container
+     * then adds container to prev stack
+     * afterwords clears future stack
+     */
+    public void changedSomething(){
+        prev.add(new Container(allPersonList,
+                couples,
+                groups,
+                //GROUP MANAGER STUFF
+                FoodPrefWeight,
+                AVGAgeRangeWeight,
+                AVGGenderDIVWeight,
+                distanceWeight,
+                optimalDistance,
+                GroupManager.getInstance().succeedingCouples,
+                GroupManager.getInstance().overBookedCouples));
+        future.clear();
+    }
+
 }

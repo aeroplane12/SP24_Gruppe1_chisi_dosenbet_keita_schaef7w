@@ -30,7 +30,7 @@ public class GroupManagerTest {
                         x.getPartner().getKitchen(),
                         x.getCouplePreference(),
                         partyLoc)).toList());
-        groupManager.calcGroups(couples);
+        groupManager.calcGroups(couples,false);
     }
 
     @Test
@@ -64,12 +64,12 @@ public class GroupManagerTest {
         assertEquals(groupManager.processedCouples.size(),groupManager.getLedger().size());
         // EDGE CASES NULL/EMPTY-LIST
         GroupManager.clear();
-        groupManager.calcGroups(Collections.emptyList());
+        groupManager.calcGroups(Collections.emptyList(),false);
         List<Group> groups1 = groupManager.getLedger();
         assertNotNull(groups1);
         assertTrue(groups1.isEmpty(), "No groups should be generated for empty input");
         // EDGE CASE LESS THAN 9
-        groupManager.calcGroups(List.of(couples.get(0)));
+        groupManager.calcGroups(List.of(couples.get(0)),false);
         List<Group> groups2 = groupManager.getLedger();
         assertNotNull(groups2);
         assertTrue(groups2.isEmpty(), "No groups should be generated when couples are less than 9 couples");
@@ -178,11 +178,11 @@ public class GroupManagerTest {
         groupManager.remove(groupManager.overBookedCouples.get(0));
         assertEquals(before-1,groupManager.overBookedCouples.size());
         assertEquals(groupManager.getLedger(),l);
-        for (int j = 0; j<toDelete.size();j++) {
+        for (Couple couple : toDelete) {
             //remove from manager, commented out due to performance concerns
-            groupManager.remove(toDelete.get(j));
+            groupManager.remove(couple);
 
-            assertFalse(groupManager.processedCouples.contains(toDelete.get(j)));
+            assertFalse(groupManager.processedCouples.contains(couple));
         }
 
         /*

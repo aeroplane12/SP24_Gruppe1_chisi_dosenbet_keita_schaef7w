@@ -8,46 +8,24 @@ import java.util.stream.Collectors;
 
 
 public class GroupManager {
-    private Double FoodPrefWeight;
-    private Double AVGAgeRangeWeight;
-    private Double AVGGenderDIVWeight;
     public List<Couple> succeedingCouples = new ArrayList<>();
     public List<Couple> overBookedCouples = new ArrayList<>(); //couples that are sadly not usable unless a conflicting couple gets deleted
-    public List<Couple> processedCouples = new ArrayList<>(); //just for testing
-    private Double distanceWeight;
-    private Double optimalDistance;
+    public List<Couple> processedCouples = new ArrayList<>();
     private static GroupManager instance;
-    private final List<Group> ledger = new ArrayList<>();
+    public List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger = new HashMap<>();
     private Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
-        Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0? 0 : (x.getFoodPref().value - y.getFoodPref().value)) * FoodPrefWeight
-                + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * AVGAgeRangeWeight
-                + Math.pow(x.getCurrentKitchen().distance(y.getCurrentKitchen())-optimalDistance,2) * distanceWeight
-                - (getGenderDiversity(x.getGenderDiv(),y.getGenderDiv())) * AVGGenderDIVWeight);
+        Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0? 0 : (x.getFoodPref().value - y.getFoodPref().value)) * Manager.getInstance().getFoodPrefWeight()
+                + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * Manager.getInstance().getAVGAgeRangeWeight()
+                + Math.abs(x.getCurrentKitchen().distance(y.getCurrentKitchen())-Manager.getInstance().getOptimalDistance()) * Manager.getInstance().getDistanceWeight()
+                - (getGenderDiversity(x.getGenderDiv(),y.getGenderDiv())) * Manager.getInstance().getAVGGenderDIVWeight());
     public GroupManager(){
-        // empty constructor
-        FoodPrefWeight = 5d;
-        AVGAgeRangeWeight = 2d;
-        AVGGenderDIVWeight = 1d;
-        distanceWeight = 3d;
-        // distance in meters
-        optimalDistance = 100d;
         // needs to be set for it to work unless the party happens at Null island
         this.partyLoc = new Location(0d,0d);
         instance = this;
     }
-    public GroupManager(Double foodPrefWeight,
-                        Double avgAgeRangeWeight,
-                        Double avgGenderDiffWeight,
-                        Double optimalDistance,
-                        Double distanceWeight,
-                        Location partyLoc){
-        FoodPrefWeight = foodPrefWeight;
-        AVGAgeRangeWeight = avgAgeRangeWeight;
-        AVGGenderDIVWeight = avgGenderDiffWeight;
-        this.optimalDistance = optimalDistance;
-        this.distanceWeight = distanceWeight;
+    public GroupManager(Location partyLoc){
         this.partyLoc = partyLoc;
         instance = this;
     }
@@ -58,7 +36,7 @@ public class GroupManager {
         return instance;
     }
 
-    public void calcGroups(List<Couple> allCouples){
+    public void calcGroups(List<Couple> allCouples,boolean forced){
         /*DONE sorting couples into Groups according to specifications
          - each group consists of three couples, one host and two guests
          - create groups according to the following specifications
@@ -87,7 +65,7 @@ public class GroupManager {
         });
         //O(n*log(n)+n)=O(n*log(n))
         while (possibleHosts.size()%9 != 0 ||
-                possibleHosts.size() > (Manager.maxGuests/2) ) {
+                (possibleHosts.size() > (Manager.maxGuests/2) && !forced) ) {
             // removes the most conflicting and furthest away kitchen Couples first
             // until it reaches a point at which there are possible solutions
             succeedingCouples.add(possibleHosts.remove(0));
@@ -107,7 +85,7 @@ public class GroupManager {
         // need everyone from conflicting kitchen to host first, then sort by distance
         for (Course course : new Course[]{Course.DESSERT,Course.DINNER,Course.STARTER}) {
             ledger.addAll(fillCourse(new ArrayList<>(possibleHosts),course));
-            //O(n^3*log(n))
+            //O(n^2*log(n))
         }
 
     }
@@ -198,7 +176,7 @@ public class GroupManager {
         }
         //O(n^2+n*(n+n+n+1))=O(n^2)
 
-        return findValidCouplePairMatching(//O(n^2+n^3*log(n)) = O(n^3*log(n))
+        return findValidCouplePairMatching(//O(n^2+n^2*log(n)) = O(n^2*log(n))
                 couplePairList,
                 guests,
                 course,
@@ -231,61 +209,42 @@ public class GroupManager {
                                         .sorted((a,b)->COUPLERANKGEN.rank(x.host,a).compareTo(COUPLERANKGEN.rank(x.host,b))) //O(m*log(m))
                                         .toList()))));
         //O(m*(m+m*log(m))) = O(m^2*log(m))
-        Map.Entry<CouplePair,List<Couple>> leastMatchablePair = hostMatchMap.entrySet()
-                .stream()
-                .min(Comparator.comparingInt(x -> x.getValue().size()))//O(m)
-                .orElseThrow();
-        //O(m+m^2*log(m))= O(m^2*log(m))
-        Couple guest2 = leastMatchablePair.getValue().stream().findFirst().orElseThrow();
-        Group group = new Group(leastMatchablePair.getKey().host,
-                leastMatchablePair.getKey().guest,
-                guest2,
-                course,
-                Manager.getGroupCounter());
+        while (!allRemainingCouples.isEmpty()){ // O((m^2*log(m))+m*(...))
+            Map.Entry<CouplePair,List<Couple>> leastMatchablePair = hostMatchMap.entrySet()
+                    .stream()
+                    .min(Comparator.comparingInt(x -> x.getValue().size()))//O(m)
+                    .orElseThrow();
+            //O(m)
+            Couple guest2 = leastMatchablePair.getValue().stream().findFirst().orElseThrow();
+            Group group = new Group(leastMatchablePair.getKey().host,
+                    leastMatchablePair.getKey().guest,
+                    guest2,
+                    course,
+                    Manager.getGroupCounter());
+            //toggles all necessary flags to indicate, that the couples met and the host hosted
+            toggleGroupFlags(leastMatchablePair.getKey().host, // O(1)
+                    leastMatchablePair.getKey().guest,
+                    guest2,
+                    course,
+                    group.getID());
+            //O(1+m)
+            //add the group to the output, remove the guest and the pair
+            // and remove every instance of the guests in the map values
+            hostMatchMap.remove(leastMatchablePair.getKey());
+            for (List<Couple> x:hostMatchMap.values()) {//O(m)
+                x.remove(guest2);//O(m)
+            }
+            //O(1+m+m^2))
+            groups.add(group);//O(1)
+            hostGuestCombo.remove(leastMatchablePair.getKey());//O(m)
+            allRemainingCouples.remove(guest2);//O(m)
+            //O(1+m+m^2)
+        }
+        // O(m+m^2+m^3+m^2*log(m)) = O(m^3)
+        return groups;
 
-        //toggles all necessary flags to indicate, that the couples met and the host hosted
-        toggleGroupFlags(leastMatchablePair.getKey().host, // O(1)
-                leastMatchablePair.getKey().guest,
-                guest2,
-                course,
-                group.getID());
-        //O(1+m^2*log(m))= O(m^2*log(m))
-        //add the group to the output, remove the guest and the pair
-        groups.add(group);//O(1)
-        hostGuestCombo.remove(leastMatchablePair.getKey());//O(m)
-        allRemainingCouples.remove(guest2);//O(m)
-        //O(1+2m+m^2*log(m))= O(m^2*log(m))
-        return findValidCouplePairMatching(
-                hostGuestCombo,
-                allRemainingCouples,
-                course,
-                groups);
-        //O(m*m^2*log(m))= O(m^3*log(m))
     }
 
-    public Double getFoodPrefWeight() {
-        return FoodPrefWeight;
-    }
-
-    public void setFoodPrefWeight(Double foodPrefWeight) {
-        this.FoodPrefWeight = foodPrefWeight;
-    }
-
-    public Double getAVGAgeRangeWeight() {
-        return AVGAgeRangeWeight;
-    }
-
-    public void setAVGAgeRangeWeight(Double AVGAgeRangeWeight) {
-        this.AVGAgeRangeWeight = AVGAgeRangeWeight;
-    }
-
-    public Double getAVGGenderDIVWeight() {
-        return AVGGenderDIVWeight;
-    }
-
-    public void setAVGGenderDIVWeight(Double AVGGenderDIVWeight) {
-        this.AVGGenderDIVWeight = AVGGenderDIVWeight;
-    }
 
     public List<Group> getLedger() {
         return ledger;
@@ -389,7 +348,7 @@ public class GroupManager {
                 x.getCurrentKitchen().clearFlags();
                 x.clearFlags();});
             clear();
-            calcGroups(retry);
+            calcGroups(retry,false);
             return;
         }
         succeedingCouples.remove(replacement);
