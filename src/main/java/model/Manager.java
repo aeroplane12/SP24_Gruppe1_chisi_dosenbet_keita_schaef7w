@@ -8,8 +8,8 @@ import java.util.Stack;
 
 public class Manager {
     static Manager instance;
-    private Stack<Container> prev;
-    private Stack<Container> future;
+    private Stack<Container> prev = new Stack<>();
+    private Stack<Container> future = new Stack<>();
     static int couple_Counter = 0;
     static int group_Counter = 0;
     public static int maxGuests = 400;
@@ -56,6 +56,7 @@ public class Manager {
 
     }
 
+
     /**
      * calcAll
      * calculates all Couples first,
@@ -64,6 +65,15 @@ public class Manager {
     public void calcAll(){
         calcCouples();
     }
+
+    public List<Couple> getCouples() {
+        return couples;
+    }
+
+    public List<Person> getSingles() {
+        return singles;
+    }
+
 
     /**
      * Reads .csv File at Path,
@@ -77,6 +87,8 @@ public class Manager {
             return;
         }
         // split people into couples and singles
+        couple_Counter = 0;
+        group_Counter = 0;
         allPersonList.forEach(x -> {
             if (x.hasPartner())
                 couples.add(new Couple(couple_Counter++ ,
@@ -185,7 +197,53 @@ public class Manager {
      * @return the current container
      */
     public Container setToPrev(){
-        // adds the current status as a container to the future stack
+        // adds the current status as a container to the previous/undo stack
+        pushToFuture();
+
+        Container curr = prev.pop();
+        switchTO(curr);
+        return curr;
+    }
+
+    /**
+     * pushToPrev / pushToUndoStack
+     * pushes the current instance to the undo stack
+     */
+    public void pushToPrev(){
+        prev.add(new Container(allPersonList,
+            couples,
+            groups,
+            maxGuests,
+            //GROUP MANAGER STUFF
+            FoodPrefWeight,
+            AVGAgeRangeWeight,
+            AVGGenderDIVWeight,
+            distanceWeight,
+            optimalDistance,
+            GroupManager.getInstance().succeedingCouples,
+            GroupManager.getInstance().overBookedCouples));
+    }
+
+    /**
+     * setToFuture / redo-function
+     * sets to and returns the last entry of the future container as the current
+     * @return the current container
+     */
+    public Container setToFuture(){
+        // adds the current status as a container to the previous/undo stack
+        pushToPrev();
+
+        Container curr = future.pop();
+        switchTO(curr);
+        return curr;
+    }
+
+    /**
+     * pushToFuture / pushToRedoStack
+     * pushes the current instance to the redo stack
+     */
+    public void pushToFuture(){
+        // adds the current status as a container to the future/redo stack
         future.add(new Container(allPersonList,
                 couples,
                 groups,
@@ -198,33 +256,6 @@ public class Manager {
                 optimalDistance,
                 GroupManager.getInstance().succeedingCouples,
                 GroupManager.getInstance().overBookedCouples));
-        Container curr = prev.pop();
-        switchTO(curr);
-        return curr;
-    }
-
-    /**
-     * setToFuture / redo-function
-     * sets to and returns the last entry of the future container as the current
-     * @return the current container
-     */
-    public Container setToFuture(){
-        // adds the current status as a container to the previous stack
-        prev.add(new Container(allPersonList,
-                couples,
-                groups,
-                maxGuests,
-                //GROUP MANAGER STUFF
-                FoodPrefWeight,
-                AVGAgeRangeWeight,
-                AVGGenderDIVWeight,
-                distanceWeight,
-                optimalDistance,
-                GroupManager.getInstance().succeedingCouples,
-                GroupManager.getInstance().overBookedCouples));
-        Container curr = future.pop();
-        switchTO(curr);
-        return curr;
     }
     /**
      * switches the current manager to another image
