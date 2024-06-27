@@ -106,7 +106,7 @@ public class Manager {
      * calculates the couples using the initialized coupleManager
      */
     private void calcCouples(){
-        coupleManager.givePeopleWithoutPartner(singles,0,couple_Counter,partyLoc);
+        coupleManager.givePeopleWithoutPartner(singles,Strictness.C,couple_Counter,partyLoc);
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getSingleList();
         couple_Counter = coupleManager.getCurrentCoupleCount();
