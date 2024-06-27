@@ -8,7 +8,7 @@ import java.util.List;
 public class CoupleManager {
 
     private static CoupleManager instance;
-    private int strictnessLevel = 0;
+    private Strictness strictnessLevel;
     private Location partyLoc;
     private int currentCoupleCount;
 
@@ -44,9 +44,9 @@ public class CoupleManager {
     private List<Person> any;
     // Index numbers of Zeros in each row
 
-    void givePeopleWithoutPartner(List<Person> singles, int strictnessLevel, int currentCoupleCount, Location partyLoc) {
-        if (strictnessLevel < 0 || strictnessLevel > 2)
-            throw new IllegalArgumentException("Strictness level must be between 0 and 2");
+    void givePeopleWithoutPartner(List<Person> singles, Strictness strictnessLevel, int currentCoupleCount, Location partyLoc) {
+        if (!(strictnessLevel == Strictness.A || strictnessLevel == Strictness.B || strictnessLevel == Strictness.C))
+            throw new IllegalArgumentException("Strictness level hast to be one of A,B or C");
 
         this.strictnessLevel = strictnessLevel;
         this.currentCoupleCount = currentCoupleCount;
@@ -63,7 +63,12 @@ public class CoupleManager {
 
         List<Person> withKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() != null).toList();
         List<Person> noKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() == null).toList();
-        if (withKitchen.size() > noKitchen.size() && strictnessLevel == 0) {
+
+        if (strictnessLevel == Strictness.A){
+
+        }
+
+        if (strictnessLevel == Strictness.B) {
             arrWithKitchen = new Person[withKitchen.size()];
             for (int i = 0; i < withKitchen.size(); i++) {
                 arrWithKitchen[i] = withKitchen.get(i);
@@ -81,7 +86,10 @@ public class CoupleManager {
                 allSingleParticipants.get(1).setPartner(allSingleParticipants.get(0));
                 allSingleParticipants.clear();
             }
-        } else if (strictnessLevel == 0) {
+
+
+
+        } else
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
 //        } else if (strictnessLevel == 1) {
 //            List<Person> veganAndVeggie = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN) || x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
@@ -98,7 +106,7 @@ public class CoupleManager {
 //            bringSingleTogether(createNumberBoxMatrix(veggie), veggie);
 //        }
         }
-    }
+
 
     private boolean bothKitchenNull(List<Person> allSingleParticipants) {
         return allSingleParticipants.stream().allMatch(x -> x.getKitchen() == null);
@@ -569,11 +577,11 @@ public class CoupleManager {
     }
 
 
-    public int getStrictnessLevel() {
+    public Strictness getStrictnessLevel() {
         return strictnessLevel;
     }
 
-    public void setStrictnessLevel(int strictnessLevel) {
+    public void setStrictnessLevel(Strictness strictnessLevel) {
         this.strictnessLevel = strictnessLevel;
     }
 

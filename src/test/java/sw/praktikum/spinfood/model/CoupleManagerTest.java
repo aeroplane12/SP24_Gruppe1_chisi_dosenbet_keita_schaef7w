@@ -18,7 +18,7 @@ public class CoupleManagerTest {
     public void setUp() {
         // TODO: Initialize coupleManager with appropriate data
         coupleManager = CoupleManager.getInstance();
-        coupleManager.setStrictnessLevel(0);
+        coupleManager.setStrictnessLevel(Strictness.B);
         coupleManager.getSingleList().clear(); // Ensure the list is empty before each test
 
         Kitchen kitchen1 = new Kitchen(10.0, 20.0, false, 1.0);
@@ -49,7 +49,7 @@ public class CoupleManagerTest {
 
 
 
-        coupleManager.givePeopleWithoutPartner(singles, 0, 0, new Location(20.00, 15.00));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, 0, new Location(20.00, 15.00));
 
         List<Couple> couples = coupleManager.getCouples();
 
@@ -93,7 +93,7 @@ public class CoupleManagerTest {
         coupleManager.addPerson(person3);
         coupleManager.addPerson(person4);
 
-        coupleManager.givePeopleWithoutPartner(singles, 0,0,new Location(0.2,0.4));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B,0,new Location(0.2,0.4));
         List<Couple> couples = coupleManager.couples;
         assertNotNull(couples);
     }
@@ -151,7 +151,7 @@ public class CoupleManagerTest {
         System.out.println("Couples after adding persons: " + coupleManager.getCouples());
 
         // Form initial couples
-        coupleManager.givePeopleWithoutPartner(singles, 0, 0, new Location(0.2, 0.4));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, 0, new Location(0.2, 0.4));
         List<Couple> initialCouples = coupleManager.getCouples();
         int initialCouplesSize = initialCouples.size();
         System.out.println("Initial couples after forming: " + initialCouples);
@@ -193,7 +193,7 @@ public class CoupleManagerTest {
         System.out.println("Couples after adding persons: " + coupleManager.getCouples());
 
         // Form initial couples
-        coupleManager.givePeopleWithoutPartner(singles, 0, 0, new Location(0.2, 0.4));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, 0, new Location(0.2, 0.4));
         List<Couple> initialCouples = coupleManager.getCouples();
         int initialCouplesSize = initialCouples.size();
         System.out.println("Initial couples after forming: " + initialCouples);
