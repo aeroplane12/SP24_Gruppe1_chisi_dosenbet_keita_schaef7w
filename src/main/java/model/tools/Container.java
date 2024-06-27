@@ -4,23 +4,24 @@ import model.Couple;
 import model.Group;
 import model.Person;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Container {
 
-    private List<Person> personList;
-    private List<Couple> coupleList;
-    private List<Group> groupList;
-    private int maxGuests;
+    private final List<Person> PERSON_LIST;
+    private final List<Couple> COUPLE_LIST;
+    private final List<Group> GROUP_LIST;
+    private final int MAX_GUESTS;
 
     //-CONSTANTS FOR GROUP MANAGER-
-    private Double FoodPrefWeight;
-    private Double AVGAgeRangeWeight;
-    private Double AVGGenderDIVWeight;
-    private Double distanceWeight;
-    private Double optimalDistance;
-    private List<Couple> succeedingCouples;
-    private List<Couple> overBookedCouples;
+    private final Double FOOD_PREF_WEIGHT;
+    private final Double AVG_AGE_RANGE_WEIGHT;
+    private final Double AVG_GENDER_DIV_WEIGHT;
+    private final Double DISTANCE_WEIGHT;
+    private final Double OPTIMAL_DISTANCE;
+    private final List<Couple> SUCCEEDING_COUPLES;
+    private final List<Couple> OVERBOOKED_COUPLES;
     //-----------------------------
 
     public Container(List<Person> personList,
@@ -34,69 +35,62 @@ public class Container {
                      Double oD,
                      List<Couple> sCGM,
                      List<Couple> oBCGM) {
-        this.personList = personList;
-        this.coupleList = coupleList;
-        this.groupList = groupList;
-        maxGuests = mG;
+        PERSON_LIST = new ArrayList<>(personList);
+        COUPLE_LIST = new ArrayList<>(coupleList);
+        GROUP_LIST = new ArrayList<>(groupList);
+        MAX_GUESTS = mG;
         //GROUP MANAGER HERE
-        FoodPrefWeight =FPW;
-        AVGAgeRangeWeight = avgARW;
-        AVGGenderDIVWeight = avgGDW;
-        distanceWeight = dW;
-        optimalDistance = oD;
-        succeedingCouples = sCGM;
-        overBookedCouples = oBCGM;
+        FOOD_PREF_WEIGHT = FPW;
+        AVG_AGE_RANGE_WEIGHT = avgARW;
+        AVG_GENDER_DIV_WEIGHT = avgGDW;
+        DISTANCE_WEIGHT = dW;
+        OPTIMAL_DISTANCE = oD;
+        SUCCEEDING_COUPLES = new ArrayList<>(sCGM);
+        OVERBOOKED_COUPLES = new ArrayList<>(oBCGM);
     }
 
-    public List<Person> getPersonList() {
-        return personList;
+    public List<Person> getPERSON_LIST() {
+        return PERSON_LIST;
     }
 
-    public void setPersonList(List<Person> personList) {
-        this.personList = personList;
+
+    public List<Couple> getCOUPLE_LIST() {
+        return COUPLE_LIST;
     }
 
-    public List<Couple> getCoupleList() {
-        return coupleList;
+
+    public List<Group> getGROUP_LIST() {
+        return GROUP_LIST;
     }
 
-    public void setCoupleList(List<Couple> coupleList) {
-        this.coupleList = coupleList;
+
+    public Double getDISTANCE_WEIGHT() {
+        return DISTANCE_WEIGHT;
     }
 
-    public List<Group> getGroupList() {
-        return groupList;
+    public Double getAVG_GENDER_DIV_WEIGHT() {
+        return AVG_GENDER_DIV_WEIGHT;
     }
 
-    public void setGroupList(List<Group> groupList) {
-        this.groupList = groupList;
+    public Double getAVG_AGE_RANGE_WEIGHT() {
+        return AVG_AGE_RANGE_WEIGHT;
     }
 
-    public Double getDistanceWeight() {
-        return distanceWeight;
+    public Double getFOOD_PREF_WEIGHT() {
+        return FOOD_PREF_WEIGHT;
     }
 
-    public Double getAVGGenderDIVWeight() {
-        return AVGGenderDIVWeight;
+    public Double getOPTIMAL_DISTANCE() {
+        return OPTIMAL_DISTANCE;
     }
 
-    public Double getAVGAgeRangeWeight() {
-        return AVGAgeRangeWeight;
+    public List<Couple> getOVERBOOKED_COUPLES() {
+        return OVERBOOKED_COUPLES;
     }
 
-    public Double getFoodPrefWeight() {
-        return FoodPrefWeight;
+    public List<Couple> getSUCCEEDING_COUPLES() {
+        return SUCCEEDING_COUPLES;
     }
 
-    public Double getOptimalDistance() {
-        return optimalDistance;
-    }
-
-    public List<Couple> getOverBookedCouples() {
-        return overBookedCouples;
-    }
-
-    public List<Couple> getSucceedingCouples() {
-        return succeedingCouples;
-    }
+    public int getMAX_GUESTS() {return MAX_GUESTS;}
 }

@@ -8,6 +8,10 @@ public class Location {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+    public Location(Location location){
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
+    }
 
     public Double getLatitude() {
         return latitude;

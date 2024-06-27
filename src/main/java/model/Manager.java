@@ -8,8 +8,8 @@ import java.util.Stack;
 
 public class Manager {
     static Manager instance;
-    private Stack<Container> prev;
-    private Stack<Container> future;
+    private static Stack<Manager> prev;
+    private static Stack<Manager> future;
     static int couple_Counter = 0;
     static int group_Counter = 0;
     public static int maxGuests = 400;
@@ -50,9 +50,19 @@ public class Manager {
     public Manager(String path){
         inputLocation(path);
         this.groupManager = GroupManager.getInstance();
-        GroupManager.setPartyLoc(partyLoc);
+        this.groupManager.setPartyLoc(partyLoc);
         this.coupleManager = CoupleManager.getInstance();
         this.couples = new ArrayList<>();
+
+    }
+    // copy constructor
+    private Manager(Manager manager){
+        coupleManager = manager.coupleManager;
+        groupManager = new GroupManager(manager.groupManager);
+        allPersonList = new ArrayList<>(manager.allPersonList);
+        singles = new ArrayList<>(manager.singles);
+        couples = new ArrayList<>(manager.couples);
+        groups = new ArrayList<>(manager.groups);
 
     }
 
@@ -160,7 +170,7 @@ public class Manager {
      */
     public void inputLocation(String path) {
         partyLoc = CSVReader.csvReaderPartyLocation(path);
-        GroupManager.setPartyLoc(partyLoc);
+        groupManager.setPartyLoc(partyLoc);
     }
 
     public GroupManager getGroupManager() {
@@ -185,6 +195,7 @@ public class Manager {
      * @return the current container
      */
     public Container setToPrev(){
+        /*
         // adds the current status as a container to the future stack
         future.add(new Container(allPersonList,
                 couples,
@@ -201,6 +212,9 @@ public class Manager {
         Container curr = prev.pop();
         switchTO(curr);
         return curr;
+
+         */
+        return null;
     }
 
     /**
@@ -210,7 +224,7 @@ public class Manager {
      */
     public Container setToFuture(){
         // adds the current status as a container to the previous stack
-        prev.add(new Container(allPersonList,
+        /*prev.add(new Container(allPersonList,
                 couples,
                 groups,
                 maxGuests,
@@ -222,28 +236,32 @@ public class Manager {
                 optimalDistance,
                 GroupManager.getInstance().succeedingCouples,
                 GroupManager.getInstance().overBookedCouples));
+
         Container curr = future.pop();
         switchTO(curr);
         return curr;
+         */
+        return null;
     }
     /**
      * switches the current manager to another image
      * @param container the image, to switch to
      */
     private void switchTO(Container container){
-        allPersonList = container.getPersonList();
-        couples = container.getCoupleList();
-        groups = container.getGroupList();
+        allPersonList = container.getPERSON_LIST();
+        couples = container.getCOUPLE_LIST();
+        groups = container.getGROUP_LIST();
+        maxGuests = container.getMAX_GUESTS();
         // INPUT COUPLE MANAGER CONSTANTS HERE
         // START GROUP MANAGER CONSTANTS
-        FoodPrefWeight = container.getFoodPrefWeight();
-        AVGAgeRangeWeight = container.getAVGAgeRangeWeight();
-        AVGGenderDIVWeight = container.getAVGGenderDIVWeight();
-        distanceWeight = container.getDistanceWeight();
-        optimalDistance = container.getOptimalDistance();
-        GroupManager.getInstance().overBookedCouples = container.getOverBookedCouples();
-        GroupManager.getInstance().succeedingCouples = container.getSucceedingCouples();
-        GroupManager.getInstance().ledger = container.getGroupList();
+        FoodPrefWeight = container.getFOOD_PREF_WEIGHT();
+        AVGAgeRangeWeight = container.getAVG_AGE_RANGE_WEIGHT();
+        AVGGenderDIVWeight = container.getAVG_GENDER_DIV_WEIGHT();
+        distanceWeight = container.getDISTANCE_WEIGHT();
+        optimalDistance = container.getOPTIMAL_DISTANCE();
+        GroupManager.getInstance().overBookedCouples = container.getOVERBOOKED_COUPLES();
+        GroupManager.getInstance().succeedingCouples = container.getSUCCEEDING_COUPLES();
+        GroupManager.getInstance().ledger = container.getGROUP_LIST();
         // END GROUP MANAGER CONSTANTS
 
     }
@@ -276,6 +294,7 @@ public class Manager {
      * afterwords clears future stack
      */
     public void changedSomething(){
+        /*
         prev.add(new Container(allPersonList,
                 couples,
                 groups,
@@ -289,6 +308,8 @@ public class Manager {
                 GroupManager.getInstance().succeedingCouples,
                 GroupManager.getInstance().overBookedCouples));
         future.clear();
+
+         */
     }
 
     /**

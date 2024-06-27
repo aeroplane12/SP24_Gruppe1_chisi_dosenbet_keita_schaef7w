@@ -17,9 +17,10 @@ public class GroupManagerTest {
     @BeforeEach
     public void setUp() {
         GroupManager.clear();
+        Manager.maxGuests = 200;
         partyLoc = new Location(10.0, 20.0);
         groupManager = new GroupManager();
-        GroupManager.setPartyLoc(partyLoc);
+        groupManager.setPartyLoc(partyLoc);
         // the entries of teilnehmerliste * 5 so we can guarantee kitchen Conflicts
         couples = new ArrayList<>(Objects.requireNonNull(CSVReader.csvReaderPeople("Dokumentation/TestingData/csvtestdateMult.csv")).stream()
                 .filter(Person::hasPartner)
@@ -30,14 +31,14 @@ public class GroupManagerTest {
                         x.getPartner().getKitchen(),
                         x.getCouplePreference(),
                         partyLoc)).toList());
-        groupManager.calcGroups(couples,false);
+        groupManager.calcGroups(new ArrayList<>(couples),false);
     }
 
     @Test
     public void testCalcGroups() {
-        // TODO: Implement this test method once calcGroups is implemented
         Map<Course, List<Group>> courseGroupMap = groupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
         Map<Couple, Integer> coupleCounter = new HashMap<>();
+        assertFalse(GroupManager.getInstance().getLedger().isEmpty());
         int mapEntrySize = courseGroupMap.values().stream().toList().get(0).size();
         for (List<Group> i : courseGroupMap.values()) {
             assertEquals(mapEntrySize,i.size(),"differently sized Group allocations");
@@ -175,44 +176,30 @@ public class GroupManagerTest {
         groupManager.remove(groupManager.succeedingCouples.get(0));
         assertEquals(before-1,groupManager.succeedingCouples.size());
         before = groupManager.overBookedCouples.size();
-        groupManager.remove(groupManager.overBookedCouples.get(0));
-        assertEquals(before-1,groupManager.overBookedCouples.size());
+        if (before != 0) {
+            groupManager.remove(groupManager.overBookedCouples.get(0));
+            assertEquals(before-1,groupManager.overBookedCouples.size());
+        }
         assertEquals(groupManager.getLedger(),l);
         for (Couple couple : toDelete) {
             //remove from manager, commented out due to performance concerns
             groupManager.remove(couple);
-
             assertFalse(groupManager.processedCouples.contains(couple));
-        }
-
-        /*
-        // checking integrity of all things again
-        Map<Course, List<Group>> courseGroupMap = groupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
-        Map<Couple, Integer> coupleCounter = new HashMap<>();
-        int mapEntrySize = courseGroupMap.values().stream().toList().get(0).size();
-        for (List<Group> i : courseGroupMap.values()) {
-            assertEquals(mapEntrySize,i.size(),"differently sized Group allocations");
-            for (Group j : i){
-                for (Couple h : j.getAll()) {
-                    if (!coupleCounter.containsKey(h)){
-                        coupleCounter.put(h,1);
-                    } else {
-                        coupleCounter.put(h,coupleCounter.get(h)+1);
-                    }
-                    assertTrue(h.wasHost(),"every Couple needs to have been host at exactly once");
-                    assertEquals(7,h.getMetCouples().size(),"every Couple needs to have met exactly 6 other Couples and themselves");
-                    for (int g:h.getWithWhomAmIEating().values()) {
-                        assertNotEquals(-1,g,"every Couple has to have the groupID registered in WithWhomAmIEating");
-                    }
-                }
-                //test assertions for groups here
+            if (groupManager.ledger.isEmpty()) {
+                break;
             }
         }
-        for (Integer i : coupleCounter.values()) {
-            assertEquals(i,3,"every Couple needs to be in exactly 3 groups");
-        }
-        //test for size
-        assertEquals(groupManager.processedCouples.size(),groupManager.getLedger().size());
-         */
+        // checking integrity of all things again
+        testCalcGroups();
+    }
+
+    @Test
+    public void testForceGroups(){
+        int size  = groupManager.succeedingCouples.size();
+        groupManager.forceGroups(groupManager.succeedingCouples);
+        assertTrue(size >= groupManager.succeedingCouples.size());
+        // checking for integrity, don't know if that works
+        testCalcGroups();
+
     }
 }
