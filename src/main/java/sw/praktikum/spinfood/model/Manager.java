@@ -83,7 +83,10 @@ public class Manager {
      */
     public void inputPeople(String path) {
         allPersonList = CSVReader.csvReaderPeople(path);
-
+        GroupManager.clear();
+        groups = new ArrayList<>();
+        couples = new ArrayList<>();
+        singles = new ArrayList<>();
         if (allPersonList == null) {
             return;
         }
@@ -316,7 +319,7 @@ public class Manager {
     /**
      * changeParameter
      * changes the Parameters to the given values
-     * @param parameterValues all parameter Values changed or otherwise
+     * @param parameterValues [Guests,FoodPref,AgeRange,GenderDiv,distanceWeight,optimalDistance]
      */
     public void changeParameter(Double[] parameterValues){
         changedSomething();
