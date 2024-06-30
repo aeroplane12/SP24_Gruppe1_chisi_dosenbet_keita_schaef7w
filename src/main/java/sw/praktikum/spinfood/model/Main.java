@@ -12,17 +12,17 @@ public class Main {
         //SP24_Gruppe1_chisi_dosenbet_keita_schaef7w_[A/B/C].csv
 
         //(A) preference deviation > path length > age differance > gender diversity > number of elements        // A
-        manager.changeParameter(new Double[]{400d,5000d,30d,20d,400d,0d});
+        manager.changeParameter(new Double[]{400d,5000d,30d,20d,400d,0d}, Strictness.A);
         manager.calcGroups();
         CSVWriter.write(manager.groups,"Dokumentation/TestingData/SP24_Gruppe1_chisi_dosenbet_keita_schaef7w_A.csv");
 
         //(B) number of elements > preference deviation > path length > gender diversity > age differance
-        manager.changeParameter(new Double[]{400d,400d,1d,20d,30d,0d});
+        manager.changeParameter(new Double[]{400d,400d,1d,20d,30d,0d}, Strictness.B);
         manager.calcGroups();
         CSVWriter.write(manager.groups,"Dokumentation/TestingData/SP24_Gruppe1_chisi_dosenbet_keita_schaef7w_B.csv");
 
         //(C) gender diversity > age differance  > preference deviation > path length > number of elements
-        manager.changeParameter(new Double[]{400d,30d,400d,5000d,20d,0d});
+        manager.changeParameter(new Double[]{400d,30d,400d,5000d,20d,0d}, Strictness.C);
         manager.calcGroups();
         CSVWriter.write(manager.groups,"Dokumentation/TestingData/SP24_Gruppe1_chisi_dosenbet_keita_schaef7w_C.csv");
 

@@ -3,9 +3,11 @@ package sw.praktikum.spinfood.model;
 import sw.praktikum.spinfood.model.tools.*;
 import sw.praktikum.spinfood.model.*;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class Manager {
     static Manager instance;
@@ -24,6 +26,11 @@ public class Manager {
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();
+    /////////////////////////////////
+    //   Group-Manager Constants   //
+    /////////////////////////////////
+
+    private Strictness strictness;
       /////////////////////////////////
      //   Group-Manager Constants   //
     /////////////////////////////////
@@ -110,7 +117,9 @@ public class Manager {
      * calculates the couples using the initialized coupleManager
      */
     private void calcCouples(){
-        coupleManager.givePeopleWithoutPartner(singles,Strictness.C,couple_Counter,partyLoc);
+        couples = new ArrayList<>(couples.stream().filter(x->!x.getPerson1().isLockedIn()).toList());
+        singles = new ArrayList<>(allPersonList.stream().filter(x -> !x.hasPartner()).collect(Collectors.toList()));
+        coupleManager.givePeopleWithoutPartner(singles,strictness,couple_Counter,partyLoc);
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getSingleList();
         couple_Counter = coupleManager.getCurrentCoupleCount();
@@ -254,7 +263,7 @@ public class Manager {
      *                        distanceWeight,
      *                        optimalDistance]
      */
-    public void changeParameter(Double[] parameterValues){
+    public void changeParameter(Double[] parameterValues, Strictness strictness){
         changedSomething();
         maxGuests = parameterValues[0].intValue();
         // last 5 entries for Group-Manager
@@ -264,6 +273,7 @@ public class Manager {
         AVGGenderDIVWeight = parameterValues[GroupManagerIndex + 2];
         distanceWeight = parameterValues[GroupManagerIndex + 3];
         optimalDistance = parameterValues[GroupManagerIndex + 4];
+        this.strictness = strictness;
     }
 
 }
