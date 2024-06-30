@@ -116,8 +116,8 @@ public class Manager {
      * calculates the couples using the initialized coupleManager
      */
     private void calcCouples(){
-        couples = new ArrayList<>(couples.stream().filter(x->!x.getPerson1().isLockedIn()).toList());
-        singles = new ArrayList<>(allPersonList.stream().filter(x -> !x.hasPartner()).collect(Collectors.toList()));
+        couples = new ArrayList<>(couples.stream().filter(x-> x.getPerson1().isLockedIn()).toList());
+        singles = new ArrayList<>(allPersonList.stream().filter(x -> !x.isLockedIn()).toList());
         coupleManager.givePeopleWithoutPartner(singles,strictness,couple_Counter,partyLoc);
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getSingleList();
