@@ -29,7 +29,7 @@ public class Manager {
     //   Group-Manager Constants   //
     /////////////////////////////////
 
-    private Strictness strictness;
+    private Strictness strictness = Strictness.B;
       /////////////////////////////////
      //   Group-Manager Constants   //
     /////////////////////////////////
