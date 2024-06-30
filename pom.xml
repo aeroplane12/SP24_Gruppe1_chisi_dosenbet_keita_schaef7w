@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>sw.praktikum</groupId>
-    <artifactId>Softwaretechnik-Praktikum</artifactId>
+    <groupId>com.SP24_Gruppe1_chisi_dosenbet_keita_schaef7w</groupId>
+    <artifactId>spinfood</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>sp24_gruppe1_chisi_dosenbet_keita_schaef7w</name>
 
@@ -13,6 +13,9 @@
         <maven.compiler.source>19</maven.compiler.source>
         <maven.compiler.target>19</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.10.0</junit.version>
+        <javafx.version>21.0.3</javafx.version>
+        <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <junit.version>5.10.0</junit.version>
     </properties>
 
@@ -60,6 +63,7 @@
 
     <build>
         <plugins>
+
             <plugin>
 
                 <groupId>org.apache.maven.plugins</groupId>
@@ -90,6 +94,7 @@
                     </execution>
                 </executions>
             </plugin>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

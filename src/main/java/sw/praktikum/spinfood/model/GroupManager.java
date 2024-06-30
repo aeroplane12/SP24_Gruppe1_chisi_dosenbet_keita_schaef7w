@@ -1,6 +1,6 @@
 package sw.praktikum.spinfood.model;
 
-import sw.praktikum.spinfood.model.tools.Rankable;
+import sw.praktikum.spinfood.model.tools.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -72,43 +72,33 @@ public class GroupManager {
                 return -1*z;
             }
             return -1*x.getCurrentKitchen()
-                        .distance(partyLoc)
-                        .compareTo(y.getCurrentKitchen()
-                                .distance(partyLoc));
+                    .distance(partyLoc)
+                    .compareTo(y.getCurrentKitchen()
+                            .distance(partyLoc));
         });
         //O(n*log(n)+n)=O(n*log(n))
         while (possibleHosts.size()%9 != 0 ||
                 (possibleHosts.size() > (Manager.maxGuests/2) && !forced) ) {
+            Couple coupleForRemoval = possibleHosts.stream()
+                    .max((x,y)->Integer.compare(
+                    kitchenLedger.get(x.getCurrentKitchen()).size(),
+                    kitchenLedger.get(y.getCurrentKitchen()).size())).get();
             // removes the most conflicting and furthest away kitchen Couples first
             // until it reaches a point at which there are possible solutions
-            succeedingCouples.add(possibleHosts.remove(0));
-            kitchenLedger.get(succeedingCouples.get(succeedingCouples.size()-1).getCurrentKitchen())
-                    .remove(succeedingCouples.get(succeedingCouples.size()-1));
+            possibleHosts.remove(coupleForRemoval);
+            succeedingCouples.add(coupleForRemoval);
+            kitchenLedger.get(coupleForRemoval.getCurrentKitchen())
+                    .remove(coupleForRemoval);
         }
-        if (possibleHosts.size()==9) {
-            succeedingCouples.addAll(possibleHosts);
-            for (Couple couple :succeedingCouples) {
-                kitchenLedger.get(couple.getCurrentKitchen())
-                        .remove(couple);
-            }
-
-            return;
-        }
-        //sort all couples from closest to furthest away from party-Location
-        possibleHosts.sort((x,y) ->
-                x.getCurrentKitchen()
-                .distance(partyLoc)
-                .compareTo(y.getCurrentKitchen()
-                        .distance(partyLoc)));
-        //O(n*log(n)+n*log(n))=O(n*log(n))
         processedCouples.addAll(possibleHosts);
-        //O(n*log(n)+n) = O(n*log(n))
-        // need everyone from conflicting kitchen to host first, then sort by distance
-        for (Course course : new Course[]{Course.DESSERT,Course.DINNER,Course.STARTER}) {
-            ledger.addAll(fillCourse(new ArrayList<>(possibleHosts),course));
-            //O(n^3))
-        }
 
+        // divide matching 9 couples into 9 groups (representing the smallest possible group-cluster),
+        // - who is hosting must be matched with kitchen availability, sorted by distance from partyloc
+        // -
+        List<Couple[]> allMatches = matchNineCouples(new ArrayList<>(processedCouples));
+        for (Couple[] i :allMatches) {
+            ledger.addAll(createCluster(i));
+        }
     }
 
     /**
@@ -158,119 +148,156 @@ public class GroupManager {
     }
 
     /**
-     * fillCourse
-     * assigns everyone a group
-     * @param course time at which the group gets together
-     * @param participants everyone who participates
-     * @return the Groups associated with the course
+     * matchNineCouples
+     * @param allCouples all Couples
+     * @return nine Couples, matched according to specs and each array seperated into:
+     *      - the furthest 3, hosting dessert
+     *      - the middle 3, hosting dinner
+     *      - the closest 3, hosting starter
+     *      in regard to the partyLocation
      */
-    public List<Group> fillCourse(List<Couple> participants, Course course){
-        List<CouplePair> couplePairList = new ArrayList<>();
-        int stepSize = participants.size()/3;
-        List<Couple> determinedHosts = participants.stream()
-                .peek(x->{
-                    // if x wasn't host and the kitchen is free, set x as the KitchenUser
-                    if (!x.wasHost() &&
-                            x.getCurrentKitchen().checkUser(course,-1)){
-                        x.getCurrentKitchen().setUser(course,x.getID());
-                        x.setHosts(course);
-                        //kitchenUserMap.put(x.getCurrentKitchen(), x.getID());
-                    }
-                })//O(1+n/3) = O(n)
-                .filter(x -> !x.wasHost() &&
-                                x.getCurrentKitchen().checkUser(course,x.getID())
-                        // filter all those who aren't kitchenUsers
-                )//O(n/3+n) = O(n)
-                .limit(stepSize)
-                .toList();
-        //O(n)
-        List<Couple> guests = new ArrayList<>(participants);
-        guests.removeAll(determinedHosts);//O(n^2)
-        //O(n+n^2) = O(n^2)
-        for (Couple host : determinedHosts) {//O(n*(...))
-            Couple firstGuest = guests.stream()
-                    .filter(x -> !x.checkMetCouple(host))//O(n)
-                    .min((x,y) -> COUPLERANKGEN.rank(host,x).compareTo(COUPLERANKGEN.rank(host,y)))//O(n)
-                    .orElseThrow();
-            guests.remove(firstGuest);//O(n)
-            couplePairList.add(new CouplePair(host,firstGuest));//O(1)
+    private List<Couple[]> matchNineCouples(List<Couple> allCouples){
+        allCouples.sort((x,y) ->{
+            int z = Integer.compare(
+                    kitchenLedger.get(x.getCurrentKitchen()).size(),
+                    kitchenLedger.get(y.getCurrentKitchen()).size());
+            if (z != 0) {
+                return -1*z;
+            }
+            return -1*x.getCurrentKitchen()
+                    .distance(partyLoc)
+                    .compareTo(y.getCurrentKitchen()
+                            .distance(partyLoc));
+        });
+        // sorts from farthest to closest
+        List<Couple[]> output = new ArrayList<>();
+        // find the three closest Couples and fit them according to the first selection
+        int size = allCouples.size()/9;
+        for (int j = 0; j<size; j++) {
+            Couple[] currCluster = new Couple[9];
+            for (Course course : Course.values()) {
+                fillLayer(allCouples, currCluster, course);
+            }
+            output.add(currCluster);
         }
-        //O(n^2+n*(n+n+n+1))=O(n^2)
 
-        return findValidCouplePairMatching(//O(n^2+n^3) = O(n^3)
-                couplePairList,
-                guests,
-                course);
+        return output;
+    }
+    /**
+     * fillLayer
+     * @param couples all remaining unmatched couples
+     * @param cluster current cluster
+     * @param course  the time
+     */
+    private void fillLayer(List<Couple> couples,
+                           Couple[] cluster,
+                           Course course){
+        Couple a;
+        if (Arrays.stream(cluster).anyMatch(Objects::nonNull)){
+            a = couples.stream()
+                    .filter(x->x.getCurrentKitchen().checkUser(course,-1))
+                    .findFirst().get();
+        } else {
+            a = couples.stream()
+                    .filter(x->x.getCurrentKitchen().checkUser(course,-1))
+                    .min((x,y)->{
+                        int out = 0;
+                        for (Couple couple : cluster) {
+                            if (couple!=null) {
+                                out += COUPLERANKGEN.rank(couple,x).compareTo(COUPLERANKGEN.rank(couple,y));
+                            }
+                        }
+                        return out;})
+                    .get();
+
+        }
+        a.getCurrentKitchen().setUser(course,a.getID());
+        couples.remove(a);
+        cluster[3 * (course.value-1)] = a;
+
+        Couple b = couples.stream()
+                .filter(x->x.getCurrentKitchen().checkUser(course,-1))
+                .min((x,y)->{
+                    int out = 0;
+                    for (Couple couple : cluster) {
+                        if (couple!=null) {
+                            out += COUPLERANKGEN.rank(couple,x).compareTo(COUPLERANKGEN.rank(couple,y));
+                        }
+                    }
+                    return out;})
+                .get();
+
+        b.getCurrentKitchen().setUser(course,b.getID());
+        couples.remove(b);
+        cluster[1 + 3 * (course.value-1)] = b;
+        Couple c = couples.stream()
+                .filter(x->x.getCurrentKitchen().checkUser(course,-1))
+                .min((x,y)->{
+                    int out = 0;
+                    for (Couple couple : cluster) {
+                        if (couple!=null) {
+                            out += COUPLERANKGEN.rank(couple,x).compareTo(COUPLERANKGEN.rank(couple,y));
+                        }
+                    }
+                    return out;})
+                .get();
+        c.getCurrentKitchen().setUser(course,c.getID());
+        couples.remove(c);
+        cluster[2 + 3 * (course.value-1)] = c;
     }
 
     /**
-     * findValidCouplePairMatching
-     * iterates through each CouplePair Combo and assigns
-     * to the least matchable pair their best possible match
-     * @param hostGuestCombo tbe hosting Couple and their best guest possible
-     * @param allRemainingCouples everyone who isn't already included in hostGuestCombo
-     * @param course the time
-     * @return all groups for the specified time
+     * createCluster
+     * @param couples nine Couples, matched according to specs and each array seperated into:
+     *      - the furthest 3, hosting dessert
+     *      - the middle 3, hosting dinner
+     *      - the closest 3, hosting starter
+     *      in regard to the partyLocation
+     * @return the 9 matching Groups
      */
-    List<Group> findValidCouplePairMatching(List<CouplePair> hostGuestCombo, List<Couple> allRemainingCouples, Course course){
-        //runtime Complexity of findValidCouplePairMatching,
-        // given hostGuestCombo and allRemainingCouples both have the same size of n/3,
-        // therefore we'll define n/3 as m
-        List<Group> groups = new ArrayList<>();
-        if (allRemainingCouples.isEmpty()) { //O(1)
-            return groups;
-        }
-        Map<CouplePair,List<Couple>> hostMatchMap = new HashMap<>(hostGuestCombo.stream()
-                .collect(Collectors
-                        .toMap(Function.identity(),//O(m*(...))
-                                // Host-Couple pairs mapped to the lowest ranking remaining Couples
-                                x -> new ArrayList<>(allRemainingCouples.stream()
-                                        .filter(y->!x.history.contains(y))// O(m)
-                                        .sorted((a,b)->COUPLERANKGEN.rank(x.host,a).compareTo(COUPLERANKGEN.rank(x.host,b))) //O(m*log(m))
-                                        .toList()))));
-        //O(m*(m+m*log(m))) = O(m^2*log(m))
-        while (!allRemainingCouples.isEmpty()){ // O((m^2*log(m))+m*(...))
-            Map.Entry<CouplePair,List<Couple>> leastMatchablePair = hostMatchMap.entrySet()
-                    .stream()
-                    .min(Comparator.comparingInt(x -> x.getValue().size()))//O(m)
-                    .orElseThrow();
-            //O(m)
-            Couple guest2 = leastMatchablePair.getValue().stream().findFirst().orElseThrow();
-            Group group = new Group(leastMatchablePair.getKey().host,
-                    leastMatchablePair.getKey().guest,
-                    guest2,
-                    course,
-                    Manager.getGroupCounter());
-            //toggles all necessary flags to indicate, that the couples met and the host hosted
-            toggleGroupFlags(leastMatchablePair.getKey().host, // O(1)
-                    leastMatchablePair.getKey().guest,
-                    guest2,
-                    course,
-                    group.getID());
-            //O(1+m)
-            //add the group to the output, remove the guest and the pair
-            // and remove every instance of the guests in the map values
-            hostMatchMap.remove(leastMatchablePair.getKey());
-            for (List<Couple> x:hostMatchMap.values()) {//O(m)
-                x.remove(guest2);//O(m)
-            }
-            //O(1+m+m^2))
-            groups.add(group);//O(1)
-            hostGuestCombo.remove(leastMatchablePair.getKey());//O(m)
-            allRemainingCouples.remove(guest2);//O(m)
-            //O(1+m+m^2)
-        }
-        // O(m+m^2+m^2*log(m)+m^3) = O(m^3)
-        return groups;
-
+    private List<Group> createCluster(Couple[] couples){
+                //last hosts
+        Couple  a = couples[0],
+                d = couples[1],
+                g = couples[2],
+                // middle hosts
+                b = couples[3],
+                e = couples[4],
+                h = couples[5],
+                // first hosts
+                c = couples[6],
+                f = couples[7],
+                i = couples[8];
+        List<Group> output = new ArrayList<>();
+        //dessert
+        output.add(new Group(a,b,c,Course.DESSERT,Manager.getGroupCounter()));
+        output.add(new Group(d,e,f,Course.DESSERT,Manager.getGroupCounter()));
+        output.add(new Group(g,h,i,Course.DESSERT,Manager.getGroupCounter()));
+        toggleGroupFlags(a,b,c,Course.DESSERT,output.get(0).getID());
+        toggleGroupFlags(d,e,f,Course.DESSERT,output.get(output.size()-2).getID());
+        toggleGroupFlags(g,h,i,Course.DESSERT,output.get(output.size()-1).getID());
+        //dinner
+        output.add(new Group(b,d,i,Course.DINNER,Manager.getGroupCounter()));
+        output.add(new Group(e,c,g,Course.DINNER,Manager.getGroupCounter()));
+        output.add(new Group(h,f,a,Course.DINNER,Manager.getGroupCounter()));
+        toggleGroupFlags(b,d,i,Course.DINNER,output.get(output.size()-3).getID());
+        toggleGroupFlags(e,c,g,Course.DINNER,output.get(output.size()-2).getID());
+        toggleGroupFlags(h,f,a,Course.DINNER,output.get(output.size()-1).getID());
+        //starter
+        output.add(new Group(c,d,h,Course.STARTER,Manager.getGroupCounter()));
+        output.add(new Group(f,g,b,Course.STARTER,Manager.getGroupCounter()));
+        output.add(new Group(i,e,a,Course.STARTER,Manager.getGroupCounter()));
+        toggleGroupFlags(c,d,h,Course.STARTER,output.get(output.size()-3).getID());
+        toggleGroupFlags(f,g,b,Course.STARTER,output.get(output.size()-2).getID());
+        toggleGroupFlags(i,e,a,Course.STARTER,output.get(output.size()-1).getID());
+        return output;
     }
 
 
     public List<Group> getLedger() {
         return ledger;
     }
-    public static void clear(){
-        /*
+    public void clear(){
         List<Couple> retry = new ArrayList<>(getInstance().processedCouples);
         retry.addAll(getInstance().overBookedCouples);
         retry.addAll(getInstance().succeedingCouples);
@@ -278,12 +305,11 @@ public class GroupManager {
             x.getCurrentKitchen().clearFlags();
             x.clearFlags();}
         );
-         */
-        getInstance().processedCouples.clear();
-        getInstance().succeedingCouples.clear();
-        getInstance().overBookedCouples.clear();
-        getInstance().kitchenLedger.clear();
-        getInstance().ledger.clear();
+        processedCouples.clear();
+        succeedingCouples.clear();
+        overBookedCouples.clear();
+        kitchenLedger.clear();
+        ledger.clear();
     }
 
     /**
@@ -297,6 +323,7 @@ public class GroupManager {
     private void toggleGroupFlags(Couple host, Couple guest1, Couple guest2, Course course, int groupID){
         host.meetsCouple(guest1);
         host.meetsCouple(guest2);
+        host.setHosts(course);
         host.isHost();
         host.putWithWhomAmIEating(course,groupID);
         guest1.meetsCouple(guest2);
@@ -317,25 +344,12 @@ public class GroupManager {
         x.addAll(y);
         return x.size()/3d;
     }
-
-    /**
-     * inner-class for grouping a host and a guest together
-     */
-    private class CouplePair{
-        Couple host;
-        Couple guest;
-        Set<Couple> history;
-        CouplePair(Couple host, Couple g1){
-            this.host = host;
-            this.guest = g1;
-            history = new HashSet<>(host.getMetCouples());
-            history.addAll(g1.getMetCouples());
-        }
+    public Map<Kitchen, List<Couple>> getKitchenLedger() {
+        return kitchenLedger;
     }
     public void setPartyLoc(Location partyLoc) {
         this.partyLoc = partyLoc;
     }
-
     /**
      * removes Couple from all Groups
      * @param couple the couple-to-be-removed
@@ -347,7 +361,7 @@ public class GroupManager {
 
         List<Group> pendingGroup = ledger.stream()
                 .filter(x->x.getAll().contains(couple)).toList();
-        if (pendingGroup.isEmpty()||!processedCouples.contains(couple)) {
+        if (pendingGroup.isEmpty() || !processedCouples.contains(couple)) {
             // if element is not in ledger, it must already be in succeeding list or overbooked list
             overBookedCouples.remove(couple);
             succeedingCouples.remove(couple);
@@ -392,6 +406,12 @@ public class GroupManager {
                 .collect(Collectors.toSet())));
         replacement.meetsCouple(replacement);
         replacement.isHost();
+
+        replacement.setHosts(coupleCourse);
+        replacement.putWithWhomAmIEating(pendingGroup.get(0).course,pendingGroup.get(0).getID());
+        replacement.putWithWhomAmIEating(pendingGroup.get(1).course,pendingGroup.get(1).getID());
+        replacement.putWithWhomAmIEating(pendingGroup.get(2).course,pendingGroup.get(2).getID());
+
         List<Group> groupsForRemoval = pendingGroup.stream().toList();
         for (Group group : groupsForRemoval) {
             group.replaceCouple(couple,replacement);
