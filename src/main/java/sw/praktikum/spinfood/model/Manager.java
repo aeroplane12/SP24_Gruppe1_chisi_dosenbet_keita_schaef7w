@@ -118,10 +118,11 @@ public class Manager {
     private void calcCouples(){
         couples = new ArrayList<>(couples.stream().filter(x-> x.getPerson1().isLockedIn()).toList());
         singles = new ArrayList<>(allPersonList.stream().filter(x -> !x.isLockedIn()).toList());
-        coupleManager.givePeopleWithoutPartner(singles,strictness,couple_Counter,partyLoc);
+        singles.stream().peek(x -> x.setPartner(null)).toList();
+        coupleManager.givePeopleWithoutPartner(singles,strictness,partyLoc);
+        System.out.println(coupleManager.getCouples().size());
+        System.out.println(coupleManager.getSingleList().size());
         couples.addAll(coupleManager.getCouples());
-        singles = coupleManager.getSingleList();
-        couple_Counter = coupleManager.getCurrentCoupleCount();
         coupleManager.restManager();
     }
     /**
@@ -157,7 +158,7 @@ public class Manager {
      */
     public void removePerson(Person person){
         changedSomething();
-        coupleManager.removeSinglePerson(person);
+        coupleManager.removeSinglePerson(person, strictness);
         singles = coupleManager.getSingleList();
         couples = coupleManager.getCouples();
         GroupManager.getInstance().clear();
