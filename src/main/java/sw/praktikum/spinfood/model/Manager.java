@@ -114,6 +114,7 @@ public class Manager {
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getSingleList();
         couple_Counter = coupleManager.getCurrentCoupleCount();
+        coupleManager.restManager();
     }
     /**
      * calculates the groups using the initialized coupleManager

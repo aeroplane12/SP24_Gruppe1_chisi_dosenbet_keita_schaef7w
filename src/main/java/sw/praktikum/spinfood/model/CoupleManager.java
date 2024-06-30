@@ -607,4 +607,9 @@ public class CoupleManager {
         else throw new IllegalArgumentException("Couple not found");
     }
 
+    public void restManager (){
+        couples.clear();
+        allSingleParticipants.clear();
+    }
+
 }
