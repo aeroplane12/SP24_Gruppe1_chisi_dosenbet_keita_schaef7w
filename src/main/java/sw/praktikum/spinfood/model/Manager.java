@@ -9,11 +9,11 @@ import java.util.Stack;
 
 public class Manager {
     static Manager instance;
-    private Stack<Manager> prev;
-    private Stack<Manager> future;
+    private final Stack<Manager> prev = new Stack<>();
+    private final Stack<Manager> future = new Stack<>();
     static int couple_Counter = 0;
     static int group_Counter = 0;
-    public static int maxGuests = 400;
+    public static int maxGuests = 666666;
     private GroupManager groupManager;
     private CoupleManager coupleManager;
     Location partyLoc;//temporary filler
@@ -74,6 +74,7 @@ public class Manager {
      */
     public void calcAll(){
         calcCouples();
+        calcGroups();
     }
 
     /**
@@ -83,7 +84,7 @@ public class Manager {
      */
     public void inputPeople(String path) {
         allPersonList = CSVReader.csvReaderPeople(path);
-        GroupManager.clear();
+        GroupManager.getInstance().clear();
         groups = new ArrayList<>();
         couples = new ArrayList<>();
         singles = new ArrayList<>();
@@ -113,12 +114,13 @@ public class Manager {
         couples.addAll(coupleManager.getCouples());
         singles = coupleManager.getSingleList();
         couple_Counter = coupleManager.getCurrentCoupleCount();
-        calcGroups();
     }
     /**
      * calculates the groups using the initialized coupleManager
      */
     public void calcGroups(){
+        groupManager.clear();
+        groups.clear();
         groupManager.calcGroups(couples,false);
         groups.addAll(groupManager.getLedger());
     }
@@ -149,7 +151,7 @@ public class Manager {
         coupleManager.removeSinglePerson(person);
         singles = coupleManager.getSingleList();
         couples = coupleManager.getCouples();
-        GroupManager.clear();
+        GroupManager.getInstance().clear();
         groupManager.calcGroups(couples,false);
         groups = groupManager.getLedger();
     }
@@ -195,81 +197,21 @@ public class Manager {
 
     /**
      * setToPrev / undo-function
-     * sets to and returns the previous container as the current image
-     * @return the current container
+     * sets to and returns the previous instance as the current image
      */
-    public Container setToPrev(){
-        /*
-        // adds the current status as a container to the future stack
-        future.add(new Container(allPersonList,
-                couples,
-                groups,
-                maxGuests,
-                //GROUP MANAGER STUFF
-                FoodPrefWeight,
-                AVGAgeRangeWeight,
-                AVGGenderDIVWeight,
-                distanceWeight,
-                optimalDistance,
-                GroupManager.getInstance().succeedingCouples,
-                GroupManager.getInstance().overBookedCouples));
-        Container curr = prev.pop();
-        switchTO(curr);
-        return curr;
-
-         */
-        return null;
+    public void setToPrev(){
+        future.add(new Manager(this));
+        instance = prev.pop();
     }
 
     /**
      * setToFuture / redo-function
      * sets to and returns the last entry of the future container as the current
-     * @return the current container
      */
-    public Container setToFuture(){
-        // adds the current status as a container to the previous stack
-        /*prev.add(new Container(allPersonList,
-                couples,
-                groups,
-                maxGuests,
-                //GROUP MANAGER STUFF
-                FoodPrefWeight,
-                AVGAgeRangeWeight,
-                AVGGenderDIVWeight,
-                distanceWeight,
-                optimalDistance,
-                GroupManager.getInstance().succeedingCouples,
-                GroupManager.getInstance().overBookedCouples));
-
-        Container curr = future.pop();
-        switchTO(curr);
-        return curr;
-         */
-        return null;
+    public void setToFuture(){
+        prev.add(new Manager(this));
+        instance = future.pop();
     }
-    /**
-     * switches the current manager to another image
-     * @param container the image, to switch to
-     */
-    private void switchTO(Container container){
-        allPersonList = container.getPERSON_LIST();
-        couples = container.getCOUPLE_LIST();
-        groups = container.getGROUP_LIST();
-        maxGuests = container.getMAX_GUESTS();
-        // INPUT COUPLE MANAGER CONSTANTS HERE
-        // START GROUP MANAGER CONSTANTS
-        FoodPrefWeight = container.getFOOD_PREF_WEIGHT();
-        AVGAgeRangeWeight = container.getAVG_AGE_RANGE_WEIGHT();
-        AVGGenderDIVWeight = container.getAVG_GENDER_DIV_WEIGHT();
-        distanceWeight = container.getDISTANCE_WEIGHT();
-        optimalDistance = container.getOPTIMAL_DISTANCE();
-        GroupManager.getInstance().overBookedCouples = container.getOVERBOOKED_COUPLES();
-        GroupManager.getInstance().succeedingCouples = container.getSUCCEEDING_COUPLES();
-        GroupManager.getInstance().ledger = container.getGROUP_LIST();
-        // END GROUP MANAGER CONSTANTS
-
-    }
-
     public Double getFoodPrefWeight() {
         return FoodPrefWeight;
     }
@@ -293,33 +235,23 @@ public class Manager {
     /**
      * changedSomething()
      * needs to be called when making a change.
-     * method creates container
      * then adds container to prev stack
      * afterwords clears future stack
      */
     public void changedSomething(){
-        /*
-        prev.add(new Container(allPersonList,
-                couples,
-                groups,
-                maxGuests,
-                //GROUP MANAGER STUFF
-                FoodPrefWeight,
-                AVGAgeRangeWeight,
-                AVGGenderDIVWeight,
-                distanceWeight,
-                optimalDistance,
-                GroupManager.getInstance().succeedingCouples,
-                GroupManager.getInstance().overBookedCouples));
+        prev.add(new Manager(this));
         future.clear();
-
-         */
     }
 
     /**
      * changeParameter
      * changes the Parameters to the given values
-     * @param parameterValues [Guests,FoodPref,AgeRange,GenderDiv,distanceWeight,optimalDistance]
+     * @param parameterValues [maxGuests,
+     *                        FoodPref,
+     *                        AgeRange,
+     *                        GenderDiv,
+     *                        distanceWeight,
+     *                        optimalDistance]
      */
     public void changeParameter(Double[] parameterValues){
         changedSomething();
