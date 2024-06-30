@@ -57,15 +57,23 @@ public class CoupleManager {
         if (allSingleParticipants.size() < 2)
             return;
 
-        List<Person> withKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() != null).toList();
-        List<Person> noKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() == null).toList();
+
 
         if (strictnessLevel == Strictness.A){
-            //TODO: This is default
-            bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
+            List<Person> vegans = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGAN)).toList();
+            List<Person> vegetarians = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.VEGGIE)).toList();
+            List<Person> MeantAndAny = allSingleParticipants.stream().filter(x -> x.getFoodPreference().equals(FoodPreference.FoodPref.MEAT) ||
+                    x.getFoodPreference().equals(FoodPreference.FoodPref.NONE)).toList();
+            bringSingleTogether(createNumberBoxMatrix(vegans), vegans);
+            bringSingleTogether(createNumberBoxMatrix(vegetarians), vegetarians);
+            bringSingleTogether(createNumberBoxMatrix(MeantAndAny), MeantAndAny);
+            bringSingleTogether(createNumberBoxMatrix(MeantAndAny), MeantAndAny);
         }
 
         else if (strictnessLevel == Strictness.B) {
+            List<Person> withKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() != null).toList();
+            List<Person> noKitchen = allSingleParticipants.stream().filter(x -> x.getKitchen() == null).toList();
+
             arrWithKitchen = new Person[withKitchen.size()];
             for (int i = 0; i < withKitchen.size(); i++)
                 arrWithKitchen[i] = withKitchen.get(i);

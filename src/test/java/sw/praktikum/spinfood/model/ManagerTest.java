@@ -81,7 +81,7 @@ class ManagerTest {
         Person partner = new Person("2", "alice", age, gender, foodPref, kitchen, null);
         Person testPerson = new Person("1", "Bob", age, gender, foodPref, kitchen, partner);
         partner.setPartner(testPerson);
-        coupleManager.addPerson(testPerson);
+        coupleManager.addPerson(testPerson, Strictness.C);
         //As person has partner both should be added
          }
 
