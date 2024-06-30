@@ -8,9 +8,7 @@ import java.util.List;
 public class CoupleManager {
 
     private static CoupleManager instance;
-    private Strictness strictnessLevel;
     private Location partyLoc;
-    private int currentCoupleCount;
 
     private Person[] arrNoKitchen;
     private Person[] arrWithKitchen;
@@ -44,20 +42,18 @@ public class CoupleManager {
     private List<Person> any;
     // Index numbers of Zeros in each row
 
-    void givePeopleWithoutPartner(List<Person> singles, Strictness strictnessLevel, int currentCoupleCount, Location partyLoc) {
+    void givePeopleWithoutPartner(List<Person> singles, Strictness strictnessLevel, Location partyLoc) {
         if (!(strictnessLevel == Strictness.A || strictnessLevel == Strictness.B || strictnessLevel == Strictness.C))
             throw new IllegalArgumentException("Strictness level hast to be one of A,B or C");
 
-        this.strictnessLevel = strictnessLevel;
-        this.currentCoupleCount = currentCoupleCount;
         this.partyLoc = partyLoc;
-        allSingleParticipants.addAll(singles);
-        calcCouples();
+        allSingleParticipants = singles;
+        calcCouples(strictnessLevel);
 
     }
-    //TODO This is wrong the break point for the recursion
 
-    void calcCouples() {
+    void calcCouples(Strictness strictnessLevel) {
+
         if (allSingleParticipants.size() < 2)
             return;
 
@@ -69,29 +65,27 @@ public class CoupleManager {
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
         }
 
-        if (strictnessLevel == Strictness.B) {
+        else if (strictnessLevel == Strictness.B) {
             arrWithKitchen = new Person[withKitchen.size()];
-            for (int i = 0; i < withKitchen.size(); i++) {
+            for (int i = 0; i < withKitchen.size(); i++)
                 arrWithKitchen[i] = withKitchen.get(i);
-            }
+
             arrNoKitchen = new Person[noKitchen.size()];
-            for (int i = 0; i < noKitchen.size(); i++) {
+            for (int i = 0; i < noKitchen.size(); i++)
                 arrNoKitchen[i] = noKitchen.get(i);
-            }
-
-
             matchingSingleTogether(subtractSmallestNoKitchen(createNumberBoxMatrix(arrWithKitchen, arrNoKitchen), false), arrWithKitchen, arrNoKitchen);
             if (allSingleParticipants.size() == 2) {
-                couples.add(new Couple(currentCoupleCount++, allSingleParticipants.get(0), allSingleParticipants.get(1), allSingleParticipants.get(0).getKitchen(), allSingleParticipants.get(1).getKitchen(), getFoodPref(allSingleParticipants.get(0), allSingleParticipants.get(1)), partyLoc));
+                couples.add(new Couple(Manager.couple_Counter++, allSingleParticipants.get(0), allSingleParticipants.get(1), allSingleParticipants.get(0).getKitchen(), allSingleParticipants.get(1).getKitchen(), getFoodPref(allSingleParticipants.get(0), allSingleParticipants.get(1)), partyLoc));
                 allSingleParticipants.get(0).setPartner(allSingleParticipants.get(1));
                 allSingleParticipants.get(1).setPartner(allSingleParticipants.get(0));
                 allSingleParticipants.clear();
             }
+        }
 
-
-
-        } else
+         else if(strictnessLevel == Strictness.C)
             bringSingleTogether(createNumberBoxMatrix(allSingleParticipants), allSingleParticipants);
+        else
+            throw new IllegalArgumentException("Please give a Strictness level A, B or C not");
         }
 
 
@@ -121,8 +115,6 @@ public class CoupleManager {
         return matrix;
     }
 
-    //TODO: implement this so that I don't get confused between methods !!!!
-    //This is correct
     private NumberBox[][] subtractSmallestNoKitchen(NumberBox[][] matrix) {
         for (int i = 0; i < matrix.length; i++) {
             // Find the smallest number in the row
@@ -271,7 +263,7 @@ public class CoupleManager {
 
                     FoodPreference.FoodPref foodPref = getFoodPref(people, i, j);
 
-                    Couple couple = new Couple(currentCoupleCount++,
+                    Couple couple = new Couple(Manager.couple_Counter++,
                             people.get(i),
                             people.get(j),
                             people.get(i).getKitchen(),
@@ -320,7 +312,7 @@ public class CoupleManager {
                 continue;
             FoodPreference.FoodPref foodPref = getFoodPref(arrWithKitchen[x], arrNoKitchen[y]);
 
-            Couple couple = new Couple(currentCoupleCount++,
+            Couple couple = new Couple(Manager.couple_Counter++,
                     arrWithKitchen[x],
                     arrNoKitchen[y],
                     arrWithKitchen[x].getKitchen(),
@@ -527,26 +519,26 @@ public class CoupleManager {
     }
 
 
-    public void addPerson(Person person) {
+    public void addPerson(Person person, Strictness strictness) {
         allSingleParticipants.add(person);
         if (allSingleParticipants.size() > 1)
-            calcCouples();
+            calcCouples(strictness);
     }
 
-    public void removeSinglePerson(Person person) {
+    public void removeSinglePerson(Person person, Strictness strictness) {
         if (!allSingleParticipants.contains(person))
             throw new IllegalArgumentException("Person not found");
         else
             allSingleParticipants.remove(person);
-        calcCouples();
+        calcCouples(strictness);
     }
 
-    public void cancelPerson(Person person) {
+    public void cancelPerson(Person person, Strictness strictness) {
 
         if (!allSingleParticipants.contains(person) && person.hasPartner()) {
             allSingleParticipants.add(person.getPartner());
             couples.stream().reduce((x, y) -> x.getPerson1().equals(person) || x.getPerson2().equals(person) ? x : y).ifPresent(couples::remove);
-            calcCouples();
+            calcCouples(strictness);
         } else if (allSingleParticipants.contains(person)) {
             throw new IllegalArgumentException("Person already is single");
         } else {
@@ -563,25 +555,12 @@ public class CoupleManager {
                 .orElse(null);
     }
 
-
-    public Strictness getStrictnessLevel() {
-        return strictnessLevel;
-    }
-
-    public void setStrictnessLevel(Strictness strictnessLevel) {
-        this.strictnessLevel = strictnessLevel;
-    }
-
     public List<Person> getSingleList() {
         return allSingleParticipants;
     }
 
     public List<Couple> getCouples() {
         return couples;
-    }
-
-    public int getCurrentCoupleCount() {
-        return currentCoupleCount;
     }
 
     public List<Person> getAllSingleParticipants() {

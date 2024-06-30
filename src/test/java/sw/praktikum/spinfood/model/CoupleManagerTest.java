@@ -18,7 +18,6 @@ public class CoupleManagerTest {
     public void setUp() {
         // TODO: Initialize coupleManager with appropriate data
         coupleManager = CoupleManager.getInstance();
-        coupleManager.setStrictnessLevel(Strictness.B);
         coupleManager.getSingleList().clear(); // Ensure the list is empty before each test
 
         Kitchen kitchen1 = new Kitchen(10.0, 20.0, false, 1.0);
@@ -49,7 +48,7 @@ public class CoupleManagerTest {
 
 
 
-        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, 0, new Location(20.00, 15.00));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, new Location(20.00, 15.00));
 
         List<Couple> couples = coupleManager.getCouples();
 
@@ -64,22 +63,22 @@ public class CoupleManagerTest {
     @Test
     public void testAddPerson() {
         // TODO: Implement this test method once addPerson is implemented
-        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person1, Strictness.C);
         assertTrue(coupleManager.getSingleList().contains(person1));
     }
 
     @Test
     public void testRemovePerson() {
         // TODO: Implement this test method once removePerson is implemented
-        coupleManager.addPerson(person1);
-        coupleManager.removeSinglePerson(person1);
+        coupleManager.addPerson(person1, Strictness.C);
+        coupleManager.removeSinglePerson(person1, Strictness.C);
         assertFalse(coupleManager.getSingleList().contains(person1));
     }
 
     @Test
     public void testGetPerson() {
         // TODO: Implement this test method once getPerson is implemented
-        coupleManager.addPerson(person1);
+        coupleManager.addPerson(person1, Strictness.C);
         Person retrievedPerson = coupleManager.getSinglePerson(person1.getID());
         assertEquals(person1, retrievedPerson);
     }
@@ -88,12 +87,12 @@ public class CoupleManagerTest {
     @Test
     public void testGetCouple() {
         // TODO: Implement this test method once getCouple is implemented
-        coupleManager.addPerson(person1);
-        coupleManager.addPerson(person2);
-        coupleManager.addPerson(person3);
-        coupleManager.addPerson(person4);
+        coupleManager.addPerson(person1, Strictness.C);
+        coupleManager.addPerson(person2, Strictness.C);
+        coupleManager.addPerson(person3, Strictness.C);
+        coupleManager.addPerson(person4, Strictness.C);
 
-        coupleManager.givePeopleWithoutPartner(singles, Strictness.B,0,new Location(0.2,0.4));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B,new Location(0.2,0.4));
         List<Couple> couples = coupleManager.couples;
         assertNotNull(couples);
     }
@@ -141,17 +140,17 @@ public class CoupleManagerTest {
         System.out.println("Initial couples: " + coupleManager.getCouples());
 
         // Add persons
-        coupleManager.addPerson(person1);
-        coupleManager.addPerson(person2);
-        coupleManager.addPerson(person3);
-        coupleManager.addPerson(person4);
+        coupleManager.addPerson(person1, Strictness.C);
+        coupleManager.addPerson(person2, Strictness.C);
+        coupleManager.addPerson(person3, Strictness.C);
+        coupleManager.addPerson(person4, Strictness.C);
 
         // Print state after adding persons
         //System.out.println("Singles after adding persons: " + coupleManager.getAllSingleParticipants());
         System.out.println("Couples after adding persons: " + coupleManager.getCouples());
 
         // Form initial couples
-        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, 0, new Location(0.2, 0.4));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B,  new Location(0.2, 0.4));
         List<Couple> initialCouples = coupleManager.getCouples();
         int initialCouplesSize = initialCouples.size();
         System.out.println("Initial couples after forming: " + initialCouples);
@@ -161,7 +160,7 @@ public class CoupleManagerTest {
         assertFalse(initialCouples.isEmpty());
 
         // Cancel person1
-        coupleManager.cancelPerson(person1);
+        coupleManager.cancelPerson(person1, Strictness.C);
 
         // Print state after cancellation
         //System.out.println("Singles after cancelling person1: " + coupleManager.getAllSingleParticipants());
@@ -183,17 +182,17 @@ public class CoupleManagerTest {
         System.out.println("Initial couples: " + coupleManager.getCouples());
 
         // Add persons
-        coupleManager.addPerson(person1);
-        coupleManager.addPerson(person2);
-        coupleManager.addPerson(person3);
-        coupleManager.addPerson(person4);
+        coupleManager.addPerson(person1, Strictness.C);
+        coupleManager.addPerson(person2, Strictness.C);
+        coupleManager.addPerson(person3, Strictness.C);
+        coupleManager.addPerson(person4, Strictness.C);
 
         // Print state after adding persons
         System.out.println("Singles after adding persons: " + coupleManager.getAllSingleParticipants());
         System.out.println("Couples after adding persons: " + coupleManager.getCouples());
 
         // Form initial couples
-        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, 0, new Location(0.2, 0.4));
+        coupleManager.givePeopleWithoutPartner(singles, Strictness.B, new Location(0.2, 0.4));
         List<Couple> initialCouples = coupleManager.getCouples();
         int initialCouplesSize = initialCouples.size();
         System.out.println("Initial couples after forming: " + initialCouples);
