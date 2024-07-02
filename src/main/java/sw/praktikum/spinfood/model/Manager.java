@@ -246,7 +246,7 @@ public class Manager {
      * changedSomething()
      * needs to be called when making a change.
      * then adds container to prev stack
-     * afterwords clears future stack
+     * afterwards clears future stack
      */
     public void changedSomething(){
         prev.add(new Manager(this));
@@ -275,5 +275,10 @@ public class Manager {
         optimalDistance = parameterValues[GroupManagerIndex + 4];
         this.strictness = strictness;
     }
-
+    public Stack<Manager> getPrev() {
+        return prev;
+    }
+    public Stack<Manager> getFuture() {
+        return future;
+    }
 }
