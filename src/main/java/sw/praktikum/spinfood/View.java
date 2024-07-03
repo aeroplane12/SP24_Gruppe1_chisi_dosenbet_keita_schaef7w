@@ -14,7 +14,7 @@ public class View extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(View.class.getResource("StartUpWindow.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 460, 360);
+        Scene scene = new Scene(fxmlLoader.load(), 740, 460);
         stage.setTitle("Spinfood");
         stage.setScene(scene);
         stage.show();

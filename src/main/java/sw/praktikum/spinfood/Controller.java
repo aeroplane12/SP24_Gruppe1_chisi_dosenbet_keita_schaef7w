@@ -1,14 +1,22 @@
 package sw.praktikum.spinfood;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sw.praktikum.spinfood.model.Couple;
+import sw.praktikum.spinfood.model.Group;
 import sw.praktikum.spinfood.model.Manager;
+import sw.praktikum.spinfood.model.Person;
 
 
 import java.io.File;
@@ -16,7 +24,7 @@ import java.io.IOException;
 
 
 public class Controller {
-
+    ObservableList<Person> personList;
     @FXML
     private Spinner<Double> foodPrefSpinner = new Spinner<>();
     @FXML
@@ -27,16 +35,55 @@ public class Controller {
     private Spinner<Double> distanceSpinner = new Spinner<>();
     @FXML
     private Spinner<Double> optimalDistanceSpinner = new Spinner<>();
-
-
+    @FXML
+    private TableView<Person> personTab = new TableView<>();
+    @FXML
+    private TableColumn<Person, String> personID = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, String> personName = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, String> personFoodPref = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, String> personAgeRange = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, String> personGender = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, String> personRegWithPartner = new TableColumn<>();
+    @FXML
+    private TableView<Couple> coupleTab = new TableView<>();
+    @FXML
+    private TableColumn<Couple, String> coupleID = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, String> couplePerson1ID = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, String> couplePerson2ID = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, String> coupleFoodPref = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, String> coupleWhoseKitchen = new TableColumn<>();
+    @FXML
+    private TableView<Group> groupTab = new TableView<>();
 
     public void initialize() {
-
         foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, Manager.getInstance().getFoodPrefWeight()));
         ageGroupSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getAVGAgeRangeWeight()));
         genderSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getAVGGenderDIVWeight()));
         distanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getDistanceWeight()));
         optimalDistanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getOptimalDistance()));
+        // Table for Person tab
+        personID.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        personName.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        personFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPreference"));
+        personAgeRange.setCellValueFactory(new PropertyValueFactory<>("AgeRange"));
+        personGender.setCellValueFactory(new PropertyValueFactory<>("Gender"));
+        personRegWithPartner.setCellValueFactory(new PropertyValueFactory<>("LockedIn"));
+        // Table for Couple tab
+        coupleID.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        couplePerson1ID.setCellValueFactory(new PropertyValueFactory<>("Person1().getID"));
+        couplePerson2ID.setCellValueFactory(new PropertyValueFactory<>("Person2().getID"));
+        coupleFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPref().toString"));
+        coupleWhoseKitchen.setCellValueFactory(new PropertyValueFactory<>("WhoseKitchen"));
+
     }
 
     @FXML
@@ -64,6 +111,8 @@ public class Controller {
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
             Manager.getInstance().inputPeople(selectedFile.getPath());
+            personList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
+            personTab.setItems(personList);
         }
     }
 
@@ -80,6 +129,8 @@ public class Controller {
 
     @FXML private void handleCalculate() {
         Manager.getInstance().calcAll();
+        personList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
+        personTab.setItems(personList);
     }
 
     @FXML private void handlePersonTab() {
@@ -150,6 +201,9 @@ public class Controller {
         if (!validateDouble(optimalDistanceSpinner.getEditor().getText())) {
             optimalDistanceSpinner.getEditor().setText(optimalDistanceSpinner.getValue().toString());
         }
+    }
+    @FXML private void handleRefreshTable() {
+
     }
 
 }

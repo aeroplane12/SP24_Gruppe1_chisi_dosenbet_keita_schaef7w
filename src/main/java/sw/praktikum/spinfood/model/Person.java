@@ -134,6 +134,7 @@ public class Person {
         return lockedIn;
     }
 
+    public boolean getLockedIn() {return lockedIn;}
     /**
      * hasPartner
      * @return whether person has partner

@@ -75,12 +75,17 @@ public class Manager {
 
     }
 
+    public List<Person> getAllPersonList() {
+        return allPersonList;
+    }
+
     /**
      * calcAll
      * calculates all Couples first,
      * then assigns all to Groups
      */
     public void calcAll(){
+        changedSomething();
         calcCouples();
         calcGroups();
     }

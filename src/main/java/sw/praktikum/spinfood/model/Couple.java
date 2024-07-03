@@ -101,6 +101,9 @@ public class Couple {
     public boolean isWhoseKitchen() {
         return whoseKitchen;
     }
+    public boolean getWhoseKitchen() {
+        return whoseKitchen;
+    }
 
     public void toggleWhoseKitchen() {
         whoseKitchen = !whoseKitchen;

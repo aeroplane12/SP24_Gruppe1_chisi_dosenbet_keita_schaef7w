@@ -18,9 +18,9 @@
             <Button fx:id="calculate" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCalculate" prefHeight="25.0" prefWidth="134.0" text="Calculate" />
          </children>
       </HBox>
-      <Button fx:id="undo" layoutX="647.0" layoutY="44.0" mnemonicParsing="false" onAction="#handleUndo" text="&lt;--" />
-      <Button fx:id="redo" layoutX="690.0" layoutY="44.0" mnemonicParsing="false" onAction="#handleRedo" text="--&gt;" />
-      <Button fx:id="languageGerman" layoutX="647.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleLanguageGerman" prefHeight="25.0" prefWidth="34.0" text="DE" />
+      <Button fx:id="undo" layoutX="656.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleUndo" text="&lt;--" />
+      <Button fx:id="redo" layoutX="690.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleRedo" text="--&gt;" />
+      <Button fx:id="languageGerman" layoutX="649.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleLanguageGerman" prefHeight="25.0" prefWidth="34.0" text="DE" />
       <Button fx:id="languageEnglish" layoutX="690.0" layoutY="15.0" mnemonicParsing="false" onAction="#handleLanguageEnglish" prefHeight="25.0" prefWidth="34.0" text="EN" />
       <Button layoutX="14.0" layoutY="57.0" mnemonicParsing="false" onAction="#handleOpenWindow" text="Calculation configuration" />
       <TabPane layoutX="17.0" layoutY="114.0" prefHeight="332.0" prefWidth="707.0" tabClosingPolicy="UNAVAILABLE">
@@ -29,16 +29,18 @@
                <content>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="303.0" prefWidth="706.0">
+                        <TableView fx:id="peopleTab" prefHeight="303.0" prefWidth="706.0">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="ID" />
-                              <TableColumn prefWidth="75.0" text="Name" />
-                              <TableColumn prefWidth="104.0" text="Food Preference" />
-                              <TableColumn prefWidth="75.0" text="Age Range" />
-                              <TableColumn prefWidth="75.0" text="Age Range" />
-                              <TableColumn prefWidth="68.0" text="Kitchen" />
-                              <TableColumn prefWidth="124.0" text="Registration As Pair" />
+                              <TableColumn fx:id="personID" prefWidth="75.0" text="ID" />
+                              <TableColumn fx:id="personName" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="personFoodPref" prefWidth="75.0" text="Food Preference" />
+                              <TableColumn fx:id="personAgeRange" prefWidth="75.0" text="Age Range" />
+                              <TableColumn fx:id="personGender" prefWidth="75.0" text="Gender" />
+                              <TableColumn fx:id="personRegWithPartner" prefWidth="75.0" text="Reg. with Partner" />
                            </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                         <ScrollBar orientation="VERTICAL" />
                      </children>
@@ -49,16 +51,17 @@
                <content>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="303.0" prefWidth="706.0">
+                        <TableView fx:id="coupleTab" prefHeight="303.0" prefWidth="706.0">
                            <columns>
-                              <TableColumn prefWidth="75.0" text="ID" />
-                              <TableColumn prefWidth="75.0" text="Name" />
-                              <TableColumn prefWidth="104.0" text="Food Preference" />
-                              <TableColumn prefWidth="75.0" text="Age Range" />
-                              <TableColumn prefWidth="75.0" text="Age Range" />
-                              <TableColumn prefWidth="68.0" text="Kitchen" />
-                              <TableColumn prefWidth="124.0" text="Registration As Pair" />
+                              <TableColumn fx:id="coupleID" prefWidth="75.0" text="Couple ID" />
+                              <TableColumn fx:id="couplePerson1ID" prefWidth="75.0" text="Person 1 ID" />
+                              <TableColumn fx:id="couplePerson2ID" prefWidth="75.0" text="Person 2 ID" />
+                              <TableColumn fx:id="coupleFoodPref" prefWidth="75.0" text="Food Preference" />
+                              <TableColumn fx:id="coupleWhoseKitchen" prefWidth="75.0" text="Whose Kitchen" />
                            </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                         <ScrollBar orientation="VERTICAL" />
                      </children>
@@ -69,16 +72,10 @@
                <content>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="303.0" prefWidth="706.0">
-                           <columns>
-                              <TableColumn prefWidth="75.0" text="ID" />
-                              <TableColumn prefWidth="75.0" text="Name" />
-                              <TableColumn prefWidth="104.0" text="Food Preference" />
-                              <TableColumn prefWidth="75.0" text="Age Range" />
-                              <TableColumn prefWidth="75.0" text="Age Range" />
-                              <TableColumn prefWidth="68.0" text="Kitchen" />
-                              <TableColumn prefWidth="124.0" text="Registration As Pair" />
-                           </columns>
+                        <TableView fx:id="groupTab" prefHeight="303.0" prefWidth="706.0">
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
                         </TableView>
                         <ScrollBar orientation="VERTICAL" />
                      </children>
@@ -87,5 +84,6 @@
             </Tab>
         </tabs>
       </TabPane>
+      <Button layoutX="600.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleRefreshTable" text="Refresh" />
    </children>
 </AnchorPane>
