@@ -66,10 +66,12 @@ public class Manager {
     private Manager(Manager manager){
         coupleManager = manager.coupleManager;
         groupManager = new GroupManager(manager.groupManager);
-        allPersonList = new ArrayList<>(manager.allPersonList);
-        singles = new ArrayList<>(manager.singles);
-        couples = new ArrayList<>(manager.couples);
-        groups = new ArrayList<>(manager.groups);
+        if (allPersonList != null) allPersonList = new ArrayList<>(manager.allPersonList);
+        if (singles != null) singles = new ArrayList<>(manager.singles);
+        if (couples != null) couples = new ArrayList<>(manager.couples);
+        if (groups != null) groups = new ArrayList<>(manager.groups);
+        partyLoc = manager.partyLoc;
+
 
     }
 
@@ -280,5 +282,13 @@ public class Manager {
     }
     public Stack<Manager> getFuture() {
         return future;
+    }
+    public void setConfig(Double foodPrefWeight, Double AVGAgeRangeWeight, Double AVGGenderDIVWeight, Double distanceWeight, Double optimalDistance) {
+        changedSomething();
+        this.FoodPrefWeight = foodPrefWeight;
+        this.AVGAgeRangeWeight = AVGAgeRangeWeight;
+        this.AVGGenderDIVWeight = AVGGenderDIVWeight;
+        this.distanceWeight = distanceWeight;
+        this.optimalDistance = optimalDistance;
     }
 }

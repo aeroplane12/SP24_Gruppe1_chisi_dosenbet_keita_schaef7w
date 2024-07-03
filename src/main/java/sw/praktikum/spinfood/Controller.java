@@ -2,7 +2,6 @@ package sw.praktikum.spinfood;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Spinner;
@@ -14,8 +13,7 @@ import sw.praktikum.spinfood.model.Manager;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+
 
 public class Controller {
 
@@ -26,16 +24,19 @@ public class Controller {
     @FXML
     private Spinner<Double> genderSpinner = new Spinner<>();
     @FXML
-    private Spinner<Double> amountPplSpinner = new Spinner<>();
+    private Spinner<Double> distanceSpinner = new Spinner<>();
+    @FXML
+    private Spinner<Double> optimalDistanceSpinner = new Spinner<>();
 
 
 
     public void initialize() {
 
-        foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0));
-        ageGroupSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,0));
-        genderSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,0));
-        amountPplSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,0));
+        foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, Manager.getInstance().getFoodPrefWeight()));
+        ageGroupSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getAVGAgeRangeWeight()));
+        genderSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getAVGGenderDIVWeight()));
+        distanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getDistanceWeight()));
+        optimalDistanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getOptimalDistance()));
     }
 
     @FXML
@@ -109,37 +110,45 @@ public class Controller {
     @FXML private void handleLanguageEnglish() {
 
     }
-    private boolean validate(String text) {
+    private boolean validateDouble(String text) {
+        if (text.isEmpty()) {
+            return true;
+        }
         try {
             Double.parseDouble(text);
             return true;
-        } catch (IllegalArgumentException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
     @FXML private void handleConfigurationSubmit() {
-
+        Manager.getInstance().setConfig(foodPrefSpinner.getValue(), ageGroupSpinner.getValue(), genderSpinner.getValue(), distanceSpinner.getValue(), optimalDistanceSpinner.getValue());
     }
 
     @FXML private void handleInvalidTextInputFoodPref() {
-        if (!validate(foodPrefSpinner.getEditor().getText())) {
+        if (!validateDouble(foodPrefSpinner.getEditor().getText())) {
             foodPrefSpinner.getEditor().setText(foodPrefSpinner.getValue().toString());
         }
     }
     @FXML private void handleInvalidTextInputAgeGroup() {
-        if (!validate(ageGroupSpinner.getEditor().getText())) {
+        if (!validateDouble(ageGroupSpinner.getEditor().getText())) {
             ageGroupSpinner.getEditor().setText(ageGroupSpinner.getValue().toString());
         }
     }
     @FXML private void handleInvalidTextInputGender() {
-        if (!validate(genderSpinner.getEditor().getText())) {
+        if (!validateDouble(genderSpinner.getEditor().getText())) {
             genderSpinner.getEditor().setText(genderSpinner.getValue().toString());
         }
     }
 
-    @FXML private void handleInvalidTextInputMaxPpl() {
-        if (!validate(amountPplSpinner.getEditor().getText())) {
-            amountPplSpinner.getEditor().setText(amountPplSpinner.getValue().toString());
+    @FXML private void handleInvalidTextInputDistanceWeight() {
+        if (!validateDouble(distanceSpinner.getEditor().getText())) {
+            distanceSpinner.getEditor().setText(distanceSpinner.getValue().toString());
+        }
+    }
+    @FXML private void handleInvalidTextInputOptimalDistance() {
+        if (!validateDouble(optimalDistanceSpinner.getEditor().getText())) {
+            optimalDistanceSpinner.getEditor().setText(optimalDistanceSpinner.getValue().toString());
         }
     }
 
