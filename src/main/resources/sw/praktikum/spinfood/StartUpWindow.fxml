@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="460.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sw.praktikum.spinfood.Controller">
+<AnchorPane prefHeight="460.0" prefWidth="740.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sw.praktikum.spinfood.Controller">
    <children>
       <HBox layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="335.0">
          <children>

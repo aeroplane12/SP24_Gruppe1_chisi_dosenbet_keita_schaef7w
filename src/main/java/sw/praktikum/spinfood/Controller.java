@@ -25,6 +25,8 @@ import java.io.IOException;
 
 public class Controller {
     ObservableList<Person> personList;
+    ObservableList<Couple> coupleList;
+    ObservableList<Group> groupList;
     @FXML
     private Spinner<Double> foodPrefSpinner = new Spinner<>();
     @FXML
@@ -112,6 +114,7 @@ public class Controller {
         if (selectedFile != null) {
             Manager.getInstance().inputPeople(selectedFile.getPath());
             personList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
+            System.out.println(personList.get(0).toString());
             personTab.setItems(personList);
         }
     }
@@ -129,20 +132,10 @@ public class Controller {
 
     @FXML private void handleCalculate() {
         Manager.getInstance().calcAll();
-        personList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
-        personTab.setItems(personList);
-    }
-
-    @FXML private void handlePersonTab() {
-
-    }
-
-    @FXML private void handleCoupleTab() {
-
-    }
-
-    @FXML private void handleGroupTab() {
-
+        coupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+        coupleTab.setItems(coupleList);
+        groupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+        groupTab.setItems(groupList);
     }
 
     @FXML private void handleUndo() {

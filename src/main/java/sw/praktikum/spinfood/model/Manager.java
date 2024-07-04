@@ -79,6 +79,10 @@ public class Manager {
         return allPersonList;
     }
 
+    public List<Couple> getCouples() {
+        return couples;
+    }
+
     /**
      * calcAll
      * calculates all Couples first,
@@ -97,6 +101,7 @@ public class Manager {
      */
     public void inputPeople(String path) {
         allPersonList = CSVReader.csvReaderPeople(path);
+        System.out.println(allPersonList.get(0).toString());
         GroupManager.getInstance().clear();
         groups = new ArrayList<>();
         couples = new ArrayList<>();
