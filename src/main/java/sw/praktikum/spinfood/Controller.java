@@ -13,10 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import sw.praktikum.spinfood.model.Couple;
-import sw.praktikum.spinfood.model.Group;
-import sw.praktikum.spinfood.model.Manager;
-import sw.praktikum.spinfood.model.Person;
+import sw.praktikum.spinfood.model.*;
 
 
 import java.io.File;
@@ -44,13 +41,13 @@ public class Controller {
     @FXML
     private TableColumn<Person, String> personName = new TableColumn<>();
     @FXML
-    private TableColumn<Person, String> personFoodPref = new TableColumn<>();
+    private TableColumn<Person, FoodPreference.FoodPref> personFoodPref = new TableColumn<>();
     @FXML
-    private TableColumn<Person, String> personAgeRange = new TableColumn<>();
+    private TableColumn<Person, AgeGroup.AgeRange> personAgeRange = new TableColumn<>();
     @FXML
-    private TableColumn<Person, String> personGender = new TableColumn<>();
+    private TableColumn<Person, Gender.genderValue> personGender = new TableColumn<>();
     @FXML
-    private TableColumn<Person, String> personRegWithPartner = new TableColumn<>();
+    private TableColumn<Person, Boolean> personRegWithPartner = new TableColumn<>();
     @FXML
     private TableView<Couple> coupleTab = new TableView<>();
     @FXML
@@ -73,18 +70,20 @@ public class Controller {
         distanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getDistanceWeight()));
         optimalDistanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getOptimalDistance()));
         // Table for Person tab
-        personID.setCellValueFactory(new PropertyValueFactory<>("ID"));
-        personName.setCellValueFactory(new PropertyValueFactory<>("Name"));
-        personFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPreference"));
-        personAgeRange.setCellValueFactory(new PropertyValueFactory<>("AgeRange"));
-        personGender.setCellValueFactory(new PropertyValueFactory<>("Gender"));
-        personRegWithPartner.setCellValueFactory(new PropertyValueFactory<>("LockedIn"));
+        personID.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        personName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        personFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
+        personAgeRange.setCellValueFactory(new PropertyValueFactory<>("age"));
+        personGender.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        personRegWithPartner.setCellValueFactory(new PropertyValueFactory<>("lockedIn"));
+
+
         // Table for Couple tab
-        coupleID.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        coupleID.setCellValueFactory(new PropertyValueFactory<>("iD"));
         couplePerson1ID.setCellValueFactory(new PropertyValueFactory<>("Person1().getID"));
         couplePerson2ID.setCellValueFactory(new PropertyValueFactory<>("Person2().getID"));
         coupleFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPref().toString"));
-        coupleWhoseKitchen.setCellValueFactory(new PropertyValueFactory<>("WhoseKitchen"));
+        coupleWhoseKitchen.setCellValueFactory(new PropertyValueFactory<>("whoseKitchen"));
 
     }
 
@@ -108,7 +107,7 @@ public class Controller {
     private void handleUploadCSV() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose a file");
-        fileChooser.setInitialDirectory(new File("C:\\"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\andre\\Desktop\\sp24_gruppe1_chisi_dosenbet_keita_schaef7w\\Dokumentation"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
@@ -122,7 +121,7 @@ public class Controller {
     @FXML private void handleLocation() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose a file");
-        fileChooser.setInitialDirectory(new File("C:\\"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\andre\\Desktop\\sp24_gruppe1_chisi_dosenbet_keita_schaef7w\\Dokumentation"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
