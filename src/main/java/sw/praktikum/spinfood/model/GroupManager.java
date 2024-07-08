@@ -21,13 +21,8 @@ public class GroupManager {
                 + Math.abs(x.getCurrentKitchen().distance(y.getCurrentKitchen())-Manager.getInstance().getOptimalDistance()) * Manager.getInstance().getDistanceWeight()
                 - (getGenderDiversity(x.getGenderDiv(),y.getGenderDiv())) * Manager.getInstance().getAVGGenderDIVWeight());
     public GroupManager(){
-        // needs to be set for it to work unless the party happens at Null island
-        this.partyLoc = new Location(0d,0d);
         instance = this;
-    }
-    public GroupManager(Location partyLoc){
-        this.partyLoc = partyLoc;
-        instance = this;
+        partyLoc = Manager.getInstance().partyLoc;
     }
     // copy constructor
     public GroupManager(GroupManager groupManager){
@@ -36,7 +31,7 @@ public class GroupManager {
         succeedingCouples = new ArrayList<>(groupManager.succeedingCouples);
         ledger = new ArrayList<>(groupManager.ledger);
         kitchenLedger = new HashMap<>(kitchenLedger);
-        partyLoc = groupManager.partyLoc;
+        partyLoc = Manager.getInstance().partyLoc;
     }
     public static GroupManager getInstance() {
         if(instance == null)
@@ -440,5 +435,30 @@ public class GroupManager {
         succeedingCouples = sC;
         overBookedCouples = oBC;
         calcGroups(retry,true);
+    }
+
+    /**
+     * calculates the cumulative ranks of every given couple
+     * @param a
+     * @param b
+     * @return
+     */
+    static public Double[] compareGroupLists(List<Group> a, List<Group> b){
+        Double aScore=0d;
+        Double bScore=0d;
+        Rankable<Couple> ranker = GroupManager.getInstance().COUPLERANKGEN;
+        for (Group i : a) {
+            Couple host = i.getHosts();
+            for (Couple j : i.getAll()){
+                aScore += ranker.rank(host,j);
+            }
+        }
+        for (Group i : b) {
+            Couple host = i.getHosts();
+            for (Couple j : i.getAll()){
+                bScore += ranker.rank(host,j);
+            }
+        }
+        return new Double[]{aScore,bScore,aScore - bScore};
     }
 }

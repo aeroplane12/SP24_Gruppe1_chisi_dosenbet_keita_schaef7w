@@ -17,7 +17,7 @@ public class Manager {
     public static int maxGuests = 666666;
     private GroupManager groupManager;
     private CoupleManager coupleManager;
-    Location partyLoc;//temporary filler
+    Location partyLoc = new Location(0d,0d);//temporary filler
 
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
@@ -25,16 +25,16 @@ public class Manager {
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();
-    /////////////////////////////////
-    //   Group-Manager Constants   //
-    /////////////////////////////////
+      //////////////////////////////////
+     //   Couple-Manager Constants   //
+    //////////////////////////////////
 
     private Strictness strictness = Strictness.B;
+        /////////////////////////////////
+       //   Group-Manager Constants   //
       /////////////////////////////////
-     //   Group-Manager Constants   //
+     // filled with default values  //
     /////////////////////////////////
-   // filled with default values  //
-  /////////////////////////////////
     private Double FoodPrefWeight = 5d;
     private Double AVGAgeRangeWeight = 2d;
     private Double AVGGenderDIVWeight = 1d;
@@ -50,7 +50,7 @@ public class Manager {
     }
     public static Manager getInstance(){
         if (instance == null) {
-            return new Manager();
+            instance = new Manager();
         }
         return instance;
     }

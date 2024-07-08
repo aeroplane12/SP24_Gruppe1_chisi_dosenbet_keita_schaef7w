@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagerTest {
@@ -87,17 +90,44 @@ class ManagerTest {
 
     @Test
     public void testGroupManager() {
-        /*TODO GroupManagerTests
-        coupleManager.calcCouples();
-        coupleManager.giveToGroupManager(groupManager);
-        String ID = "1"; //TODO: Default ID think about how to implement ID Couple
-        int size = groupManager.couples.get(ID).length;
+        // depend on these
+        assertTrue(manager.groups.isEmpty());
+        testInputPeople();
+        testCoupleManager();
+        manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
+        manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
+        manager.calcAll();
+        if (!manager.allPersonList.isEmpty()) {
+            assertFalse(manager.groups.isEmpty());
+            Map<Course, List<Group>> courseGroupMap = groupManager.getLedger().stream().collect(groupingBy(Group::getCourse));
+            Map<Couple, Integer> coupleCounter = new HashMap<>();
+            assertFalse(GroupManager.getInstance().getLedger().isEmpty());
+            int mapEntrySize = courseGroupMap.values().stream().toList().get(0).size();
+            for (List<Group> i : courseGroupMap.values()) {
+                assertEquals(mapEntrySize,i.size(),"differently sized Group allocations");
+                for (Group j : i){
+                    for (Couple h : j.getAll()) {
+                        if (!coupleCounter.containsKey(h)){
+                            coupleCounter.put(h,1);
+                        } else {
+                            coupleCounter.put(h,coupleCounter.get(h)+1);
+                        }
+                        assertTrue(h.wasHost(),"every Couple needs to have been host at exactly once");
+                        assertEquals(h.getMetCouples().size(),7,"every Couple needs to have met exactly 6 other Couples and themselves");
+                        for (int g:h.getWithWhomAmIEating().values()) {
+                            assertNotEquals(-1,g,"every Couple has to have the groupID registered in WithWhomAmIEating");
+                        }
+                    }
+                    //test assertions for groups here
+                }
+            }
+            for (Integer i : coupleCounter.values()) {
+                assertEquals(i,3,"every Couple needs to be in exactly 3 groups");
+            }
+            //test for size
+            assertEquals(groupManager.processedCouples.size(),groupManager.getLedger().size());
+        }
 
-        assertEquals(size,coupleManager.allParticipants.length / 2, "The size is the same");
-        // Check if couple from CV file is correct
-
-        assertEquals(coupleManager.getCouple("ID Couple"), "ID Couple");
-        */
     }
 
     /**
@@ -145,5 +175,31 @@ class ManagerTest {
         @Test
         public void testGetCoupleManager() {
             assertEquals(coupleManager, manager.getCoupleManager());
+        }
+        @Test
+        public void testRemoveAll(){
+            testInputPeople();
+            testCoupleManager();
+            testGroupManager();
+            manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
+            manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
+            manager.calcAll();
+            List<Couple> coupleForRemoval = new ArrayList<>(manager.couples.subList(0,10));
+            List<Person> personForRemoval = new ArrayList<>(manager.allPersonList.subList(0,10));
+            /*
+            manager.removeAll(coupleForRemoval,personForRemoval);
+            for (Couple i : manager.couples) {
+                for (Couple j :coupleForRemoval) {
+                    assertNotEquals(i.getPerson1(), j.getPerson1());
+                    assertNotEquals(i.getPerson2(), j.getPerson1());
+                    assertNotEquals(i.getPerson1(), j.getPerson2());
+                    assertNotEquals(i.getPerson2(), j.getPerson2());
+                }
+            }
+            for (Person j :personForRemoval) {
+                assertFalse(manager.allPersonList.contains(j));
+            }
+             */
+
         }
 }

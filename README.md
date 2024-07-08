@@ -1,5 +1,8 @@
 # SP24_Gruppe1_chisi_dosenbet_keita_schaef7w
 
+## ModelTests
+1. [Pseudo-Code Couple Manager](#pseudo-code-couple-manager)
+2. [Pseudo-Code Group Manager](#pseudo-code-group-manager)
 
 
 ## Aufteilung des Projects und Aufträge
@@ -44,3 +47,7 @@ Gemäß Model-View-Control Modells
 - - [x] Pers. to Couple
 - - [x] Couple to Group
 - - [x] General Manager
+
+## Pseudo-Code Group-Manager
+
+## Pseudo-Code Couple-Manager
