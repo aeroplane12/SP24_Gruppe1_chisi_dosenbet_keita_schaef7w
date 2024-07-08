@@ -131,8 +131,8 @@ public class Controller {
     @FXML
     private void handleUploadCSV() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose a file");
-        fileChooser.setInitialDirectory(new File("C:\\Users\\andre\\Desktop\\sp24_gruppe1_chisi_dosenbet_keita_schaef7w\\Dokumentation"));
+        fileChooser.setTitle("Choose the CSV with the participants file");
+        fileChooser.setInitialDirectory(new File("Dokumentation"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
@@ -145,8 +145,8 @@ public class Controller {
 
     @FXML private void handleLocation() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose a file");
-        fileChooser.setInitialDirectory(new File("C:\\Users\\andre\\Desktop\\sp24_gruppe1_chisi_dosenbet_keita_schaef7w\\Dokumentation"));
+        fileChooser.setTitle("Choose the location file");
+        fileChooser.setInitialDirectory(new File("Dokumentation"));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV File", "*.csv"));
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
