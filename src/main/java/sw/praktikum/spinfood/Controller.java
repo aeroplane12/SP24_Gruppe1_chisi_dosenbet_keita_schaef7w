@@ -51,17 +51,33 @@ public class Controller {
     @FXML
     private TableView<Couple> coupleTab = new TableView<>();
     @FXML
-    private TableColumn<Couple, String> coupleID = new TableColumn<>();
+    private TableColumn<Couple, Integer> coupleID = new TableColumn<>();
     @FXML
-    private TableColumn<Couple, String> couplePerson1ID = new TableColumn<>();
+    private TableColumn<Couple, Person> couplePerson1 = new TableColumn<>();
     @FXML
-    private TableColumn<Couple, String> couplePerson2ID = new TableColumn<>();
+    private TableColumn<Couple, Person> couplePerson2 = new TableColumn<>();
     @FXML
-    private TableColumn<Couple, String> coupleFoodPref = new TableColumn<>();
+    private TableColumn<Couple, Kitchen> coupleKitchen1 = new TableColumn<>();
     @FXML
-    private TableColumn<Couple, String> coupleWhoseKitchen = new TableColumn<>();
+    private TableColumn<Couple, Kitchen> coupleKitchen2 = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, FoodPreference.FoodPref> coupleFoodPref = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Boolean> coupleWhoseKitchen = new TableColumn<>();
     @FXML
     private TableView<Group> groupTab = new TableView<>();
+    @FXML
+    private TableColumn<Group, Integer> groupID = new TableColumn<>();
+    @FXML
+    private TableColumn<Group, Couple> groupHost = new TableColumn<>();
+    @FXML
+    private TableColumn<Group, Couple> groupGuest1 = new TableColumn<>();
+    @FXML
+    private TableColumn<Group, Couple> groupGuest2 = new TableColumn<>();
+    @FXML
+    private TableColumn<Group, FoodPreference.FoodPref> groupFoodPref = new TableColumn<>();
+    @FXML
+    private TableColumn<Group, Course> groupCourse = new TableColumn<>();
 
     public void initialize() {
         foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, Manager.getInstance().getFoodPrefWeight()));
@@ -80,11 +96,20 @@ public class Controller {
 
         // Table for Couple tab
         coupleID.setCellValueFactory(new PropertyValueFactory<>("iD"));
-        couplePerson1ID.setCellValueFactory(new PropertyValueFactory<>("Person1().getID"));
-        couplePerson2ID.setCellValueFactory(new PropertyValueFactory<>("Person2().getID"));
-        coupleFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPref().toString"));
+        couplePerson1.setCellValueFactory(new PropertyValueFactory<>("Person1"));
+        couplePerson2.setCellValueFactory(new PropertyValueFactory<>("Person2"));
+        coupleKitchen1.setCellValueFactory(new PropertyValueFactory<>("Kitchen1"));
+        coupleKitchen2.setCellValueFactory(new PropertyValueFactory<>("Kitchen2"));
+        coupleFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPref"));
         coupleWhoseKitchen.setCellValueFactory(new PropertyValueFactory<>("whoseKitchen"));
 
+        // Table for Group tab
+        groupID.setCellValueFactory(new PropertyValueFactory<>("ID"));
+        groupHost.setCellValueFactory(new PropertyValueFactory<>("hosts"));
+        groupGuest1.setCellValueFactory(new PropertyValueFactory<>("guest1"));
+        groupGuest2.setCellValueFactory(new PropertyValueFactory<>("guest2"));
+        groupFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
+        groupCourse.setCellValueFactory(new PropertyValueFactory<>("course"));
     }
 
     @FXML
@@ -135,6 +160,7 @@ public class Controller {
         coupleTab.setItems(coupleList);
         groupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
         groupTab.setItems(groupList);
+        coupleList.forEach(elem -> System.out.println(elem.getKitchen2()));
     }
 
     @FXML private void handleUndo() {

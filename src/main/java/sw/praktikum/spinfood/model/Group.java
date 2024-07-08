@@ -47,6 +47,19 @@ public class Group {
     public List<Couple> getAll(){
         return List.of(host,guest1,guest2);
     }
+
+    public Couple getGuest1() {
+        return guest1;
+    }
+
+    public Couple getGuest2() {
+        return guest2;
+    }
+
+    public FoodPreference.FoodPref getFoodPreference() {
+        return foodPreference;
+    }
+
     public void replaceCouple(Couple couple, Couple replacement){
         if (couple.equals(host)) {
             host = replacement;
