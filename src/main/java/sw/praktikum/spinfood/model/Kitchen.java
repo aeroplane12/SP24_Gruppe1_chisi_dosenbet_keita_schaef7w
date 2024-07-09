@@ -25,6 +25,10 @@ public class Kitchen extends Location {
         this.story = story;
     }
 
+    public double getStory() {
+        return story;
+    }
+
     @Override
     public Double distance(Location l){
         Double x = super.distance(l);

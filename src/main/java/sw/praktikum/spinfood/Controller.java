@@ -14,6 +14,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.BooleanStringConverter;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import sw.praktikum.spinfood.model.*;
 import sw.praktikum.spinfood.model.tools.AgeGroupStringConverter;
@@ -59,6 +60,14 @@ public class Controller {
     private TableColumn<Person, String> personID = new TableColumn<>();
     @FXML
     private TableColumn<Person, String> personName = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, Kitchen> personKitchen = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, Double> personKitchenLongitude = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, Double> personKitchenLatitude = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, Double> personKitchenStory = new TableColumn<>();
     @FXML
     private TableColumn<Person, FoodPreference.FoodPref> personFoodPref = new TableColumn<>();
     @FXML
@@ -107,7 +116,7 @@ public class Controller {
 
         // Table for Person tab
         personID.setCellValueFactory(new PropertyValueFactory<>("iD"));
-        personID.setCellFactory(TextFieldTableCell.forTableColumn());
+        // personID.setCellFactory(TextFieldTableCell.forTableColumn());
 
         personName.setCellValueFactory(new PropertyValueFactory<>("name"));
         personName.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -118,6 +127,14 @@ public class Controller {
                 person.setName(personStringCellEditEvent.getNewValue());
             }
         });
+        //personKitchen.setCellValueFactory(new PropertyValueFactory<>("kitchen"));
+
+        personKitchenLongitude.setCellValueFactory(new PropertyValueFactory<>("kitchenLongitude"));
+
+        personKitchenLatitude.setCellValueFactory(new PropertyValueFactory<>("kitchenLatitude"));
+
+        personKitchenStory.setCellValueFactory(new PropertyValueFactory<>("kitchenStory"));
+
         personFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
         personFoodPref.setCellFactory(TextFieldTableCell.forTableColumn(new FoodPreferenceStringConverter()));
         personFoodPref.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, FoodPreference.FoodPref>>() {
@@ -187,7 +204,7 @@ public class Controller {
             Parent root = fxmlLoader.load();
 
             Stage stage = new Stage();
-            stage.setTitle("Popup Window");
+            stage.setTitle("Configuration");
             stage.setScene(new Scene(root));
 
             stage.show();
@@ -260,7 +277,14 @@ public class Controller {
         }
     }
     @FXML private void handleConfigurationSubmit() {
-        Manager.getInstance().setConfig(foodPrefSpinner.getValue(), ageGroupSpinner.getValue(), genderSpinner.getValue(), distanceSpinner.getValue(), optimalDistanceSpinner.getValue(), strictnessChange.getValue());
+        Manager.getInstance().setConfig(foodPrefSpinner.getValue(),
+                ageGroupSpinner.getValue(),
+                genderSpinner.getValue(),
+                distanceSpinner.getValue(),
+                optimalDistanceSpinner.getValue(),
+                strictnessChange.getValue());
+        Stage stage = (Stage) foodPrefSpinner.getScene().getWindow();
+        stage.close();
     }
 
     @FXML private void handleInvalidTextInputFoodPref() {

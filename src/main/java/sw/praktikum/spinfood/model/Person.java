@@ -120,6 +120,15 @@ public class Person {
     public Kitchen getKitchen() {
         return kitchen;
     }
+    public Double getKitchenLongitude() {
+        return kitchen == null? null : kitchen.getLongitude();
+    }
+    public Double getKitchenLatitude() {
+        return kitchen == null? null : kitchen.getLatitude();
+    }
+    public Double getKitchenStory() {
+        return kitchen == null? null : kitchen.getStory();
+    }
     public String getName() {
         return name;
     }

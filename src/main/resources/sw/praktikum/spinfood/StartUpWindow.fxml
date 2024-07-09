@@ -34,6 +34,13 @@
                            <columns>
                               <TableColumn fx:id="personID" prefWidth="75.0" text="Person ID" />
                               <TableColumn fx:id="personName" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="personKitchen" prefWidth="75.0" text="Kitchen">
+                                 <columns>
+                                    <TableColumn fx:id="personKitchenLongitude" prefWidth="75.0" text="Longitude" />
+                                    <TableColumn fx:id="personKitchenLatitude" prefWidth="75.0" text="Latitude" />
+                                    <TableColumn fx:id="personKitchenStory" prefWidth="75.0" text="Story" />
+                                 </columns>
+                              </TableColumn>
                               <TableColumn fx:id="personFoodPref" prefWidth="75.0" text="Food Preference" />
                               <TableColumn fx:id="personAgeRange" prefWidth="75.0" text="Age Range" />
                               <TableColumn fx:id="personGender" prefWidth="75.0" text="Gender" />
