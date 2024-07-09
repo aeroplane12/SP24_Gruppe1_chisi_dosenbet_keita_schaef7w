@@ -18,7 +18,7 @@ public class Manager {
     public static int maxGuests = 666666;
     private GroupManager groupManager;
     private CoupleManager coupleManager;
-    Location partyLoc;//temporary filler
+    Location partyLoc = new Location(0d,0d);//temporary filler
 
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
@@ -26,16 +26,16 @@ public class Manager {
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();
-    /////////////////////////////////
-    //   Group-Manager Constants   //
-    /////////////////////////////////
+      //////////////////////////////////
+     //   Couple-Manager Constants   //
+    //////////////////////////////////
 
     private Strictness strictness = Strictness.B;
+        /////////////////////////////////
+       //   Group-Manager Constants   //
       /////////////////////////////////
-     //   Group-Manager Constants   //
+     // filled with default values  //
     /////////////////////////////////
-   // filled with default values  //
-  /////////////////////////////////
     private Double FoodPrefWeight = 5d;
     private Double AVGAgeRangeWeight = 2d;
     private Double AVGGenderDIVWeight = 1d;
@@ -51,7 +51,7 @@ public class Manager {
     }
     public static Manager getInstance(){
         if (instance == null) {
-            return new Manager();
+            instance = new Manager();
         }
         return instance;
     }
@@ -132,8 +132,6 @@ public class Manager {
         singles = new ArrayList<>(allPersonList.stream().filter(x -> !x.isLockedIn()).toList());
         singles.stream().peek(x -> x.setPartner(null)).toList();
         coupleManager.givePeopleWithoutPartner(singles,strictness,partyLoc);
-        System.out.println(coupleManager.getCouples().size());
-        System.out.println(coupleManager.getSingleList().size());
         couples.addAll(coupleManager.getCouples());
         coupleManager.restManager();
     }
@@ -170,9 +168,16 @@ public class Manager {
      */
     public void removePerson(Person person){
         changedSomething();
-        coupleManager.removeSinglePerson(person, strictness);
-        singles = coupleManager.getSingleList();
-        couples = coupleManager.getCouples();
+        Couple couple = couples.stream().filter(x -> x.getPerson1().equals(person) || x.getPerson2().equals(person)).findFirst().orElse(null);
+        Person partner = person.getPartner();
+        if (couple != null) {
+            couples.remove(couple);
+            partner.setPartner(null);
+            partner.setLockedIn(false);
+            singles.add(partner);
+        }
+        singles.remove(person);
+        calcCouples();
         GroupManager.getInstance().clear();
         groupManager.calcGroups(couples,false);
         groups = groupManager.getLedger();
