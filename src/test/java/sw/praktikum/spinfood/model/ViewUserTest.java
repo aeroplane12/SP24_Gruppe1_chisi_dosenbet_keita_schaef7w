@@ -46,7 +46,6 @@ public class ViewUserTest {
             uploadCSVButton.fire();
             assertEquals(true, uploadCSVButton.isDisabled());
         });
-        Thread.sleep(1000);
     }
 
 }
