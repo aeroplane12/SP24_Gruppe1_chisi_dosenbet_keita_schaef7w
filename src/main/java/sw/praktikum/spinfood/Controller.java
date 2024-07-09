@@ -2,7 +2,6 @@ package sw.praktikum.spinfood;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,11 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.BooleanStringConverter;
-import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import sw.praktikum.spinfood.model.*;
 import sw.praktikum.spinfood.model.tools.AgeGroupStringConverter;
@@ -27,9 +27,13 @@ import java.io.IOException;
 
 
 public class Controller {
-    ObservableList<Person> personList;
-    ObservableList<Couple> coupleList;
-    ObservableList<Group> groupList;
+    ObservableList<Person> currentPersonList;
+    ObservableList<Couple> currentCoupleList;
+    ObservableList<Group> currentGroupList;
+    ObservableList<Manager> managersList;
+    Person selectedPersonInList;
+    @FXML
+    private TableRow<Person> selectedPerson;
     File chosenDirOutput = new File("Dokumentation");
     String fileName;
     @FXML
@@ -60,8 +64,6 @@ public class Controller {
     private TableColumn<Person, String> personID = new TableColumn<>();
     @FXML
     private TableColumn<Person, String> personName = new TableColumn<>();
-    @FXML
-    private TableColumn<Person, Kitchen> personKitchen = new TableColumn<>();
     @FXML
     private TableColumn<Person, Double> personKitchenLongitude = new TableColumn<>();
     @FXML
@@ -106,6 +108,8 @@ public class Controller {
     private TableColumn<Group, FoodPreference.FoodPref> groupFoodPref = new TableColumn<>();
     @FXML
     private TableColumn<Group, Course> groupCourse = new TableColumn<>();
+    @FXML
+    private ComboBox<Manager> couplesGroupsMenu = new ComboBox<>();
 
     public void initialize() {
         foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, Manager.getInstance().getFoodPrefWeight()));
@@ -120,12 +124,9 @@ public class Controller {
 
         personName.setCellValueFactory(new PropertyValueFactory<>("name"));
         personName.setCellFactory(TextFieldTableCell.forTableColumn());
-        personName.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> personStringCellEditEvent) {
-                Person person = personStringCellEditEvent.getRowValue();
-                person.setName(personStringCellEditEvent.getNewValue());
-            }
+        personName.setOnEditCommit(personStringCellEditEvent -> {
+            Person person = personStringCellEditEvent.getRowValue();
+            person.setName(personStringCellEditEvent.getNewValue());
         });
         //personKitchen.setCellValueFactory(new PropertyValueFactory<>("kitchen"));
 
@@ -137,39 +138,27 @@ public class Controller {
 
         personFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
         personFoodPref.setCellFactory(TextFieldTableCell.forTableColumn(new FoodPreferenceStringConverter()));
-        personFoodPref.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, FoodPreference.FoodPref>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, FoodPreference.FoodPref> personFoodPrefCellEditEvent) {
-                Person person = personFoodPrefCellEditEvent.getRowValue();
-                person.setFoodPreference(personFoodPrefCellEditEvent.getNewValue());
-            }
+        personFoodPref.setOnEditCommit(personFoodPrefCellEditEvent -> {
+            Person person = personFoodPrefCellEditEvent.getRowValue();
+            person.setFoodPreference(personFoodPrefCellEditEvent.getNewValue());
         });
         personAgeRange.setCellValueFactory(new PropertyValueFactory<>("age"));
         personAgeRange.setCellFactory(TextFieldTableCell.forTableColumn(new AgeGroupStringConverter()));
-        personAgeRange.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, AgeGroup.AgeRange>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, AgeGroup.AgeRange> personAgeRangeCellEditEvent) {
-                Person person = personAgeRangeCellEditEvent.getRowValue();
-                person.setAge(personAgeRangeCellEditEvent.getNewValue());
-            }
+        personAgeRange.setOnEditCommit(personAgeRangeCellEditEvent -> {
+            Person person = personAgeRangeCellEditEvent.getRowValue();
+            person.setAge(personAgeRangeCellEditEvent.getNewValue());
         });
         personGender.setCellValueFactory(new PropertyValueFactory<>("gender"));
         personGender.setCellFactory(TextFieldTableCell.forTableColumn(new GenderStringConverter()));
-        personGender.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, Gender.genderValue>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, Gender.genderValue> personGenderValueCellEditEvent) {
-                Person person = personGenderValueCellEditEvent.getRowValue();
-                person.setGender(personGenderValueCellEditEvent.getNewValue());
-            }
+        personGender.setOnEditCommit(personGenderValueCellEditEvent -> {
+            Person person = personGenderValueCellEditEvent.getRowValue();
+            person.setGender(personGenderValueCellEditEvent.getNewValue());
         });
         personRegWithPartner.setCellValueFactory(new PropertyValueFactory<>("lockedIn"));
         personRegWithPartner.setCellFactory(TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
-        personRegWithPartner.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, Boolean>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, Boolean> personBooleanCellEditEvent) {
-                Person person = personBooleanCellEditEvent.getRowValue();
-                person.setLockedIn(personBooleanCellEditEvent.getNewValue());
-            }
+        personRegWithPartner.setOnEditCommit(personBooleanCellEditEvent -> {
+            Person person = personBooleanCellEditEvent.getRowValue();
+            person.setLockedIn(personBooleanCellEditEvent.getNewValue());
         });
 
         // Table for Couple tab
@@ -195,6 +184,20 @@ public class Controller {
         strictnessChange.getItems().add(Strictness.B);
         strictnessChange.getItems().add(Strictness.C);
         strictnessChange.setValue(Strictness.B);
+
+        managersList = FXCollections.observableArrayList(new Manager());
+        couplesGroupsMenu.setItems(managersList);
+
+        personTab.setRowFactory(tv -> {
+            TableRow<Person> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (! row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+                    selectedPersonInList = row.getItem();
+                    System.out.println(selectedPersonInList);
+                }
+            });
+            return row;
+        });
     }
 
     @FXML
@@ -222,8 +225,8 @@ public class Controller {
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
             Manager.getInstance().inputPeople(selectedFile.getPath());
-            personList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
-            personTab.setItems(personList);
+            currentPersonList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
+            personTab.setItems(currentPersonList);
             calculate.setDisable(false);
         }
     }
@@ -242,10 +245,10 @@ public class Controller {
 
     @FXML private void handleCalculate() {
         Manager.getInstance().calcAll();
-        coupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
-        coupleTab.setItems(coupleList);
-        groupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
-        groupTab.setItems(groupList);
+        currentCoupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+        coupleTab.setItems(currentCoupleList);
+        currentGroupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+        groupTab.setItems(currentGroupList);
         saveGroups.setDisable(false);
     }
 
@@ -313,9 +316,7 @@ public class Controller {
             optimalDistanceSpinner.getEditor().setText(optimalDistanceSpinner.getValue().toString());
         }
     }
-    @FXML private void handleRefreshTable() {
 
-    }
     @FXML private void handleSaveGroupsWindow() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SaveFileWindow.fxml"));
@@ -349,4 +350,28 @@ public class Controller {
         Stage stage = (Stage) saveButton.getScene().getWindow();
         stage.close();
     }
+    @FXML private void handleNewCouplesGroupsTab(){
+        Manager manager = new Manager();
+        manager.setAllPersonList(currentPersonList);
+        managersList.add(manager);
+        manager.setAllPersonList(currentPersonList);
+    }
+    @FXML private void handleDeleteCouplesGroupsTab(){
+        if (managersList.size() > 1) {
+            managersList.remove(Manager.getInstance());
+            managersList.get(0).setInstance();
+        }
+    }
+    @FXML private void handleSwitchCouplesGroupsTab(){
+        couplesGroupsMenu.getValue().setInstance();
+        currentCoupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+        currentGroupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+        coupleTab.setItems(currentCoupleList);
+        groupTab.setItems(currentGroupList);
+
+    }
+    @FXML private void handleRemoveParticipant() {
+        currentPersonList.remove(selectedPersonInList);
+    }
+
 }

@@ -83,7 +83,12 @@ public class Manager {
     public List<Couple> getCouples() {
         return couples;
     }
-
+    public void setAllPersonList(List<Person> people) {
+        allPersonList = people;
+    }
+    public void setInstance() {
+        instance = this;
+    }
     /**
      * calcAll
      * calculates all Couples first,
