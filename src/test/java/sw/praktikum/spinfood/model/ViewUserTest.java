@@ -41,11 +41,17 @@ public class ViewUserTest {
 
     @Test
     public void testUIInteraction() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(() -> {
-            Button uploadCSVButton = (Button) stage.getScene().lookup("#uploadCSV");
-            uploadCSVButton.fire();
-            assertEquals(true, uploadCSVButton.isDisabled());
+            try {
+                Button uploadCSVButton = (Button) stage.getScene().lookup("#uploadCSV");
+                uploadCSVButton.fire();
+                assertEquals(true, uploadCSVButton.isDisabled());
+            } finally {
+                latch.countDown();
+            }
         });
+        latch.await(5, TimeUnit.SECONDS);
     }
 
 }
