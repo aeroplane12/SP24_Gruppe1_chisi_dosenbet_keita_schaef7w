@@ -177,6 +177,7 @@ public class Manager {
             singles.add(partner);
         }
         singles.remove(person);
+        allPersonList.remove(person);
         calcCouples();
         GroupManager.getInstance().clear();
         groupManager.calcGroups(couples,false);

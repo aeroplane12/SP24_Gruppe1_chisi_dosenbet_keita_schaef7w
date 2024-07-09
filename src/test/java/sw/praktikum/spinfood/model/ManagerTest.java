@@ -186,7 +186,7 @@ class ManagerTest {
             manager.calcAll();
             List<Couple> coupleForRemoval = new ArrayList<>(manager.couples.subList(0,10));
             List<Person> personForRemoval = new ArrayList<>(manager.allPersonList.subList(0,10));
-            /*
+
             manager.removeAll(coupleForRemoval,personForRemoval);
             for (Couple i : manager.couples) {
                 for (Couple j :coupleForRemoval) {
@@ -199,7 +199,7 @@ class ManagerTest {
             for (Person j :personForRemoval) {
                 assertFalse(manager.allPersonList.contains(j));
             }
-             */
+
 
         }
 }
