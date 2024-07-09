@@ -88,8 +88,31 @@ public class Person {
         this.kitchen = kitchen;
         this.partner = partner;
     }
+    // setter methods
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setAge(AgeGroup.AgeRange age) {
+        this.age = age;
+    }
+    public void setGender(Gender.genderValue gender) {
+        this.gender = gender;
+    }
+    public void setFoodPreference(FoodPreference.FoodPref foodPreference) {
+        this.foodPreference = foodPreference;
+    }
+    public void setKitchen(Kitchen kitchen) {
+        this.kitchen = kitchen;
+    }
+    public void setPartner(Person partner) {
+        this.partner = partner;
+    }
+    public void setLockedIn(boolean lockedIn) {
+        this.lockedIn = lockedIn;
+    }
 
     // getter methods
+
     public FoodPreference.FoodPref getFoodPreference() {
         return foodPreference;
     }
@@ -97,11 +120,9 @@ public class Person {
     public Kitchen getKitchen() {
         return kitchen;
     }
-
     public String getName() {
         return name;
     }
-
     public String getID() {
         return ID;
     }
@@ -109,25 +130,15 @@ public class Person {
     public Person getPartner() {
         return partner;
     }
+
     public boolean hasKitchen() {return kitchen != null; }
+
     public AgeGroup.AgeRange getAge() {
         return age;
     }
 
     public Gender.genderValue getGender() {
         return gender;
-    }
-
-    public void setKitchen(Kitchen kitchen) {
-        this.kitchen = kitchen;
-    }
-    public void setPartner(Person partner) {
-        this.partner = partner;
-    }
-
-
-    public void setLockedIn(boolean lockedIn) {
-        this.lockedIn = lockedIn;
     }
 
     public boolean isLockedIn() {

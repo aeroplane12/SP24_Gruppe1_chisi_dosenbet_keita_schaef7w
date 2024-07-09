@@ -10,6 +10,15 @@ public class Gender {
         genderValue(int value) {
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return switch (this.value) {
+                case 0 -> "male";
+                case 1 -> "female";
+                default -> "other";
+            };
+        }
     }
 
     public static genderValue getGen(String s){

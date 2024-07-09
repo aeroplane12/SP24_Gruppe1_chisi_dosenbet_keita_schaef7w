@@ -17,6 +17,21 @@ public class AgeGroup {
         AgeRange(int value) {
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return switch (this.value) {
+                case 0 -> "Age 0-17";
+                case 1 -> "Age 18-23";
+                case 2 -> "Age 24-27";
+                case 3 -> "Age 28-30";
+                case 4 -> "Age 31-35";
+                case 5 -> "Age 36-41";
+                case 6 -> "Age 42-46";
+                case 7 -> "Age 47-56";
+                default -> "Age 57-Inf";
+            };
+        }
     }
 
     /**

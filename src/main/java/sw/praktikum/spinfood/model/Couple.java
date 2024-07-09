@@ -204,4 +204,11 @@ public class Couple {
                 Course.DINNER,-1,
                 Course.DESSERT,-1));
     }
+    @Override
+    public String toString() {
+        return "[CoupleID: " + ID +
+                ", Person1_ID: " + person1.getID() +
+                ", Person2_ID: " + person2.getID() + "]";
+
+    }
 }

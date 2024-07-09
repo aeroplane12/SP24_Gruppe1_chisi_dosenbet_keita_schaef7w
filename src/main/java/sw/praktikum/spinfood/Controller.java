@@ -2,18 +2,23 @@ package sw.praktikum.spinfood;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.converter.BooleanStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 import sw.praktikum.spinfood.model.*;
+import sw.praktikum.spinfood.model.tools.AgeGroupStringConverter;
+import sw.praktikum.spinfood.model.tools.FoodPreferenceStringConverter;
+import sw.praktikum.spinfood.model.tools.GenderStringConverter;
 
 
 import java.io.File;
@@ -24,6 +29,20 @@ public class Controller {
     ObservableList<Person> personList;
     ObservableList<Couple> coupleList;
     ObservableList<Group> groupList;
+    File chosenDirOutput = new File("Dokumentation");
+    String fileName;
+    @FXML
+    private TextField filenameTextfield = new TextField();
+    @FXML
+    private Button saveButton = new Button();
+    @FXML
+    private ChoiceBox<Strictness> strictnessChange = new ChoiceBox<>();
+    @FXML
+    private Button uploadCSV = new Button();
+    @FXML
+    private Button calculate = new Button();
+    @FXML
+    private Button saveGroups = new Button();
     @FXML
     private Spinner<Double> foodPrefSpinner = new Spinner<>();
     @FXML
@@ -85,17 +104,60 @@ public class Controller {
         genderSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getAVGGenderDIVWeight()));
         distanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getDistanceWeight()));
         optimalDistanceSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getOptimalDistance()));
+
         // Table for Person tab
         personID.setCellValueFactory(new PropertyValueFactory<>("iD"));
-        personName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        personFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
-        personAgeRange.setCellValueFactory(new PropertyValueFactory<>("age"));
-        personGender.setCellValueFactory(new PropertyValueFactory<>("gender"));
-        personRegWithPartner.setCellValueFactory(new PropertyValueFactory<>("lockedIn"));
+        personID.setCellFactory(TextFieldTableCell.forTableColumn());
 
+        personName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        personName.setCellFactory(TextFieldTableCell.forTableColumn());
+        personName.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Person, String> personStringCellEditEvent) {
+                Person person = personStringCellEditEvent.getRowValue();
+                person.setName(personStringCellEditEvent.getNewValue());
+            }
+        });
+        personFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
+        personFoodPref.setCellFactory(TextFieldTableCell.forTableColumn(new FoodPreferenceStringConverter()));
+        personFoodPref.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, FoodPreference.FoodPref>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Person, FoodPreference.FoodPref> personFoodPrefCellEditEvent) {
+                Person person = personFoodPrefCellEditEvent.getRowValue();
+                person.setFoodPreference(personFoodPrefCellEditEvent.getNewValue());
+            }
+        });
+        personAgeRange.setCellValueFactory(new PropertyValueFactory<>("age"));
+        personAgeRange.setCellFactory(TextFieldTableCell.forTableColumn(new AgeGroupStringConverter()));
+        personAgeRange.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, AgeGroup.AgeRange>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Person, AgeGroup.AgeRange> personAgeRangeCellEditEvent) {
+                Person person = personAgeRangeCellEditEvent.getRowValue();
+                person.setAge(personAgeRangeCellEditEvent.getNewValue());
+            }
+        });
+        personGender.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        personGender.setCellFactory(TextFieldTableCell.forTableColumn(new GenderStringConverter()));
+        personGender.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, Gender.genderValue>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Person, Gender.genderValue> personGenderValueCellEditEvent) {
+                Person person = personGenderValueCellEditEvent.getRowValue();
+                person.setGender(personGenderValueCellEditEvent.getNewValue());
+            }
+        });
+        personRegWithPartner.setCellValueFactory(new PropertyValueFactory<>("lockedIn"));
+        personRegWithPartner.setCellFactory(TextFieldTableCell.forTableColumn(new BooleanStringConverter()));
+        personRegWithPartner.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, Boolean>>() {
+            @Override
+            public void handle(TableColumn.CellEditEvent<Person, Boolean> personBooleanCellEditEvent) {
+                Person person = personBooleanCellEditEvent.getRowValue();
+                person.setLockedIn(personBooleanCellEditEvent.getNewValue());
+            }
+        });
 
         // Table for Couple tab
         coupleID.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        coupleID.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         couplePerson1.setCellValueFactory(new PropertyValueFactory<>("Person1"));
         couplePerson2.setCellValueFactory(new PropertyValueFactory<>("Person2"));
         coupleKitchen1.setCellValueFactory(new PropertyValueFactory<>("Kitchen1"));
@@ -110,6 +172,12 @@ public class Controller {
         groupGuest2.setCellValueFactory(new PropertyValueFactory<>("guest2"));
         groupFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
         groupCourse.setCellValueFactory(new PropertyValueFactory<>("course"));
+
+        // Strictness level
+        strictnessChange.getItems().add(Strictness.A);
+        strictnessChange.getItems().add(Strictness.B);
+        strictnessChange.getItems().add(Strictness.C);
+        strictnessChange.setValue(Strictness.B);
     }
 
     @FXML
@@ -138,8 +206,8 @@ public class Controller {
         if (selectedFile != null) {
             Manager.getInstance().inputPeople(selectedFile.getPath());
             personList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
-            System.out.println(personList.get(0).toString());
             personTab.setItems(personList);
+            calculate.setDisable(false);
         }
     }
 
@@ -151,6 +219,7 @@ public class Controller {
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
             Manager.getInstance().inputLocation(selectedFile.getPath());
+            uploadCSV.setDisable(false);
         }
     }
 
@@ -160,7 +229,7 @@ public class Controller {
         coupleTab.setItems(coupleList);
         groupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
         groupTab.setItems(groupList);
-        coupleList.forEach(elem -> System.out.println(elem.getKitchen2()));
+        saveGroups.setDisable(false);
     }
 
     @FXML private void handleUndo() {
@@ -191,7 +260,7 @@ public class Controller {
         }
     }
     @FXML private void handleConfigurationSubmit() {
-        Manager.getInstance().setConfig(foodPrefSpinner.getValue(), ageGroupSpinner.getValue(), genderSpinner.getValue(), distanceSpinner.getValue(), optimalDistanceSpinner.getValue());
+        Manager.getInstance().setConfig(foodPrefSpinner.getValue(), ageGroupSpinner.getValue(), genderSpinner.getValue(), distanceSpinner.getValue(), optimalDistanceSpinner.getValue(), strictnessChange.getValue());
     }
 
     @FXML private void handleInvalidTextInputFoodPref() {
@@ -223,5 +292,37 @@ public class Controller {
     @FXML private void handleRefreshTable() {
 
     }
+    @FXML private void handleSaveGroupsWindow() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SaveFileWindow.fxml"));
+            Parent root = fxmlLoader.load();
 
+            Stage stage = new Stage();
+            stage.setTitle("Choose save directory");
+            stage.setScene(new Scene(root));
+
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    @FXML private void handleChooseDir() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Chose directory");
+        directoryChooser.setInitialDirectory(new File("Dokumentation"));
+        chosenDirOutput = directoryChooser.showDialog(new Stage());
+    }
+    @FXML private void handleOutputFilename() {
+        fileName = filenameTextfield.getCharacters().toString();
+    }
+    @FXML private void handleSaveButton() {
+        if (fileName == null) {
+            Manager.getInstance().saveGroupsToFile(chosenDirOutput.getAbsoluteFile() + "\\" + "calcGroupsOutput.csv");
+        } else {
+            Manager.getInstance().saveGroupsToFile(chosenDirOutput.getAbsoluteFile() + "\\" + fileName + ".csv");
+        }
+        Stage stage = (Stage) saveButton.getScene().getWindow();
+        stage.close();
+    }
 }

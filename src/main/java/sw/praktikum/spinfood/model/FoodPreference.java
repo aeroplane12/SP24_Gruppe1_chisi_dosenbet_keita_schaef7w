@@ -15,16 +15,12 @@ public class FoodPreference {
 
         @Override
         public String toString() {
-            switch (this.value) {
-                case 3:
-                    return "VEGAN";
-                case 2:
-                    return "VEGGIE";
-                case 1:
-                    return "MEAT";
-                default:
-                    return "ANY";
-            }
+            return switch (this.value) {
+                case 3 -> "VEGAN";
+                case 2 -> "VEGGIE";
+                case 1 -> "MEAT";
+                default -> "ANY";
+            };
         }
     }
 

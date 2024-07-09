@@ -3,6 +3,7 @@ package sw.praktikum.spinfood.model;
 import sw.praktikum.spinfood.model.tools.*;
 import sw.praktikum.spinfood.model.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -101,7 +102,6 @@ public class Manager {
      */
     public void inputPeople(String path) {
         allPersonList = CSVReader.csvReaderPeople(path);
-        System.out.println(allPersonList.get(0).toString());
         GroupManager.getInstance().clear();
         groups = new ArrayList<>();
         couples = new ArrayList<>();
@@ -293,12 +293,16 @@ public class Manager {
     public Stack<Manager> getFuture() {
         return future;
     }
-    public void setConfig(Double foodPrefWeight, Double AVGAgeRangeWeight, Double AVGGenderDIVWeight, Double distanceWeight, Double optimalDistance) {
+    public void setConfig(Double foodPrefWeight, Double AVGAgeRangeWeight, Double AVGGenderDIVWeight, Double distanceWeight, Double optimalDistance, Strictness strictness) {
         changedSomething();
         this.FoodPrefWeight = foodPrefWeight;
         this.AVGAgeRangeWeight = AVGAgeRangeWeight;
         this.AVGGenderDIVWeight = AVGGenderDIVWeight;
         this.distanceWeight = distanceWeight;
         this.optimalDistance = optimalDistance;
+        this.strictness = strictness;
+    }
+    public void saveGroupsToFile(String filePath) {
+        CSVWriter.write(groups, filePath);
     }
 }
