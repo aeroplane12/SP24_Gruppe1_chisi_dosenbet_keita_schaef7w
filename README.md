@@ -61,12 +61,10 @@ Gemäß Model-View-Control Modells
     matchSingles(createMatrix(mixedGroup), mixedGroup);
     break;
     case B:
-    List<Person> withKitchen = filterByKitchenAvailability(allSingleParticipants, true);
-    List<Person> noKitchen = filterByKitchenAvailability(allSingleParticipants, false);
-    matchSinglesWithAdjustment(createMatrix(withKitchen, noKitchen), withKitchen, noKitchen);
+    //with and without kitchen
     break;
     case C:
-    matchSingles(createMatrix(allSingleParticipants), allSingleParticipants);
+    //maximum number off matches
     break;
     default:
     throw new IllegalArgumentException("Invalid Strictness level");
