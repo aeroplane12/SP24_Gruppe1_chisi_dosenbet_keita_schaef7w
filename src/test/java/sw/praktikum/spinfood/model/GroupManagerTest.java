@@ -18,9 +18,8 @@ public class GroupManagerTest {
     public void setUp() {
         GroupManager.getInstance().clear();
         Manager.maxGuests = 400;
-        partyLoc = new Location(10.0, 20.0);
+        Manager.getInstance().partyLoc = new Location(10.0, 20.0);
         groupManager = new GroupManager();
-        groupManager.setPartyLoc(partyLoc);
         // the entries of teilnehmerliste * 5 so we can guarantee kitchen Conflicts
         couples = new ArrayList<>(Objects.requireNonNull(CSVReader.csvReaderPeople("Dokumentation/TestingData/csvtestdateMult.csv")).stream()
                 .filter(Person::hasPartner)
