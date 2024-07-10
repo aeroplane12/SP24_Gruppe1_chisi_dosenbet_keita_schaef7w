@@ -1,13 +1,10 @@
 package sw.praktikum.spinfood.model;
 
 import sw.praktikum.spinfood.model.tools.*;
-import sw.praktikum.spinfood.model.*;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 public class Manager {
     static int managerID = 0;
@@ -23,7 +20,7 @@ public class Manager {
 
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
-    static List<Person> allPersonList;
+    List<Person> allPersonList;
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();
