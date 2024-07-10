@@ -276,6 +276,34 @@ class ManagerTest {
             assertEquals(groupSize,manager.groups.size());
 
             // remove, for rolling back changes in the lists
+            List<Couple> coupleForRemoval = new ArrayList<>(manager.couples.subList(0,10));
+            List<Person> personForRemoval = new ArrayList<>(manager.allPersonList.subList(0,10));
+            manager.removeAll(coupleForRemoval,personForRemoval);
+            for (Couple i : manager.couples) {
+                for (Couple j :coupleForRemoval) {
+                    assertNotEquals(i.getPerson1(), j.getPerson1());
+                    assertNotEquals(i.getPerson2(), j.getPerson1());
+                    assertNotEquals(i.getPerson1(), j.getPerson2());
+                    assertNotEquals(i.getPerson2(), j.getPerson2());
+                }
+            }
+            for (Person j :personForRemoval) {
+                assertFalse(manager.allPersonList.contains(j));
+            }
+            while (!Manager.getPrev().empty()) {
+                Manager.setToPrev();
+            }
+            manager = Manager.getInstance();
 
+            assertEquals(configTable.get("DEFAULT").get(0),manager.getFoodPrefWeight());
+            assertEquals(configTable.get("DEFAULT").get(1),manager.getAVGAgeRangeWeight());
+            assertEquals(configTable.get("DEFAULT").get(2),manager.getAVGGenderDIVWeight());
+            assertEquals(configTable.get("DEFAULT").get(3),manager.getDistanceWeight());
+            assertEquals(configTable.get("DEFAULT").get(4),manager.getOptimalDistance());
+            assertEquals(Strictness.B,manager.getStrictness());
+
+            assertEquals(allParticipantsSize,manager.allPersonList.size());
+            assertEquals(coupleSize,manager.couples.size());
+            assertEquals(groupSize,manager.groups.size());
         }
 }
