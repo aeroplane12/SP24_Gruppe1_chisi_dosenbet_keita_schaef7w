@@ -55,7 +55,15 @@ public class Group {
     public Couple getGuest2() {
         return guest2;
     }
-
+    public Integer getHostID() {
+        return host.getID();
+    }
+    public Integer getGuest1ID() {
+        return guest1.getID();
+    }
+    public Integer getGuest2ID() {
+        return guest2.getID();
+    }
     public FoodPreference.FoodPref getFoodPreference() {
         return foodPreference;
     }

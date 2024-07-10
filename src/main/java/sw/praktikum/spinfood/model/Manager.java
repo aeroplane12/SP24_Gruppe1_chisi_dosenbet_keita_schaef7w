@@ -22,7 +22,7 @@ public class Manager {
 
     // maximum distance between kitchens for it to be measured as equal in meters
     public static final Double MAX_EQUAL_KITCHEN_DISTANCE = 0d;
-    List<Person> allPersonList;
+    static List<Person> allPersonList;
     List<Person> singles = new ArrayList<>();
     List<Couple> couples = new ArrayList<>();
     List<Group> groups = new ArrayList<>();

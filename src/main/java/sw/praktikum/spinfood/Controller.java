@@ -10,7 +10,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -20,10 +19,14 @@ import sw.praktikum.spinfood.model.*;
 import sw.praktikum.spinfood.model.tools.AgeGroupStringConverter;
 import sw.praktikum.spinfood.model.tools.FoodPreferenceStringConverter;
 import sw.praktikum.spinfood.model.tools.GenderStringConverter;
+import sw.praktikum.spinfood.model.tools.LanguageSetting;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 public class Controller {
@@ -37,17 +40,57 @@ public class Controller {
     File chosenDirOutput = new File("Dokumentation");
     String fileName;
     @FXML
-    private TextField filenameTextfield = new TextField();
+    private ComboBox<LanguageSetting.Language> languageMenu = new ComboBox<>();
     @FXML
-    private Button saveButton = new Button();
+    private TextField filenameTextfield = new TextField();
     @FXML
     private ChoiceBox<Strictness> strictnessChange = new ChoiceBox<>();
     @FXML
-    private Button uploadCSV = new Button();
+    private Button uploadLocationButton = new Button();
     @FXML
-    private Button calculate = new Button();
+    private Button uploadCSVButton = new Button();
     @FXML
-    private Button saveGroups = new Button();
+    private Button calculateButton = new Button();
+    @FXML
+    private Button saveGroupsButton = new Button();
+    @FXML
+    private Button calculationConfigButton = new Button();
+    @FXML
+    private Button removeParticipantButton = new Button();
+    @FXML
+    private Button createCouplesGroupsTab = new Button();
+    @FXML
+    private Button deleteCouplesGroupsTab = new Button();
+    @FXML
+    private ComboBox<Manager> couplesGroupsMenu = new ComboBox<>();
+    @FXML
+    private Tab participantsTabSel = new Tab();
+    @FXML
+    private Tab couplesTabSel = new Tab();
+    @FXML
+    private Tab groupsTabSel = new Tab();
+    @FXML
+    private Label foodPrefWeightLabel = new Label();
+    @FXML
+    private Label ageGroupWeightLabel = new Label();
+    @FXML
+    private Label genderWeightLabel = new Label();
+    @FXML
+    private Label distanceWeightLabel = new Label();
+    @FXML
+    private Label optimalDistanceLabel = new Label();
+    @FXML
+    private Label strictnessLevelLabel = new Label();
+    @FXML
+    private Button configurationSubmitButton = new Button();
+    @FXML
+    private Button chooseDirButton = new Button();
+    @FXML
+    private Label filenameTextfieldLabel = new Label();
+    @FXML
+    private Button finalSaveButton = new Button();
+
+
     @FXML
     private Spinner<Double> foodPrefSpinner = new Spinner<>();
     @FXML
@@ -64,6 +107,8 @@ public class Controller {
     private TableColumn<Person, String> personID = new TableColumn<>();
     @FXML
     private TableColumn<Person, String> personName = new TableColumn<>();
+    @FXML
+    private TableColumn<Person, Kitchen> personKitchen = new TableColumn<>();
     @FXML
     private TableColumn<Person, Double> personKitchenLongitude = new TableColumn<>();
     @FXML
@@ -87,9 +132,21 @@ public class Controller {
     @FXML
     private TableColumn<Couple, Person> couplePerson2 = new TableColumn<>();
     @FXML
-    private TableColumn<Couple, Kitchen> coupleKitchen1 = new TableColumn<>();
+    private TableColumn<Person, Kitchen> coupleKitchen1 = new TableColumn<>();
     @FXML
-    private TableColumn<Couple, Kitchen> coupleKitchen2 = new TableColumn<>();
+    private TableColumn<Person, Kitchen> coupleKitchen2 = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Kitchen> coupleKitchen1Longitude = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Kitchen> coupleKitchen1Latitude = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Kitchen> coupleKitchen1Story = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Kitchen> coupleKitchen2Longitude = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Kitchen> coupleKitchen2Latitude = new TableColumn<>();
+    @FXML
+    private TableColumn<Couple, Kitchen> coupleKitchen2Story = new TableColumn<>();
     @FXML
     private TableColumn<Couple, FoodPreference.FoodPref> coupleFoodPref = new TableColumn<>();
     @FXML
@@ -108,8 +165,6 @@ public class Controller {
     private TableColumn<Group, FoodPreference.FoodPref> groupFoodPref = new TableColumn<>();
     @FXML
     private TableColumn<Group, Course> groupCourse = new TableColumn<>();
-    @FXML
-    private ComboBox<Manager> couplesGroupsMenu = new ComboBox<>();
 
     public void initialize() {
         foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, Manager.getInstance().getFoodPrefWeight()));
@@ -164,18 +219,22 @@ public class Controller {
         // Table for Couple tab
         coupleID.setCellValueFactory(new PropertyValueFactory<>("iD"));
         coupleID.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        couplePerson1.setCellValueFactory(new PropertyValueFactory<>("Person1"));
-        couplePerson2.setCellValueFactory(new PropertyValueFactory<>("Person2"));
-        coupleKitchen1.setCellValueFactory(new PropertyValueFactory<>("Kitchen1"));
-        coupleKitchen2.setCellValueFactory(new PropertyValueFactory<>("Kitchen2"));
+        couplePerson1.setCellValueFactory(new PropertyValueFactory<>("Person1ID"));
+        couplePerson2.setCellValueFactory(new PropertyValueFactory<>("Person2ID"));
+        coupleKitchen1Longitude.setCellValueFactory(new PropertyValueFactory<>("Kitchen1Longitude"));
+        coupleKitchen1Latitude.setCellValueFactory(new PropertyValueFactory<>("Kitchen1Latitude"));
+        coupleKitchen1Story.setCellValueFactory(new PropertyValueFactory<>("Kitchen1Story"));
+        coupleKitchen2Longitude.setCellValueFactory(new PropertyValueFactory<>("Kitchen2Longitude"));
+        coupleKitchen2Latitude.setCellValueFactory(new PropertyValueFactory<>("Kitchen2Latitude"));
+        coupleKitchen2Story.setCellValueFactory(new PropertyValueFactory<>("Kitchen2Story"));
         coupleFoodPref.setCellValueFactory(new PropertyValueFactory<>("FoodPref"));
         coupleWhoseKitchen.setCellValueFactory(new PropertyValueFactory<>("whoseKitchen"));
 
         // Table for Group tab
         groupID.setCellValueFactory(new PropertyValueFactory<>("ID"));
-        groupHost.setCellValueFactory(new PropertyValueFactory<>("hosts"));
-        groupGuest1.setCellValueFactory(new PropertyValueFactory<>("guest1"));
-        groupGuest2.setCellValueFactory(new PropertyValueFactory<>("guest2"));
+        groupHost.setCellValueFactory(new PropertyValueFactory<>("hostID"));
+        groupGuest1.setCellValueFactory(new PropertyValueFactory<>("guest1ID"));
+        groupGuest2.setCellValueFactory(new PropertyValueFactory<>("guest2ID"));
         groupFoodPref.setCellValueFactory(new PropertyValueFactory<>("foodPreference"));
         groupCourse.setCellValueFactory(new PropertyValueFactory<>("course"));
 
@@ -188,6 +247,14 @@ public class Controller {
         managersList = FXCollections.observableArrayList(new Manager());
         couplesGroupsMenu.setItems(managersList);
 
+        List<LanguageSetting.Language> languages = new ArrayList<>();
+        languages.add(LanguageSetting.Language.ENGLISH);
+        languages.add(LanguageSetting.Language.GERMAN);
+        languageMenu.setItems(FXCollections.observableArrayList(languages));
+        languageMenu.setPromptText("German");
+        languageMenu.setValue(LanguageSetting.Language.GERMAN);
+
+
         personTab.setRowFactory(tv -> {
             TableRow<Person> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -198,18 +265,75 @@ public class Controller {
             });
             return row;
         });
+
+    }
+    @FXML
+    private void handleSelectedLanguage() {
+        Map<Integer, String> labels = LanguageSetting.getSelectLanguage(languageMenu.getValue());
+        uploadLocationButton.setText(labels.get(0));
+        uploadCSVButton.setText(labels.get(1));
+        calculateButton.setText(labels.get(2));
+        saveGroupsButton.setText(labels.get(3));
+        calculationConfigButton.setText(labels.get(4));
+        removeParticipantButton.setText(labels.get(5));
+        createCouplesGroupsTab.setText(labels.get(6));
+        deleteCouplesGroupsTab.setText(labels.get(7));
+        couplesGroupsMenu.setPromptText(labels.get(8));
+        participantsTabSel.setText(labels.get(9));
+        couplesTabSel.setText(labels.get(10));
+        groupsTabSel.setText(labels.get(11));
+        personID.setText(labels.get(12));
+        personName.setText(labels.get(13));
+        personKitchen.setText(labels.get(14));
+        personKitchenLongitude.setText(labels.get(15));
+        coupleKitchen1Longitude.setText(labels.get(15));
+        coupleKitchen2Longitude.setText(labels.get(15));
+        personKitchenLatitude.setText(labels.get(16));
+        coupleKitchen1Latitude.setText(labels.get(16));
+        coupleKitchen2Latitude.setText(labels.get(16));
+        personKitchenStory.setText(labels.get(17));
+        coupleKitchen1Story.setText(labels.get(17));
+        coupleKitchen2Story.setText(labels.get(17));
+        personFoodPref.setText(labels.get(18));
+        coupleFoodPref.setText(labels.get(18));
+        groupFoodPref.setText(labels.get(18));
+        personAgeRange.setText(labels.get(19));
+        personGender.setText(labels.get(20));
+        personRegWithPartner.setText(labels.get(21));
+        coupleID.setText(labels.get(22));
+        couplePerson1.setText(labels.get(23));
+        couplePerson2.setText(labels.get(24));
+        coupleKitchen1.setText(labels.get(25));
+        coupleKitchen2.setText(labels.get(26));
+        coupleWhoseKitchen.setText(labels.get(27));
+        groupID.setText(labels.get(28));
+        groupHost.setText(labels.get(29));
+        groupGuest1.setText(labels.get(30));
+        groupGuest2.setText(labels.get(31));
+        groupCourse.setText(labels.get(32));
+        foodPrefWeightLabel.setText(labels.get(33));
+        ageGroupWeightLabel.setText(labels.get(34));
+        genderWeightLabel.setText(labels.get(35));
+        distanceWeightLabel.setText(labels.get(36));
+        optimalDistanceLabel.setText(labels.get(37));
+        strictnessLevelLabel.setText(labels.get(38));
+        chooseDirButton.setText(labels.get(39));
+        filenameTextfieldLabel.setText(labels.get(40));
+        configurationSubmitButton.setText(labels.get(41));
+        finalSaveButton.setText(labels.get(41));
+
     }
 
     @FXML
     private void handleOpenWindow() {
         try {
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("PopupWindow.fxml"));
             Parent root = fxmlLoader.load();
-
             Stage stage = new Stage();
-            stage.setTitle("Configuration");
+            stage.setTitle("Berechnungseinstellungen");
             stage.setScene(new Scene(root));
-
+            stage.setAlwaysOnTop(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,7 +351,7 @@ public class Controller {
             Manager.getInstance().inputPeople(selectedFile.getPath());
             currentPersonList = FXCollections.observableArrayList(Manager.getInstance().getAllPersonList());
             personTab.setItems(currentPersonList);
-            calculate.setDisable(false);
+            calculateButton.setDisable(false);
         }
     }
 
@@ -239,7 +363,7 @@ public class Controller {
         File selectedFile = fileChooser.showOpenDialog(new Stage());
         if (selectedFile != null) {
             Manager.getInstance().inputLocation(selectedFile.getPath());
-            uploadCSV.setDisable(false);
+            uploadCSVButton.setDisable(false);
         }
     }
 
@@ -249,17 +373,21 @@ public class Controller {
         coupleTab.setItems(currentCoupleList);
         currentGroupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
         groupTab.setItems(currentGroupList);
-        saveGroups.setDisable(false);
+        saveGroupsButton.setDisable(false);
     }
 
     @FXML private void handleUndo() {
         if (!Manager.getInstance().getPrev().isEmpty()) {
+            Manager removedManager = Manager.getInstance();
             Manager.getInstance().setToPrev();
+            managersList.set(managersList.indexOf(removedManager), Manager.getInstance());
         }
     }
     @FXML private void handleRedo() {
         if (!Manager.getInstance().getFuture().isEmpty()) {
+            Manager removedManager = Manager.getInstance();
             Manager.getInstance().setToFuture();
+            managersList.set(managersList.indexOf(removedManager), Manager.getInstance());
         }
     }
     @FXML private void handleLanguageGerman() {
@@ -323,9 +451,9 @@ public class Controller {
             Parent root = fxmlLoader.load();
 
             Stage stage = new Stage();
-            stage.setTitle("Choose save directory");
+            stage.setTitle("Wähle ein Ziel");
             stage.setScene(new Scene(root));
-
+            stage.setAlwaysOnTop(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -347,12 +475,11 @@ public class Controller {
         } else {
             Manager.getInstance().saveGroupsToFile(chosenDirOutput.getAbsoluteFile() + "\\" + fileName + ".csv");
         }
-        Stage stage = (Stage) saveButton.getScene().getWindow();
+        Stage stage = (Stage) finalSaveButton.getScene().getWindow();
         stage.close();
     }
     @FXML private void handleNewCouplesGroupsTab(){
         Manager manager = new Manager();
-        manager.setAllPersonList(currentPersonList);
         managersList.add(manager);
         manager.setAllPersonList(currentPersonList);
     }
@@ -371,7 +498,9 @@ public class Controller {
 
     }
     @FXML private void handleRemoveParticipant() {
+        managersList.forEach(manager -> manager.removePerson(selectedPersonInList));
         currentPersonList.remove(selectedPersonInList);
+
     }
 
 }

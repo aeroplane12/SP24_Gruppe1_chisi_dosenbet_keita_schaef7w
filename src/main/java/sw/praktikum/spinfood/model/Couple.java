@@ -72,6 +72,30 @@ public class Couple {
     public void setPerson2(Person person2) {
         this.person2 = person2;
     }
+    public String getPerson1ID() {
+        return person1.getID();
+    }
+    public String getPerson2ID() {
+        return person2.getID();
+    }
+    public Double getKitchen1Longitude() {
+        return kitchen1 == null? null : kitchen1.getLongitude();
+    }
+    public Double getKitchen1Latitude() {
+        return kitchen1 == null? null : kitchen1.getLatitude();
+    }
+    public Double getKitchen1Story() {
+        return kitchen1 == null? null : kitchen1.getStory();
+    }
+    public Double getKitchen2Longitude() {
+        return kitchen2 == null? null : kitchen2.getLongitude();
+    }
+    public Double getKitchen2Latitude() {
+        return kitchen2 == null? null : kitchen2.getLatitude();
+    }
+    public Double getKitchen2Story() {
+        return kitchen2 == null? null : kitchen2.getStory();
+    }
 
     public Kitchen getKitchen1() {
         return kitchen1;
