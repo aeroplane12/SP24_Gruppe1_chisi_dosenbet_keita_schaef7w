@@ -33,6 +33,9 @@ public class CoupleManager {
 
         return instance;
     }
+    public static void setInstance(CoupleManager coupleManager) {
+        instance = coupleManager;
+    }
 
     List<Couple> couples = new ArrayList<>();
     // might need overview over all People
