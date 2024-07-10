@@ -475,7 +475,6 @@ public class Controller {
             Stage stage = new Stage();
             stage.setTitle("Wähle ein Ziel");
             stage.setScene(new Scene(root));
-            stage.setAlwaysOnTop(true);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
