@@ -166,6 +166,11 @@ public class Controller {
     @FXML
     private TableColumn<Group, Course> groupCourse = new TableColumn<>();
 
+    @FXML
+    private Button redo = new Button();
+    @FXML
+    private Button undo = new Button();
+
     public void initialize() {
         foodPrefSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, Manager.getInstance().getFoodPrefWeight()));
         ageGroupSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,Double.MAX_VALUE,Manager.getInstance().getAVGAgeRangeWeight()));
@@ -243,6 +248,11 @@ public class Controller {
         strictnessChange.getItems().add(Strictness.B);
         strictnessChange.getItems().add(Strictness.C);
         strictnessChange.setValue(Strictness.B);
+
+        // undo / redo Buttons
+        undo.setDisable(true);
+        redo.setDisable(true);
+
 
         managersList = FXCollections.observableArrayList(new Manager());
         couplesGroupsMenu.setItems(managersList);
@@ -327,9 +337,9 @@ public class Controller {
     @FXML
     private void handleOpenWindow() {
         try {
-
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("PopupWindow.fxml"));
             Parent root = fxmlLoader.load();
+
             Stage stage = new Stage();
             stage.setTitle("Berechnungseinstellungen");
             stage.setScene(new Scene(root));
@@ -374,21 +384,31 @@ public class Controller {
         currentGroupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
         groupTab.setItems(currentGroupList);
         saveGroupsButton.setDisable(false);
+        undo.setDisable(Manager.getPrev().isEmpty());
+        redo.setDisable(Manager.getFuture().isEmpty());
     }
 
     @FXML private void handleUndo() {
-        if (!Manager.getInstance().getPrev().isEmpty()) {
-            Manager removedManager = Manager.getInstance();
-            Manager.getInstance().setToPrev();
-            managersList.set(managersList.indexOf(removedManager), Manager.getInstance());
+        if (!Manager.getPrev().isEmpty()) {
+            Manager.setToPrev();
+            currentCoupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+            coupleTab.setItems(currentCoupleList);
+            currentGroupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+            groupTab.setItems(currentGroupList);
         }
+        undo.setDisable(Manager.getPrev().isEmpty());
+        redo.setDisable(Manager.getFuture().isEmpty());
     }
     @FXML private void handleRedo() {
-        if (!Manager.getInstance().getFuture().isEmpty()) {
-            Manager removedManager = Manager.getInstance();
-            Manager.getInstance().setToFuture();
-            managersList.set(managersList.indexOf(removedManager), Manager.getInstance());
+        if (!Manager.getFuture().isEmpty()) {
+            Manager.setToFuture();
+            currentCoupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+            coupleTab.setItems(currentCoupleList);
+            currentGroupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+            groupTab.setItems(currentGroupList);
         }
+        undo.setDisable(Manager.getPrev().isEmpty());
+        redo.setDisable(Manager.getFuture().isEmpty());
     }
     @FXML private void handleLanguageGerman() {
 
@@ -416,6 +436,8 @@ public class Controller {
                 strictnessChange.getValue());
         Stage stage = (Stage) foodPrefSpinner.getScene().getWindow();
         stage.close();
+        undo.setDisable(Manager.getPrev().isEmpty());
+        redo.setDisable(Manager.getFuture().isEmpty());
     }
 
     @FXML private void handleInvalidTextInputFoodPref() {

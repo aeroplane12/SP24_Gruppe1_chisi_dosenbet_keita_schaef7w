@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class View extends Application {
+    private Controller controller;
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(View.class.getResource("StartUpWindow.fxml"));
@@ -23,5 +24,10 @@ public class View extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+    public Controller getController() {
+        return controller;
+    }
+
 }
 

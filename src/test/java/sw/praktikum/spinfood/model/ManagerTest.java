@@ -186,7 +186,7 @@ class ManagerTest {
             manager.calcAll();
             List<Couple> coupleForRemoval = new ArrayList<>(manager.couples.subList(0,10));
             List<Person> personForRemoval = new ArrayList<>(manager.allPersonList.subList(0,10));
-            /*
+
             manager.removeAll(coupleForRemoval,personForRemoval);
             for (Couple i : manager.couples) {
                 for (Couple j :coupleForRemoval) {
@@ -199,7 +199,111 @@ class ManagerTest {
             for (Person j :personForRemoval) {
                 assertFalse(manager.allPersonList.contains(j));
             }
-             */
 
+
+        }
+        @Test
+        public void testRedoAndUndo(){
+            testInputPeople();
+            testCoupleManager();
+            testGroupManager();
+            manager = new Manager();
+            manager.inputPeople("Dokumentation/TestingData/teilnehmerliste.csv");
+            manager.inputLocation("Dokumentation/TestingData/partylocation.csv");
+            manager.calcAll();
+            int allParticipantsSize = manager.allPersonList.size();
+            int coupleSize = manager.couples.size();
+            int groupSize = manager.groups.size();
+            //config table
+            Map<String,Map<Integer,Double>> configTable = new HashMap<>(
+                    Map.ofEntries(
+                            Map.entry("DEFAULT", new HashMap<>(Map.ofEntries(Map.entry(0,5d), Map.entry(1,2d), Map.entry(2,1d), Map.entry(3,3d), Map.entry(4,10d), Map.entry(5,1d)))),
+                            Map.entry("ZERO", new HashMap<>(Map.ofEntries(Map.entry(0,0d), Map.entry(1,0d), Map.entry(2,0d), Map.entry(3,0d), Map.entry(4,0d), Map.entry(5,0d)))),
+                            Map.entry("BIG", new HashMap<>(Map.ofEntries(Map.entry(0,10000d), Map.entry(1,10000d), Map.entry(2,10000d), Map.entry(3,10000d), Map.entry(4,10000d), Map.entry(5,2d))))
+                    )
+            );
+            manager.setConfig(configTable.get("ZERO").get(0),configTable.get("ZERO").get(1),configTable.get("ZERO").get(2),configTable.get("ZERO").get(3),configTable.get("ZERO").get(4),configTable.get("ZERO").get(5)==0d?Strictness.A:configTable.get("ZERO").get(5)==1d?Strictness.B:Strictness.C);
+            assertEquals(0d,manager.getFoodPrefWeight());
+            assertEquals(0d,manager.getAVGAgeRangeWeight());
+            assertEquals(0d,manager.getDistanceWeight());
+            assertEquals(0d,manager.getAVGGenderDIVWeight());
+            assertEquals(0d,manager.getOptimalDistance());
+            assertEquals(Strictness.A,manager.getStrictness());
+
+            assertEquals(allParticipantsSize,manager.allPersonList.size());
+
+            Manager.setToPrev();
+            manager = Manager.getInstance();
+
+            assertNotEquals(0d,manager.getFoodPrefWeight());
+            assertNotEquals(0d,manager.getAVGAgeRangeWeight());
+            assertNotEquals(0d,manager.getDistanceWeight());
+            assertNotEquals(0d,manager.getAVGGenderDIVWeight());
+            assertNotEquals(0d,manager.getOptimalDistance());
+            assertNotEquals(Strictness.A,manager.getStrictness());
+
+            assertEquals(allParticipantsSize,manager.allPersonList.size());
+
+            Manager.setToFuture();
+            manager = Manager.getInstance();
+
+            assertEquals(0d,manager.getFoodPrefWeight());
+            assertEquals(0d,manager.getAVGAgeRangeWeight());
+            assertEquals(0d,manager.getDistanceWeight());
+            assertEquals(0d,manager.getAVGGenderDIVWeight());
+            assertEquals(0d,manager.getOptimalDistance());
+            assertEquals(Strictness.A,manager.getStrictness());
+
+            assertEquals(allParticipantsSize,manager.allPersonList.size());
+
+            manager.setConfig(configTable.get("BIG").get(0),configTable.get("BIG").get(1),configTable.get("BIG").get(2),configTable.get("BIG").get(3),configTable.get("BIG").get(4),configTable.get("BIG").get(5)==0d?Strictness.A:configTable.get("BIG").get(5)==1d?Strictness.B:Strictness.C);
+            manager.setConfig(configTable.get("BIG").get(0),configTable.get("BIG").get(1),configTable.get("BIG").get(2),configTable.get("BIG").get(3),configTable.get("BIG").get(4),configTable.get("BIG").get(5)==0d?Strictness.A:configTable.get("BIG").get(5)==1d?Strictness.B:Strictness.C);
+
+            Manager.setToPrev();
+            Manager.setToPrev();
+            Manager.setToPrev();
+            manager = Manager.getInstance();
+
+            assertEquals(configTable.get("DEFAULT").get(0),manager.getFoodPrefWeight());
+            assertEquals(configTable.get("DEFAULT").get(1),manager.getAVGAgeRangeWeight());
+            assertEquals(configTable.get("DEFAULT").get(2),manager.getAVGGenderDIVWeight());
+            assertEquals(configTable.get("DEFAULT").get(3),manager.getDistanceWeight());
+            assertEquals(configTable.get("DEFAULT").get(4),manager.getOptimalDistance());
+            assertEquals(Strictness.B,manager.getStrictness());
+
+            assertEquals(allParticipantsSize,manager.allPersonList.size());
+            assertEquals(coupleSize,manager.couples.size());
+            assertEquals(groupSize,manager.groups.size());
+
+            // remove, for rolling back changes in the lists
+            List<Couple> coupleForRemoval = new ArrayList<>(manager.couples.subList(0,10));
+            List<Person> personForRemoval = new ArrayList<>(manager.allPersonList.subList(0,10));
+            manager.removeAll(coupleForRemoval,personForRemoval);
+            for (Couple i : manager.couples) {
+                for (Couple j :coupleForRemoval) {
+                    assertNotEquals(i.getPerson1(), j.getPerson1());
+                    assertNotEquals(i.getPerson2(), j.getPerson1());
+                    assertNotEquals(i.getPerson1(), j.getPerson2());
+                    assertNotEquals(i.getPerson2(), j.getPerson2());
+                }
+            }
+            for (Person j :personForRemoval) {
+                assertFalse(manager.allPersonList.contains(j));
+            }
+            while (!Manager.getPrev().empty()) {
+                Manager.setToPrev();
+            }
+            manager = Manager.getInstance();
+
+            assertEquals(configTable.get("DEFAULT").get(0),manager.getFoodPrefWeight());
+            assertEquals(configTable.get("DEFAULT").get(1),manager.getAVGAgeRangeWeight());
+            assertEquals(configTable.get("DEFAULT").get(2),manager.getAVGGenderDIVWeight());
+            assertEquals(configTable.get("DEFAULT").get(3),manager.getDistanceWeight());
+            assertEquals(configTable.get("DEFAULT").get(4),manager.getOptimalDistance());
+            assertEquals(Strictness.B,manager.getStrictness());
+
+            assertEquals(allParticipantsSize,manager.allPersonList.size());
+            assertEquals(coupleSize,manager.couples.size());
+            assertEquals(groupSize,manager.groups.size());
         }
 }

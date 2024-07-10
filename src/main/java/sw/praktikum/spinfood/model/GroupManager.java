@@ -14,7 +14,6 @@ public class GroupManager {
     private static GroupManager instance;
     public List<Group> ledger = new ArrayList<>();
     private Map<Kitchen,List<Couple>> kitchenLedger = new HashMap<>();
-    private Location partyLoc;
     private final Rankable<Couple> COUPLERANKGEN = ((x,y)->
         Math.abs(x.getFoodPref().value == 0 || y.getFoodPref().value == 0? 0 : (x.getFoodPref().value - y.getFoodPref().value)) * Manager.getInstance().getFoodPrefWeight()
                 + Math.abs(x.getAgeRAngeAVG() - y.getAgeRAngeAVG()) * Manager.getInstance().getAVGAgeRangeWeight()
@@ -22,7 +21,6 @@ public class GroupManager {
                 - (getGenderDiversity(x.getGenderDiv(),y.getGenderDiv())) * Manager.getInstance().getAVGGenderDIVWeight());
     public GroupManager(){
         instance = this;
-        partyLoc = Manager.getInstance().partyLoc;
     }
     // copy constructor
     public GroupManager(GroupManager groupManager){
@@ -31,13 +29,15 @@ public class GroupManager {
         succeedingCouples = new ArrayList<>(groupManager.succeedingCouples);
         ledger = new ArrayList<>(groupManager.ledger);
         kitchenLedger = new HashMap<>(kitchenLedger);
-        partyLoc = Manager.getInstance().partyLoc;
     }
     public static GroupManager getInstance() {
         if(instance == null)
             instance = new GroupManager();
 
         return instance;
+    }
+    public static void setInstance(GroupManager groupManager) {
+        instance = groupManager;
     }
 
     public void calcGroups(List<Couple> allCouples,boolean forced){
@@ -67,9 +67,9 @@ public class GroupManager {
                 return -1*z;
             }
             return -1*x.getCurrentKitchen()
-                    .distance(partyLoc)
+                    .distance(Manager.getInstance().partyLoc)
                     .compareTo(y.getCurrentKitchen()
-                            .distance(partyLoc));
+                            .distance(Manager.getInstance().partyLoc));
         });
         //O(n*log(n)+n)=O(n*log(n))
         while (possibleHosts.size()%9 != 0 ||
@@ -160,9 +160,9 @@ public class GroupManager {
                 return -1*z;
             }
             return -1*x.getCurrentKitchen()
-                    .distance(partyLoc)
+                    .distance(Manager.getInstance().partyLoc)
                     .compareTo(y.getCurrentKitchen()
-                            .distance(partyLoc));
+                            .distance(Manager.getInstance().partyLoc));
         });
         // sorts from farthest to closest
         List<Couple[]> output = new ArrayList<>();
@@ -341,9 +341,6 @@ public class GroupManager {
     }
     public Map<Kitchen, List<Couple>> getKitchenLedger() {
         return kitchenLedger;
-    }
-    public void setPartyLoc(Location partyLoc) {
-        this.partyLoc = partyLoc;
     }
     /**
      * removes Couple from all Groups

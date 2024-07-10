@@ -10,12 +10,13 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class Manager {
+    static int managerID = 0;
     static Manager instance;
-    private final Stack<Manager> prev = new Stack<>();
-    private final Stack<Manager> future = new Stack<>();
+    private static final Stack<Manager> prev = new Stack<>();
+    private static final Stack<Manager> future = new Stack<>();
     static int couple_Counter = 0;
     static int group_Counter = 0;
-    public static int maxGuests = 666666;
+    public static int maxGuests = 999999;
     private GroupManager groupManager;
     private CoupleManager coupleManager;
     Location partyLoc = new Location(0d,0d);//temporary filler
@@ -47,6 +48,7 @@ public class Manager {
         this.groupManager = GroupManager.getInstance();
         this.coupleManager = CoupleManager.getInstance();
         this.couples = new ArrayList<>();
+        this.groups = new ArrayList<>();
         instance = this;
     }
     public static Manager getInstance(){
@@ -58,22 +60,26 @@ public class Manager {
     public Manager(String path){
         inputLocation(path);
         this.groupManager = GroupManager.getInstance();
-        this.groupManager.setPartyLoc(partyLoc);
         this.coupleManager = CoupleManager.getInstance();
         this.couples = new ArrayList<>();
+        this.groups = new ArrayList<>();
 
     }
     // copy constructor
     private Manager(Manager manager){
         coupleManager = manager.coupleManager;
         groupManager = new GroupManager(manager.groupManager);
-        if (allPersonList != null) allPersonList = new ArrayList<>(manager.allPersonList);
-        if (singles != null) singles = new ArrayList<>(manager.singles);
-        if (couples != null) couples = new ArrayList<>(manager.couples);
-        if (groups != null) groups = new ArrayList<>(manager.groups);
-        partyLoc = manager.partyLoc;
-
-
+        allPersonList = new ArrayList<>(manager.allPersonList);
+        singles = new ArrayList<>(manager.singles);
+        couples = new ArrayList<>(manager.couples);
+        groups = new ArrayList<>(manager.groups);
+        partyLoc = new Location(manager.partyLoc);
+        strictness = manager.strictness;
+        FoodPrefWeight = manager.FoodPrefWeight;
+        AVGAgeRangeWeight = manager.AVGAgeRangeWeight;
+        AVGGenderDIVWeight = manager.AVGGenderDIVWeight;
+        distanceWeight = manager.distanceWeight;
+        optimalDistance = manager.optimalDistance;
     }
 
     public List<Person> getAllPersonList() {
@@ -95,7 +101,6 @@ public class Manager {
      * then assigns all to Groups
      */
     public void calcAll(){
-        changedSomething();
         calcCouples();
         calcGroups();
     }
@@ -173,7 +178,11 @@ public class Manager {
      */
     public void removePerson(Person person){
         changedSomething();
-        Couple couple = couples.stream().filter(x -> x.getPerson1().equals(person) || x.getPerson2().equals(person)).findFirst().orElse(null);
+        allPersonList.remove(person);
+        Couple couple = couples.stream()
+                .filter(x -> x.getPerson1().equals(person) ||
+                        x.getPerson2().equals(person))
+                .findFirst().orElse(null);
         Person partner = person.getPartner();
         if (couple != null) {
             couples.remove(couple);
@@ -182,6 +191,7 @@ public class Manager {
             singles.add(partner);
         }
         singles.remove(person);
+        allPersonList.remove(person);
         calcCouples();
         GroupManager.getInstance().clear();
         groupManager.calcGroups(couples,false);
@@ -208,7 +218,6 @@ public class Manager {
      */
     public void inputLocation(String path) {
         partyLoc = CSVReader.csvReaderPartyLocation(path);
-        groupManager.setPartyLoc(partyLoc);
     }
 
     public GroupManager getGroupManager() {
@@ -231,18 +240,28 @@ public class Manager {
      * setToPrev / undo-function
      * sets to and returns the previous instance as the current image
      */
-    public void setToPrev(){
-        future.add(new Manager(this));
+    public static void setToPrev(){
+        if (prev.empty()){
+            return;
+        }
+        future.add(new Manager(Manager.getInstance()));
         instance = prev.pop();
+        GroupManager.setInstance(instance.groupManager);
+        CoupleManager.setInstance(instance.coupleManager);
     }
 
     /**
      * setToFuture / redo-function
      * sets to and returns the last entry of the future container as the current
      */
-    public void setToFuture(){
-        prev.add(new Manager(this));
+    public static void setToFuture(){
+        if (future.empty()){
+            return;
+        }
+        prev.add(new Manager(Manager.getInstance()));
         instance = future.pop();
+        GroupManager.setInstance(instance.groupManager);
+        CoupleManager.setInstance(instance.coupleManager);
     }
     public Double getFoodPrefWeight() {
         return FoodPrefWeight;
@@ -268,7 +287,7 @@ public class Manager {
      * changedSomething()
      * needs to be called when making a change.
      * then adds container to prev stack
-     * afterwards clears future stack
+     * clears future stack afterward
      */
     public void changedSomething(){
         prev.add(new Manager(this));
@@ -297,10 +316,10 @@ public class Manager {
         optimalDistance = parameterValues[GroupManagerIndex + 4];
         this.strictness = strictness;
     }
-    public Stack<Manager> getPrev() {
+    public static Stack<Manager> getPrev() {
         return prev;
     }
-    public Stack<Manager> getFuture() {
+    public static Stack<Manager> getFuture() {
         return future;
     }
     public void setConfig(Double foodPrefWeight, Double AVGAgeRangeWeight, Double AVGGenderDIVWeight, Double distanceWeight, Double optimalDistance, Strictness strictness) {
@@ -311,8 +330,13 @@ public class Manager {
         this.distanceWeight = distanceWeight;
         this.optimalDistance = optimalDistance;
         this.strictness = strictness;
+        calcAll();
     }
     public void saveGroupsToFile(String filePath) {
         CSVWriter.write(groups, filePath);
+    }
+
+    public Strictness getStrictness() {
+        return strictness;
     }
 }
