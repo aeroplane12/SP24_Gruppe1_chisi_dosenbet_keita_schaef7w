@@ -93,13 +93,21 @@ public class Person {
         this.name = name;
     }
     public void setAge(AgeGroup.AgeRange age) {
-        this.age = age;
+        if (age == null) {
+            this.age = AgeGroup.AgeRange.AGE_24_27;
+        } else {this.age = age;}
     }
     public void setGender(Gender.genderValue gender) {
-        this.gender = gender;
+        if (gender == null) {
+            this.gender = Gender.genderValue.other;
+        } else {
+            this.gender = gender;
+        }
     }
     public void setFoodPreference(FoodPreference.FoodPref foodPreference) {
-        this.foodPreference = foodPreference;
+        if (foodPreference == null) {
+            this.foodPreference = FoodPreference.FoodPref.NONE;
+        } else {this.foodPreference = foodPreference;}
     }
     public void setKitchen(Kitchen kitchen) {
         this.kitchen = kitchen;

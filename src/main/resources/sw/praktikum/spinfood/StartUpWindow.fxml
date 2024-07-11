@@ -22,9 +22,6 @@
       <Button fx:id="undo" layoutX="658.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleUndo" text="&lt;--" AnchorPane.rightAnchor="48.0" />
       <Button fx:id="redo" layoutX="692.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleRedo" text="--&gt;" AnchorPane.rightAnchor="14.0" />
       <Button fx:id="calculationConfigButton" layoutX="14.0" layoutY="52.0" mnemonicParsing="false" onAction="#handleOpenWindow" text="Berechnungseinstellungen" AnchorPane.leftAnchor="14.0" />
-      <Button fx:id="createCouplesGroupsTab" layoutX="14.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleNewCouplesGroupsTab" text="Neuen Partner/Gruppen Tab" />
-      <Button fx:id="deleteCouplesGroupsTab" layoutX="201.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleDeleteCouplesGroupsTab" text="Partner/Gruppen Tab löschen" />
-      <ComboBox fx:id="couplesGroupsMenu" layoutX="404.0" layoutY="89.0" onAction="#handleSwitchCouplesGroupsTab" prefHeight="25.0" prefWidth="236.0" promptText="Ausgewählter Partner/Gruppen Tab" />
       <Button fx:id="removeParticipantButton" layoutX="188.0" layoutY="52.0" mnemonicParsing="false" onAction="#handleRemoveParticipant" prefHeight="25.0" prefWidth="149.0" text="Teilnehmer entfernen" />
       <TabPane layoutX="14.0" layoutY="114.0" prefHeight="332.0" prefWidth="712.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="114.0">
         <tabs>
