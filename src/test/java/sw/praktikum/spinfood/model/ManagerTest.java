@@ -292,6 +292,7 @@ class ManagerTest {
             }
             while (!Manager.getPrev().empty()) {
                 Manager.setToPrev();
+                assertTrue(allParticipantsSize>=Manager.getInstance().allPersonList.size());
             }
             manager = Manager.getInstance();
 

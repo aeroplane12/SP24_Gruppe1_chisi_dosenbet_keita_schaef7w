@@ -24,6 +24,7 @@ import sw.praktikum.spinfood.model.tools.GenderStringConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 public class Controller {
@@ -311,6 +312,10 @@ public class Controller {
         stage.close();
         undo.setDisable(Manager.getPrev().isEmpty());
         redo.setDisable(Manager.getFuture().isEmpty());
+        coupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+        coupleTab.setItems(coupleList);
+        groupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+        groupTab.setItems(groupList);
     }
 
     @FXML private void handleInvalidTextInputFoodPref() {
@@ -340,7 +345,12 @@ public class Controller {
         }
     }
     @FXML private void handleRefreshTable() {
-
+        coupleList = FXCollections.observableArrayList(Manager.getInstance().getCouples());
+        coupleTab.setItems(coupleList);
+        groupList = FXCollections.observableArrayList(Manager.getInstance().getGroups());
+        groupTab.setItems(groupList);
+        undo.setDisable(Manager.getPrev().isEmpty());
+        redo.setDisable(Manager.getFuture().isEmpty());
     }
     @FXML private void handleSaveGroupsWindow() {
         try {

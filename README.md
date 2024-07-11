@@ -29,124 +29,95 @@ Gemäß Model-View-Control Modells
 | UML-Diagram   |    x    |       |       |        |
 | Tests & stuff |         |   x   |   x   |   x    |
 
-| Meilenstein 3 (changes pending)   | Andreas | Felix | Keita | Tobias |
-|-----------------------------------|:-------:|:-----:|:-----:|:------:|
-| View                              |    x    |       |   x   |        |
-| Controller                        |    x    |       |       |        |
-| Group-Manager changes             |         |   x   |       |        |
-| Couple-Manager changes            |         |       |       |   x    |
-| Documentation <br/> (pseudo-Code) |         |   x   |       |   x    |
+| Meilenstein 3 (changes pending) | Andreas | Felix | Keita | Tobias |
+|---------------------------------|:-------:|:-----:|:-----:|:------:|
+| View                            |    x    |       |   x   |        |
+| Controller                      |    x    |       |       |        |
+| Manager adjustments             |    x    |   x   |       |   x    |
+| Tests                           |         |   x   |   x   |        |
+| Documentation                   |         |   x   |   x   |   x    |
 
 
 
 ### To-Do
 - [x] Grundstruktur
-- [ ] GUI
-- [ ] Controller
+- [x] GUI
+- [x] Controller
 - [x] Model
-- - [x] Pers. to Couple
+- - [x] Person to Couple
 - - [x] Couple to Group
 - - [x] General Manager
 
 ## Pseudo-Code Couple-Manager
 
-    void givePeopleWithoutPartner(List<Person> singles, Strictness strictnessLevel, Location partyLoc) {
-    calcCouples(strictnessLevel);
-    }
+    void givePeopleWithoutPartner(List singles, strictnessLevel, Location partyLoc) 
+    calcCouples(strictnessLevel) 
+    
     
     void calcCouples(Strictness strictnessLevel) {
-    switch (strictnessLevel) {
+    switch (strictnessLevel) 
     case A:
-    matchSingles(createMatrix(vegetarians), vegetarians);
-    matchSingles(createMatrix(mixedGroup), mixedGroup);
-    break;
+    matchSingles(createMatrix(vegetarians), vegetarians) 
+    matchSingles(createMatrix(mixedGroup), mixedGroup) 
+    break 
     case B:
     //with and without kitchen
-    break;
+    break 
     case C:
     //maximum number off matches
-    break;
-    default:
-    throw new IllegalArgumentException("Invalid Strictness level");
-    }
-    }
-    
-    private NumberBox[][] createMatrix(List<Person> singles) {
-    int size = singles.size();
-    NumberBox[][] matrix = new NumberBox[size][size];
-    for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-    matrix[i][j] = new NumberBox(calculateCost(singles.get(i), singles.get(j)));
-    }
-    }
-    return matrix;
-    }
-    
-    public double calculateCost(Person p1, Person p2) {
-    int cost = 0;
 
+    }
+    
+    createMatrix(List singles) {
+
+    for (int i = 0  i < size  i++) :
+    for (int j = 0  j < size  j++) :
+    matrix[i][j] = new NumberBox(calculateCost(singles.get(i), singles.get(j))) 
+    
+    return matrix 
+    }
+    
+    calculateCost(Person p1, Person p2) {
+    
     if (!p1.hasSameFoodPreference(p2)) {
-        cost += calculateFoodPreferenceCost(p1, p2);
-    }
-    cost += calculateKitchenDistanceCost(p1, p2);
-    cost += calculateAgeDifferenceCost(p1, p2);
-    cost += calculateGenderCost(p1, p2);
-
-    return cost;
+        cost += calculateFoodPreferenceCost(p1, p2) 
+    
+    cost += calculateKitchenDistanceCost(p1, p2) 
+    cost += calculateAgeDifferenceCost(p1, p2) 
+    cost += calculateGenderCost(p1, p2) 
+    
+    return cost
     }
     
-    private void matchSingles(NumberBox[][] matrix, List<Person> people) {
-    adjustMatrix(matrix);
-    formCouples(matrix, people);
+    matchSingles( matrix, List people) {
+    adjustMatrix(matrix) 
+    formCouples(matrix, people) 
     }
     
-    private void matchSinglesWithAdjustment(NumberBox[][] matrix, List<Person> group1, List<Person> group2) {
-    adjustMatrix(matrix);
-    matrix = splitMatrix(matrix);
-    formCouples(findZeroCoordinates(matrix), group1, group2);
+    matchSinglesWithAdjustment(matrix, List group1, List group2) {
+    adjustMatrix(matrix) 
+    matrix = splitMatrix(matrix) 
+    formCouples(findZeroCoordinates(matrix), group1, group2) 
     }
     
     // Helper Methods
     private List<Person> filterByKitchenAvailability(List<Person> participants, boolean hasKitchen) {
-    return participants.stream().filter(p -> p.hasKitchen() == hasKitchen).collect(Collectors.toList());
+    return participants.stream().filter(p -> p.hasKitchen() == hasKitchen).collect(Collectors.toList()) 
     }
     
-    private int calculateFoodPreferenceCost(Person p1, Person p2) {
-    // Implementation for calculating cost based on food preference
-    }
-    
-    private int calculateKitchenDistanceCost(Person p1, Person p2) {
-    // Implementation for calculating cost based on kitchen distance
-    }
-    
-    private int calculateAgeDifferenceCost(Person p1, Person p2) {
-    // Implementation for calculating cost based on age difference
-    }
-    
-    private int calculateGenderCost(Person p1, Person p2) {
-    // Implementation for calculating cost based on gender
-    }
-    
-    private void adjustMatrix(NumberBox[][] matrix) {
-    // Implementation for adjusting the matrix
-    }
-    
-    private void formCouples(NumberBox[][] matrix, List<Person> singles) {
-        for (int i = 0; i < numberBox.length; i++) {
-            for (int j = 0; j < numberBox[i].length; j++) 
+    private void formCouples(matrix, List singles) {
+        for (int i = 0  i < numberBox.length  i++) :
+            for (int j = 0  j < numberBox[i].length  j++) :
                 if (numberBox[i][j].getNumber() == 0.0) 
-                    Couple couple = new Couple(people.get(i), people.get(j));
+                    Couple couple = new Couple(people.get(i), people.get(j)) 
         }
-
-        for (int i = 0; i < numberBox.length; i++) {
+    
+        for (int i = 0  i < numberBox.length  i++) {
             if (people.get(i).getPartner() == null)
-                stillSingle.add(people.get(i));
+                stillSingle.add(people.get(i)) 
         }
     }
 
-```
-
-```
 ## Pseudo-Code Group-Manager
 ```
 //preprocess input
